@@ -3,6 +3,7 @@
 #------------------------------------------------------------------------------
 require(shiny)
 require(shinyjs)
+require(shinycssloaders)
 require(shinythemes)
 require(shinyauthr)
 require(sodium)
@@ -62,9 +63,7 @@ ui <- navbarPage(
                                #additional_ui = shiny::tagList(p(HTML("<br>")), img(src="")
            ),
            
-           htmlOutput("notification"),
-           HTML("<br>"),
-           imageOutput("thisImage")
+           htmlOutput("notification") 
   ),
   tabPanel(title = "Garde",
            dateInput("dateDeGarde",
@@ -78,8 +77,8 @@ ui <- navbarPage(
                      accept = "image/*",
                      buttonLabel = "Mettre en ligne"),
            HTML("<br><br><br>"),
-           DTOutput("tabelleGarde"),
-           imageOutput("thisImage")
+           DTOutput("tabelleGarde")
+           
   )
 )
 
@@ -99,7 +98,9 @@ server <- function(input, output, session) {
                                           active = reactive(credentials()$user_auth))
   
   output$notification <- renderUI({
-    #req(credentials()$user_auth)
+    req(credentials()$user_auth)
+    
+    Sys.sleep(1.5)
     
     div(
       class = "bg-success",
@@ -132,14 +133,14 @@ server <- function(input, output, session) {
   })
   
   # Send a pre-rendered image, and don't delete the image after sending it
-  output$thisImage <- renderUI({
+  #output$thisImage <- renderUI({
     
     
     # Return a list containing the filename and alt text
-    list(src = './www/face.png',
-         alt = paste("Image number face"))
+    #list(src = './www/face.png',
+    #     alt = paste("Image number face"))
     
-  }, deleteFile = FALSE)
+  #}, deleteFile = FALSE)
   
 }
 
