@@ -40,6 +40,15 @@ ward <- tibble(
   `Date de registre` = c("09/03/2022", "08/03/2022", "09/03/2022", "09/03/2022", "09/03/2022", "08/03/2022"),
   `Dernière modification` = c("09/03/2022", "08/03/2022", "09/03/2022", "09/03/2022", "09/03/2022", "08/03/2022")) 
 
+displayMessage <- function(aFile) {
+  
+  ext <- tools::file_ext(aFile$datapath) 
+  
+  Sys.sleep(1.5)
+  
+  paste0('This is a clasic ', ext, ' file!')
+}
+
 #------------------------------------------------------------------------------
 # UI
 #------------------------------------------------------------------------------
@@ -59,9 +68,7 @@ ui <- navbarPage(
                                user_title = "Identifiant",
                                pass_title = "Mot de passe",
                                login_title = "Se connecter",
-                               error_message = "Identifiant ou mot de passe invalides!"
-                               #additional_ui = shiny::tagList(p(HTML("<br>")), img(src="")
-           ),
+                               error_message = "Identifiant ou mot de passe invalides!"),
            
            htmlOutput("notification") 
   ),
@@ -77,7 +84,8 @@ ui <- navbarPage(
                      accept = "image/*",
                      buttonLabel = "Mettre en ligne"),
            HTML("<br><br><br>"),
-           DTOutput("tabelleGarde")
+           DTOutput("tabelleGarde"),
+           
            
   )
 )
@@ -100,7 +108,7 @@ server <- function(input, output, session) {
   output$notification <- renderUI({
     req(credentials()$user_auth)
     
-    Sys.sleep(1.5)
+    #Sys.sleep(1.5)
     
     div(
       class = "bg-success",
@@ -132,15 +140,24 @@ server <- function(input, output, session) {
     
   })
   
-  # Send a pre-rendered image, and don't delete the image after sending it
-  #output$thisImage <- renderUI({
+  thisMessage <- reactive({
+    file <- input$aFile
     
     
-    # Return a list containing the filename and alt text
-    #list(src = './www/face.png',
-    #     alt = paste("Image number face"))
+    req(file)
+    displayMessage(file)
     
-  #}, deleteFile = FALSE)
+  })
+  
+
+  observeEvent(!(thisMessage()==""), {
+    showModal(modalDialog(
+      title = "Mededeling",
+      thisMessage(),
+      easyClose = TRUE,
+      footer = modalButton(label = "Check!" , icon = icon('thumbs-up', lib = "font-awesome"))
+    ))
+  })
   
 }
 
