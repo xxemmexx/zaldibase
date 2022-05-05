@@ -104,15 +104,15 @@ patients_table_module <- function(input, output, session) {
     actions <- purrr::map_chr(ids, function(id_) {
       paste0(
         '<div class="btn-group" style="width: 75px;" role="group" aria-label="Basic example">
-          <button class="btn btn-primary btn-sm edit_btn" data-toggle="tooltip" data-placement="top" title="Edit" id = ', id_, ' style="margin: 0"><i class="fa fa-pencil-square-o"></i></button>
-          <button class="btn btn-danger btn-sm delete_btn" data-toggle="tooltip" data-placement="top" title="Delete" id = ', id_, ' style="margin: 0"><i class="fa fa-trash-o"></i></button>
+          <button class="btn btn-primary btn-sm edit_btn" data-toggle="tooltip" data-placement="top" title="Modifier" id = ', id_, ' style="margin: 0"><i class="fa fa-pencil-square-o"></i></button>
+          <button class="btn btn-danger btn-sm delete_btn" data-toggle="tooltip" data-placement="top" title="Effacer" id = ', id_, ' style="margin: 0"><i class="fa fa-times-circle"></i></button>
         </div>'
       )
     })
 
     # Select relevant columns for the user
     out <- out %>%
-      select(-uid)
+      select(nom, prenom, date_naissance, condition)
 
     # Set the Action Buttons row to the first column of the `patients` table
     out <- cbind(
@@ -141,14 +141,13 @@ patients_table_module <- function(input, output, session) {
     datatable(
       out,
       rownames = FALSE,
-      colnames = c('Nom', 'Prénom', 'Date de naissance', 'Condition',
-                   'Hôpital', 'Personne de contact', 'Created At',
-                   'Created By', 'Modified At', 'Modified By'),
+      colnames = c('Nom', 'Prénom', 'Date de naissance', 'Condition'),
+                   #'Hôpital', 'Personne de contact', 'Created At',
+                   #'Created By', 'Modified At', 'Modified By'),
       selection = "none",
       class = "compact stripe row-border nowrap",
       # Escape the HTML in all except 1st column (which has the buttons)
       escape = -1,
-      extensions = c("Buttons"),
       options = list(
         scrollX = TRUE,
         dom = 't',
@@ -160,11 +159,10 @@ patients_table_module <- function(input, output, session) {
           $('.tooltip').remove()
         }")
       )
-    ) %>%
-      formatDate(
-        columns = c("created_at", "modified_at"),
-        method = 'toLocaleString'
-      )
+    ) #%>%
+      # formatDate(
+      #   columns = c("created_at", "modified_at"),
+      #   method = 'toLocaleString')
 
   })
 
