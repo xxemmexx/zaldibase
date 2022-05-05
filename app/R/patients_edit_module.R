@@ -1,7 +1,7 @@
 
-#' Car Add & Edit Module
+#' Add & Edit Module
 #'
-#' Module to add & edit cars in the mtcars database file
+#' Module to add & edit patients in the patients database file
 #'
 #' @importFrom shiny observeEvent showModal modalDialog removeModal fluidRow column textInput numericInput selectInput modalButton actionButton reactive eventReactive
 #' @importFrom shinyFeedback showFeedbackDanger hideFeedback showToast
@@ -11,7 +11,7 @@
 #' @importFrom DBI dbExecute
 #'
 #' @param modal_title string - the title for the modal
-#' @param car_to_edit reactive returning a 1 row data frame of the car to edit
+#' @param patient_to_edit reactive returning a 1 row data frame of the car to edit
 #' from the "mt_cars" table
 #' @param modal_trigger reactive trigger to open the modal (Add or Edit buttons)
 #'

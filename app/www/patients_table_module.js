@@ -1,6 +1,3 @@
-
-
-
 function patients_table_module_js(ns_prefix) {
 
   $("#" + ns_prefix + "patients_table").on("click", ".delete_btn", function() {
