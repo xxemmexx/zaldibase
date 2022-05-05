@@ -210,7 +210,7 @@ patients_table_module <- function(input, output, session) {
   })
 
   callModule(
-    patient_delete_module,
+    patients_delete_module,
     "delete_patient",
     modal_title = "Effacer patient",
     patient_to_delete = patient_to_delete,
