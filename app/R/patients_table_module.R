@@ -19,11 +19,11 @@ patients_table_module_ui <- function(id) {
         width = 2,
         actionButton(
           ns("add_patient"),
-          "Add",
+          "Nouveau patient",
           class = "btn-success",
           style = "color: #fff;",
           icon = icon('plus'),
-          width = '100%'
+          width = '175%'
         ),
         tags$br(),
         tags$br()
