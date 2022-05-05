@@ -4,7 +4,7 @@ fluidPage(
   # Application Title
   titlePanel(
     h1("PendejAPP", align = 'center'),
-    windowTitle = "Ejemplo"
+    windowTitle = "Ejemplo de app"
   ),
   patients_table_module_ui("patients_table")
 )
