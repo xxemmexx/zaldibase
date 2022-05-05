@@ -120,12 +120,12 @@ patients_edit_module <- function(input, output, session, modal_title, patient_to
     time_now <- as.character(lubridate::with_tz(Sys.time(), tzone = "UTC"))
 
     if (is.null(hold)) {
-      # adding a new car
+      # adding a new patient
 
       out$data$created_at <- time_now
       out$data$created_by <- session$userData$email
     } else {
-      # Editing existing car
+      # Editing existing patient
 
       out$data$created_at <- as.character(hold$created_at)
       out$data$created_by <- hold$created_by
