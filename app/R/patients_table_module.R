@@ -90,7 +90,7 @@ patients_table_module <- function(input, output, session) {
       showToast("error", msg)
     })
 
-    out
+    out 
   })
 
 
@@ -110,7 +110,7 @@ patients_table_module <- function(input, output, session) {
       )
     })
 
-    # Remove the `uid` column. We don't want to show this column to the user
+    # Select relevant columns for the user
     out <- out %>%
       select(-uid)
 
@@ -151,7 +151,7 @@ patients_table_module <- function(input, output, session) {
       extensions = c("Buttons"),
       options = list(
         scrollX = TRUE,
-        dom = 'Bftip',
+        dom = 't',
         buttons = list(
           list(
             extend = "excel",
