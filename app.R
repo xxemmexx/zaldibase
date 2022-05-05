@@ -40,14 +40,14 @@ ward <- tibble(
   `Date de registre` = c("09/03/2022", "08/03/2022", "09/03/2022", "09/03/2022", "09/03/2022", "08/03/2022"),
   `Dernière modification` = c("09/03/2022", "08/03/2022", "09/03/2022", "09/03/2022", "09/03/2022", "08/03/2022")) 
 
-displayMessage <- function(aFile) {
-  
-  ext <- tools::file_ext(aFile$datapath) 
-  
-  Sys.sleep(1.5)
-  
-  paste0('This is a clasic ', ext, ' file!')
-}
+# displayMessage <- function(aFile) {
+#   
+#   ext <- tools::file_ext(aFile$datapath) 
+#   
+#   Sys.sleep(1.5)
+#   
+#   paste0('This is a clasic ', ext, ' file!')
+# }
 
 #------------------------------------------------------------------------------
 # UI
@@ -140,24 +140,24 @@ server <- function(input, output, session) {
     
   })
   
-  thisMessage <- reactive({
-    file <- input$aFile
-    
-    
-    req(file)
-    displayMessage(file)
-    
-  })
-  
-
-  observeEvent(!(thisMessage()==""), {
-    showModal(modalDialog(
-      title = "Mededeling",
-      thisMessage(),
-      easyClose = TRUE,
-      footer = modalButton(label = "Check!" , icon = icon('thumbs-up', lib = "font-awesome"))
-    ))
-  })
+  # thisMessage <- reactive({
+  #   file <- input$aFile
+  #   
+  #   
+  #   req(file)
+  #   displayMessage(file)
+  #   
+  # })
+  # 
+  # 
+  # observeEvent(!(thisMessage()==""), {
+  #   showModal(modalDialog(
+  #     title = "Mededeling",
+  #     thisMessage(),
+  #     easyClose = TRUE,
+  #     footer = modalButton(label = "Check!" , icon = icon('thumbs-up', lib = "font-awesome"))
+  #   ))
+  # })
   
 }
 
