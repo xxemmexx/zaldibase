@@ -111,7 +111,7 @@ patients_edit_module <- function(input, output, session, modal_title, patient_to
       data = list(
         "nom" = input$nom,
         "prenom" = input$prenom,
-        "date_naissance" = input$date_naissance,
+        "date_naissance" = format(as.Date(input$date_naissance), '%Y-%m-%d'),
         "condition" = input$condition,
         "hopital" = input$hopital,
         "contact" = input$contact
