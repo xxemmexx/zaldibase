@@ -181,7 +181,7 @@ patients_table_module <- function(input, output, session) {
   patients_table_proxy <- DT::dataTableProxy('patients_table')
 
   callModule(
-    patient_edit_module,
+    patients_edit_module,
     "add_patient",
     modal_title = "Registrer un nouveau patient",
     patient_to_edit = function() NULL,
@@ -195,7 +195,7 @@ patients_table_module <- function(input, output, session) {
   })
 
   callModule(
-    patient_edit_module,
+    patients_edit_module,
     "edit_patient",
     modal_title = "Modifier un patient",
     patient_to_edit = patient_to_edit,
