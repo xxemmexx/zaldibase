@@ -185,7 +185,7 @@ patients_edit_module <- function(input, output, session, modal_title, patient_to
       }
 
       session$userData$patients_trigger(session$userData$patients_trigger() + 1)
-      showToast("success", paste0(modal_title, " C'est fait!"))
+      showToast(printToastMessage(modal_title))
     }, error = function(error) {
 
       msg <- paste0(modal_title, " Erreur")

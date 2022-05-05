@@ -1,5 +1,5 @@
 
-#' Car Delete Module
+#' Patient Delete Module
 #'
 #' This module is for deleting a row's information from the mtcars database file
 #'
@@ -40,7 +40,7 @@ patients_delete_module <- function(input, output, session, modal_title, patient_
           modalButton("Annuler"),
           actionButton(
             ns("submit_delete"),
-            "Supprimer profil",
+            "Effacer profil",
             class = "btn-danger",
             style="color: #fff;"
           )
@@ -65,7 +65,7 @@ patients_delete_module <- function(input, output, session, modal_title, patient_
       )
 
       session$userData$patients_trigger(session$userData$patients_trigger() + 1)
-      showToast("success", "Profil du patient a été bien effacé")
+      showToast(printToastMessage(modal_title))
     }, error = function(error) {
 
       msg <- "Erreur pendant la suppression"

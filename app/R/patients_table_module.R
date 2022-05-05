@@ -197,7 +197,7 @@ patients_table_module <- function(input, output, session) {
   callModule(
     patients_edit_module,
     "edit_patient",
-    modal_title = "Modifier un patient",
+    modal_title = "Modification du profil",
     patient_to_edit = patient_to_edit,
     modal_trigger = reactive({input$patient_id_to_edit})
   )
@@ -212,7 +212,7 @@ patients_table_module <- function(input, output, session) {
   callModule(
     patients_delete_module,
     "delete_patient",
-    modal_title = "Effacer patient",
+    modal_title = "Effacer profil",
     patient_to_delete = patient_to_delete,
     modal_trigger = reactive({input$patient_id_to_delete})
   )

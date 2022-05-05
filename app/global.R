@@ -10,6 +10,8 @@ library(shinyFeedback)
 library(dplyr)
 library(dbplyr)
 
+source('R/supporting_functions.R')
+
 db_config <- config::get()$db
 
 # Create database connection
