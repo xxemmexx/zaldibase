@@ -49,7 +49,7 @@ patients_edit_module <- function(input, output, session, modal_title, patient_to
               choices = c('Le duele la verga',
                           'Le duele la cola',
                           'Le huele la cola',
-                          'Suegra lo tiene hasta la madre'),
+                          'Suegra'),
               selected = ifelse(is.null(hold), "", hold$condition)
             ),
           ),
@@ -75,7 +75,7 @@ patients_edit_module <- function(input, output, session, modal_title, patient_to
           modalButton('Annuler'),
           actionButton(
             ns('submit'),
-            'Procéder',
+            'Modifier',
             class = "btn btn-primary",
             style = "color: white"
           )
@@ -83,7 +83,7 @@ patients_edit_module <- function(input, output, session, modal_title, patient_to
       )
     )
 
-    # Observe event for "Model" text input in Add/Edit Car Modal
+    # Observe event for "Nom" text input in Add/Edit Patient
     # `shinyFeedback`
     observeEvent(input$nom, {
       if (input$nom == "") {
@@ -99,8 +99,6 @@ patients_edit_module <- function(input, output, session, modal_title, patient_to
     })
 
   })
-
-
 
 
 
