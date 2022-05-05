@@ -1,5 +1,7 @@
 library(RSQLite)
 library(tibble)
+require(uuid)
+require(dplyr)
 
 # Create a connection object with SQLite
 conn <- dbConnect(
@@ -9,20 +11,14 @@ conn <- dbConnect(
 
 # Create a query to prepare the 'mtcars' table with additional 'uid', 'id',
 # & the 4 created/modified columns
-create_mtcars_query = "CREATE TABLE mtcars (
+create_patients_query = "CREATE TABLE patients (
   uid                             TEXT PRIMARY KEY,
-  model                           TEXT,
-  mpg                             REAL,
-  cyl                             REAL,
-  disp                            REAL,
-  hp                              REAL,
-  drat                            REAL,
-  wt                              REAL,
-  qsec                            REAL,
-  vs                              TEXT,
-  am                              TEXT,
-  gear                            REAL,
-  carb                            REAL,
+  nom                             TEXT,
+  prenom                          TEXT,
+  date_naissance                  TEXT,
+  condition                       TEXT,
+  hopital                         TEXT,
+  contact                         TEXT,
   created_at                      TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   created_by                      TEXT,
   modified_at                     TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -31,12 +27,12 @@ create_mtcars_query = "CREATE TABLE mtcars (
 
 # dbExecute() executes a SQL statement with a connection object
 # Drop the table if it already exists
-dbExecute(conn, "DROP TABLE IF EXISTS mtcars")
+dbExecute(conn, "DROP TABLE IF EXISTS patients")
 # Execute the query created above
-dbExecute(conn, create_mtcars_query)
+dbExecute(conn, create_patients_query)
 
 # Read in the RDS file created in 'data_prep.R'
-dat <- readRDS("01_traditional/data_prep/prepped/mtcars.RDS")
+dat <- readRDS("data/patients_dummy.RDS")
 
 # add uid column to the `dat` data frame
 dat$uid <- uuid::UUIDgenerate(n = nrow(dat))
@@ -48,7 +44,7 @@ dat <- dat %>%
 # Fill in the SQLite table with the values from the RDS file
 DBI::dbWriteTable(
   conn,
-  name = "mtcars",
+  name = "patients",
   value = dat,
   overwrite = FALSE,
   append = TRUE
