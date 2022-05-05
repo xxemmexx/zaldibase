@@ -85,15 +85,15 @@ patients_edit_module <- function(input, output, session, modal_title, patient_to
 
     # Observe event for "Model" text input in Add/Edit Car Modal
     # `shinyFeedback`
-    observeEvent(input$model, {
-      if (input$model == "") {
+    observeEvent(input$nom, {
+      if (input$nom == "") {
         shinyFeedback::showFeedbackDanger(
-          "model",
-          text = "Must enter model of car!"
+          "nom",
+          text = "Ecrivez au moin le nom!"
         )
         shinyjs::disable('submit')
       } else {
-        shinyFeedback::hideFeedback("model")
+        shinyFeedback::hideFeedback("nom")
         shinyjs::enable('submit')
       }
     })
@@ -104,24 +104,18 @@ patients_edit_module <- function(input, output, session, modal_title, patient_to
 
 
 
-  edit_car_dat <- reactive({
-    hold <- car_to_edit()
+  edit_patient_dat <- reactive({
+    hold <- patient_to_edit()
 
     out <- list(
       uid = if (is.null(hold)) NA else hold$uid,
       data = list(
-        "model" = input$model,
-        "mpg" = input$mpg,
-        "cyl" = input$cyl,
-        "disp" = input$disp,
-        "hp" = input$hp,
-        "drat" = input$drat,
-        "wt" = input$wt,
-        "qsec" = input$qsec,
-        "vs" = input$vs,
-        "am" = input$am,
-        "gear" = input$gear,
-        "carb" = input$carb
+        "nom" = input$nom,
+        "prenom" = input$prenom,
+        "date_naissance" = input$date_naissance,
+        "condition" = input$condition,
+        "hopital" = input$hopital,
+        "contact" = input$contact,
       )
     )
 
@@ -146,7 +140,7 @@ patients_edit_module <- function(input, output, session, modal_title, patient_to
   })
 
   validate_edit <- eventReactive(input$submit, {
-    dat <- edit_car_dat()
+    dat <- edit_patient_dat()
 
     # Logic to validate inputs...
 
@@ -165,9 +159,9 @@ patients_edit_module <- function(input, output, session, modal_title, patient_to
 
         dbExecute(
           conn,
-          "INSERT INTO mtcars (uid, model, mpg, cyl, disp, hp, drat, wt, qsec, vs, am,
-          gear, carb, created_at, created_by, modified_at, modified_by) VALUES
-          ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17)",
+          "INSERT INTO patients (uid, nom, prenom, date_naissance, condition, hopital, 
+          contact, created_at, created_by, modified_at, modified_by) VALUES
+          ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)",
           params = c(
             list(uid),
             unname(dat$data)
@@ -177,9 +171,9 @@ patients_edit_module <- function(input, output, session, modal_title, patient_to
         # editing an existing car
         dbExecute(
           conn,
-          "UPDATE mtcars SET model=$1, mpg=$2, cyl=$3, disp=$4, hp=$5, drat=$6,
-          wt=$7, qsec=$8, vs=$9, am=$10, gear=$11, carb=$12, created_at=$13, created_by=$14,
-          modified_at=$15, modified_by=$16 WHERE uid=$17",
+          "UPDATE patients SET nom=$1, prenom=$2, date_naissance=$3, condition=$4, hopital=$5, 
+          contact=$6, created_at=$7, created_by=$8, modified_at=$9, modified_by=$10 
+          WHERE uid=$11",
           params = c(
             unname(dat$data),
             list(dat$uid)
@@ -187,11 +181,11 @@ patients_edit_module <- function(input, output, session, modal_title, patient_to
         )
       }
 
-      session$userData$mtcars_trigger(session$userData$mtcars_trigger() + 1)
-      showToast("success", paste0(modal_title, " Successs"))
+      session$userData$patients_trigger(session$userData$patients_trigger() + 1)
+      showToast("success", paste0(modal_title, " C'est fait!"))
     }, error = function(error) {
 
-      msg <- paste0(modal_title, " Error")
+      msg <- paste0(modal_title, " Erreur")
 
 
       # print `msg` so that we can find it in the logs
