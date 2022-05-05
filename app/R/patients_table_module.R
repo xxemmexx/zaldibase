@@ -152,16 +152,6 @@ patients_table_module <- function(input, output, session) {
       options = list(
         scrollX = TRUE,
         dom = 't',
-        buttons = list(
-          list(
-            extend = "excel",
-            text = "Download",
-            title = paste0("patients-", Sys.Date()),
-            exportOptions = list(
-              columns = 1:(length(out) - 1)
-            )
-          )
-        ),
         columnDefs = list(
           list(targets = 0, orderable = FALSE)
         ),
