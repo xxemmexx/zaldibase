@@ -167,6 +167,8 @@ patients_edit_module <- function(input, output, session, modal_title, patient_to
         )
       } else {
         # editing an existing car
+        #print('About to execute')
+        
         dbExecute(
           conn,
           "UPDATE patients SET nom=$1, prenom=$2, date_naissance=$3, condition=$4, hopital=$5, 

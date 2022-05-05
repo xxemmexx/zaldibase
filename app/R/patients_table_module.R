@@ -141,8 +141,8 @@ patients_table_module <- function(input, output, session) {
     datatable(
       out,
       rownames = FALSE,
-      colnames = c('nom', 'prenom', 'date_naissance', 'condition',
-                   'hopital', 'contact', 'Created At',
+      colnames = c('Nom', 'Prénom', 'Date de naissance', 'Condition',
+                   'Hôpital', 'Personne de contact', 'Created At',
                    'Created By', 'Modified At', 'Modified By'),
       selection = "none",
       class = "compact stripe row-border nowrap",
