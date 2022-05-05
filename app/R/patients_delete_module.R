@@ -28,9 +28,9 @@ patients_delete_module <- function(input, output, session, modal_title, patient_
           h2(
             style = "line-height: 1.75;",
             paste0(
-              'Etes-vous sûr de vouloir supprimer M./Mme. "',
+              'Etes-vous sûr de vouloir effacer le profil de M./Mme. ',
               patient_to_delete()$nom,
-              '"?'
+              '?'
             )
           )
         ),
