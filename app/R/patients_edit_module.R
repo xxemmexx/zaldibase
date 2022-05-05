@@ -185,10 +185,10 @@ patients_edit_module <- function(input, output, session, modal_title, patient_to
       }
 
       session$userData$patients_trigger(session$userData$patients_trigger() + 1)
-      showToast(printToastMessage(modal_title))
+      showToast("success", message = printToastMessage(modal_title))
     }, error = function(error) {
 
-      msg <- paste0(modal_title, " Erreur")
+      msg <- paste0("Erreur - contactez votre admin")
 
 
       # print `msg` so that we can find it in the logs

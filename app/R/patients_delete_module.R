@@ -65,7 +65,7 @@ patients_delete_module <- function(input, output, session, modal_title, patient_
       )
 
       session$userData$patients_trigger(session$userData$patients_trigger() + 1)
-      showToast(printToastMessage(modal_title))
+      showToast("success", printToastMessage(modal_title))
     }, error = function(error) {
 
       msg <- "Erreur pendant la suppression"
