@@ -38,10 +38,11 @@ patients_edit_module <- function(input, output, session, modal_title, patient_to
               'Prénom',
               value = ifelse(is.null(hold), "", hold$prenom)
             ),
-            textInput(
+            dateInput(
               ns("date_naissance"),
               'Date de naissance',
-              value = ifelse(is.null(hold), "", hold$date_naissance)
+              value = ifelse(is.null(hold), "", hold$date_naissance),
+              language = "fr"
             ),
             selectInput(
               ns('condition'),
