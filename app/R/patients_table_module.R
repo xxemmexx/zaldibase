@@ -23,7 +23,7 @@ patients_table_module_ui <- function(id) {
           class = "btn-success",
           style = "color: #fff;",
           icon = icon('plus'),
-          width = '175%'
+          width = '150%'
         ),
         tags$br(),
         tags$br()
