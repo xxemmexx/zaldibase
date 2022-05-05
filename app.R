@@ -4,13 +4,17 @@
 require(shiny)
 require(shinyjs)
 require(shinycssloaders)
+library(shinyFeedback)
 require(shinythemes)
 require(shinyauthr)
 require(sodium)
 require(dplyr)
+library(dbplyr)
 require(DT)
 require(stringr)
 require(lubridate)
+library(DBI)
+library(RSQLite)
 
 #-------------------------------------------------------------------------------
 # javascript functions
