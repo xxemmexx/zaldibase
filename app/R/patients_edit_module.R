@@ -35,7 +35,7 @@ patients_edit_module <- function(input, output, session, modal_title, patient_to
             ),
             textInput(
               ns("prenom"),
-              'Prenom',
+              'Prénom',
               value = ifelse(is.null(hold), "", hold$prenom)
             ),
             textInput(
@@ -57,7 +57,7 @@ patients_edit_module <- function(input, output, session, modal_title, patient_to
             width = 6,
             selectInput(
               ns('hopital'),
-              'Hôpital d´origine',
+              "Hôpital d'origine",
               choices = c('Centre Hospitalier Albertville-Moûtiers',
                           'Centre Hospitalier Universitaire de Grenoble'),
               selected = ifelse(is.null(hold), "", hold$hopital)
@@ -89,7 +89,7 @@ patients_edit_module <- function(input, output, session, modal_title, patient_to
       if (input$nom == "") {
         shinyFeedback::showFeedbackDanger(
           "nom",
-          text = "Ecrivez au moin le nom!"
+          text = "Le nom du patient est obligatoire!"
         )
         shinyjs::disable('submit')
       } else {
@@ -113,7 +113,7 @@ patients_edit_module <- function(input, output, session, modal_title, patient_to
         "date_naissance" = input$date_naissance,
         "condition" = input$condition,
         "hopital" = input$hopital,
-        "contact" = input$contact,
+        "contact" = input$contact
       )
     )
 
@@ -124,11 +124,13 @@ patients_edit_module <- function(input, output, session, modal_title, patient_to
 
       out$data$created_at <- time_now
       out$data$created_by <- session$userData$email
+      
     } else {
       # Editing existing patient
 
       out$data$created_at <- as.character(hold$created_at)
       out$data$created_by <- hold$created_by
+      
     }
 
     out$data$modified_at <- time_now
