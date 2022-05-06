@@ -58,9 +58,10 @@ patients_table_module_ui <- function(id) {
 #'
 #' @return None
 
-patients_table_module <- function(input, output, session) {
-
-  # trigegr to reload data from the "patients" table
+patients_table_module <- function(input, output, session, user_autho) {
+  
+  
+  # trigger to reload data from the "patients" table
   session$userData$patients_trigger <- reactiveVal(0)
 
   # Read in "patients" table from the database
@@ -93,10 +94,11 @@ patients_table_module <- function(input, output, session) {
     out 
   })
 
-
+  #user_autho <- reactiveVal(NULL)
   patients_table_prep <- reactiveVal(NULL)
 
   observeEvent(patients(), {
+    
     out <- patients()
 
     ids <- out$uid
@@ -133,9 +135,13 @@ patients_table_module <- function(input, output, session) {
 
     }
   })
-
+  
+  
+  
   output$patients_table <- renderDT({
-    req(patients_table_prep())
+    req(user_autho(), patients_table_prep())
+    
+    
     out <- patients_table_prep()
 
     datatable(

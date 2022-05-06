@@ -13,6 +13,12 @@ require(dbplyr)
 require(twilio)
 source('R/supporting_functions.R')
 
+user_base <- tibble(
+  user = c("zaldijn001", "zaldijn002", "zaldipe001"),
+  password = c("pendejouw", "pendejouw", "pendejobrouw"),
+  permissions = c("admin", "end user", "standard"),
+  name = c("Julian Zaldivar", "Julien Zaldivar", "Pierre Zaldivar"))
+
 db_config <- config::get()$db
 
 # Create database connection

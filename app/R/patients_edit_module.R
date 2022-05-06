@@ -17,7 +17,8 @@
 #'
 #' @return None
 #'
-patients_edit_module <- function(input, output, session, modal_title, patient_to_edit, modal_trigger) {
+patients_edit_module <- function(input, output, session, 
+                                 modal_title, patient_to_edit, modal_trigger) {
   ns <- session$ns
 
   observeEvent(modal_trigger(), {
