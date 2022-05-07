@@ -51,9 +51,17 @@ patients_edit_module <- function(input, output, session,
               choices = c('Le duele la verga',
                           'Le duele la cola',
                           'Le huele la cola',
-                          'Suegra'),
+                          'Suegra',
+                          'Autre...' = 1),
               selected = ifelse(is.null(hold), "", hold$condition)
             ),
+            conditionalPanel("input.condition == 1",
+              textInput(
+              ns('description'),
+              'Description',
+              placeholder = "Decrivez..."
+            ),
+            ns = ns),
           ),
           column(
             width = 6,

@@ -17,6 +17,10 @@ patients_table_module_ui <- function(id) {
     fluidRow(
       column(
         width = 3,
+        tags$br(),
+        tags$br(),
+        tags$br(),
+        tags$br(),
         actionButton(
           ns("add_patient"),
           "Nouveau patient",
