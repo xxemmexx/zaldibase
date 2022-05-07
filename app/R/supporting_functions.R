@@ -7,3 +7,28 @@ printToastMessage <- function(aModalTitle) {
   "C'est fait!")
   
 }
+
+computeDateGarde <- function(aTimestamp) {
+  
+  timestampNowParts <- str_split(aTimestamp, " ")
+  timestampNow <- timestampNowParts[[1]][[2]]
+  todayStr <- timestampNowParts[[1]][[1]]
+  
+  hoursMinutesSecondsList <- timestampNow %>%
+    str_split(":")
+  
+  hourNow <- hoursMinutesSecondsList[[1]][[1]] %>%
+    as.numeric()
+  
+  if(hourNow > 7) {
+    dateGarde <- as.Date(todayStr)
+  } else {
+    dateGarde <- as.Date(todayStr) - 1
+  }
+  
+  dateGarde
+  
+}
+
+
+

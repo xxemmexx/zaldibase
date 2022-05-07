@@ -8,9 +8,10 @@ require(shinyjs)
 require(shinycssloaders)
 require(lubridate)
 require(shinyFeedback)
+require(stringr)
 require(dplyr)
 require(dbplyr)
-require(twilio)
+#require(twilio)
 source('R/supporting_functions.R')
 
 user_base <- tibble(
