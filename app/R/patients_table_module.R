@@ -16,14 +16,14 @@ patients_table_module_ui <- function(id) {
   tagList(
     fluidRow(
       column(
-        width = 2,
+        width = 3,
         actionButton(
           ns("add_patient"),
           "Nouveau patient",
           class = "btn-success",
           style = "color: #fff;",
           icon = icon('plus'),
-          width = '150%'
+          width = '100%'
         ),
         tags$br(),
         tags$br()
@@ -182,6 +182,11 @@ patients_table_module <- function(input, output, session, user_autho) {
     modal_trigger = reactive({input$add_patient})
   )
 
+  observeEvent(is.null(user_autho()), {
+    toggle("add_patient")
+    
+  })
+  
   patient_to_edit <- eventReactive(input$patient_id_to_edit, {
 
     patients() %>%
