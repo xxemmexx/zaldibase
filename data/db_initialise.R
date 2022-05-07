@@ -17,6 +17,7 @@ create_patients_query = "CREATE TABLE patients (
   prenom                          TEXT,
   date_naissance                  TEXT,
   condition                       TEXT,
+  description                     TEXT,
   hopital                         TEXT,
   contact                         TEXT,
   created_at                      TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,

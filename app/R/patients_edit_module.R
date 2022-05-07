@@ -52,10 +52,10 @@ patients_edit_module <- function(input, output, session,
                           'Le duele la cola',
                           'Le huele la cola',
                           'Suegra',
-                          'Autre...' = 1),
+                          'Autre...' = 'Autre'),
               selected = ifelse(is.null(hold), "", hold$condition)
             ),
-            conditionalPanel("input.condition == 1",
+            conditionalPanel("input.condition == 'Autre'",
               textInput(
               ns('description'),
               'Description',

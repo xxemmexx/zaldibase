@@ -187,7 +187,7 @@ patients_table_module <- function(input, output, session, user_autho) {
   )
 
   observeEvent(is.null(user_autho()), {
-    toggle("add_patient")
+    toggle("add_patient", anim = TRUE, animType = 'fade')
     
   })
   
