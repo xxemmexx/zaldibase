@@ -16,12 +16,12 @@ function(input, output, session) {
                                           active = reactive(credentials()$user_auth))
   # shinyauthr ----------------------------------------------------------------
   
-  
+  output$privilege <- renderText({noquote(credentials()$info[["permissions"]][[1]])})
+
   # Call the server function portion of the `patients_table_module.R` module file
   callModule(
     patients_table_module,
     "patients_table",
-    reactive(credentials()$user_auth),
-    reactive(credentials()$info[["permissions"]])
+    reactive(credentials()$user_auth)
   )
 }

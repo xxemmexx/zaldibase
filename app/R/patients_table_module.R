@@ -41,7 +41,7 @@ patients_table_module_ui <- function(id) {
         title = "Mes patients",
         DTOutput(ns('patients_table')) %>%
           withSpinner(),
-        #textOutput(ns('role')),
+        #textOutput(ns('myRole')),
         tags$br(),
         tags$br()
       )
@@ -65,13 +65,13 @@ patients_table_module_ui <- function(id) {
 #'
 #' @return None
 
-patients_table_module <- function(input, output, session, user_autho, permissions) {
+patients_table_module <- function(input, output, session, user_autho) {
   
   
   # trigger to reload data from the "patients" table
   session$userData$patients_trigger <- reactiveVal(0)
 
-  
+
   output$titleMesPatients <- renderUI({
     req(user_autho())
     
