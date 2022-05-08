@@ -2,18 +2,18 @@
 tagList(shinyFeedback::useShinyFeedback(),
         shinyjs::useShinyjs(),
   
-        navbarPage(title = "Pendejapp",
+        navbarPage(title = HTML('<p style="font-family: Garamond">Zal<b>di|b</b>ase</p>'),
                    id = "tabs",
                    collapsible = TRUE,
                    windowTitle = "Garde",
                    theme = shinytheme("flatly"), 
-                   tabPanel("Mes patients",
+                   tabPanel("Application",
                             
                             # add logout button UI
                             div(class = "pull-right", shinyauthr::logoutUI(id = "logout")),
                             # add login panel UI function
                             shinyauthr::loginUI(id = "login",
-                                                title = "ZaldiBase",
+                                                title = "Bienvenue!",
                                                 user_title = "Identifiant",
                                                 pass_title = "Mot de passe",
                                                 login_title = "Se connecter",
@@ -23,18 +23,12 @@ tagList(shinyFeedback::useShinyFeedback(),
                             
                             ), # Close tabPanel Mes Patients
                    
-                   navbarMenu("Autres services",
-                              "----",
-                              "Recherche",
-                              tabPanel("Archive",
-                                       HTML("<h2>Under construction...</h2>")
-                                       
-                              ),
-                              "----",
-                              "Configuration",
-                              tabPanel("Bonjour",
-                                       HTML("<h2>Under construction...</h2>")
-                                       )
+                   tabPanel("About",
+                            HTML('<h2 style="font-family: Garamond">Zal<b>di|b</b>ase</h2> <br>
+                                 <p>Un projet pour et par pendejos qui veulent une 
+                                 administration simple pour les chefs de garde du CHU.<br><br>
+                                 Avez-vous des questions? Gardez-les pour vous.</p>')
+                            
                    )
         )
 )
