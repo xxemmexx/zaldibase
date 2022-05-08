@@ -16,9 +16,11 @@ patients_table_module_ui <- function(id) {
   tagList(
     fluidRow(
       column(
-        width = 3,
+        width = 4,
         tags$br(),
         tags$br(),
+        tags$br(),
+        uiOutput(ns('titleMesPatients')),
         tags$br(),
         tags$br(),
         actionButton(
@@ -27,7 +29,7 @@ patients_table_module_ui <- function(id) {
           class = "btn-success",
           style = "color: #fff;",
           icon = icon('plus'),
-          width = '100%'
+          width = '66%'
         ),
         tags$br(),
         tags$br()
@@ -39,6 +41,7 @@ patients_table_module_ui <- function(id) {
         title = "Mes patients",
         DTOutput(ns('patients_table')) %>%
           withSpinner(),
+        #textOutput(ns('role')),
         tags$br(),
         tags$br()
       )
@@ -62,12 +65,21 @@ patients_table_module_ui <- function(id) {
 #'
 #' @return None
 
-patients_table_module <- function(input, output, session, user_autho) {
+patients_table_module <- function(input, output, session, user_autho, permissions) {
   
   
   # trigger to reload data from the "patients" table
   session$userData$patients_trigger <- reactiveVal(0)
 
+  
+  output$titleMesPatients <- renderUI({
+    req(user_autho())
+    
+    body <- '<h2>Mes patients</h2></br></br>'
+    
+    HTML(body)
+  })
+  
   # Read in "patients" table from the database
   patients <- reactive({
     session$userData$patients_trigger()
@@ -187,7 +199,7 @@ patients_table_module <- function(input, output, session, user_autho) {
   )
 
   observeEvent(is.null(user_autho()), {
-    toggle("add_patient", anim = TRUE, animType = 'fade')
+    toggle("add_patient")
     
   })
   

@@ -28,7 +28,7 @@ patients_edit_module <- function(input, output, session,
       modalDialog(
         fluidRow(
           column(
-            width = 6,
+            width = 5,
             textInput(
               ns("nom"),
               'Nom',
@@ -45,26 +45,9 @@ patients_edit_module <- function(input, output, session,
               value = ifelse(is.null(hold), "", hold$date_naissance),
               language = "fr"
             ),
-            selectInput(
-              ns('condition'),
-              'Condition',
-              choices = c('Le duele la verga',
-                          'Le duele la cola',
-                          'Le huele la cola',
-                          'Suegra',
-                          'Autre...' = 'Autre'),
-              selected = ifelse(is.null(hold), "", hold$condition)
-            ),
-            conditionalPanel("input.condition == 'Autre'",
-              textInput(
-              ns('description'),
-              'Description',
-              placeholder = "Decrivez..."
-            ),
-            ns = ns),
           ),
           column(
-            width = 6,
+            width = 7,
             selectInput(
               ns('hopital'),
               "Hôpital d'origine",
@@ -76,7 +59,24 @@ patients_edit_module <- function(input, output, session,
               ns("contact"),
               'Personne de contact',
               value = ifelse(is.null(hold), "", hold$contact)
-            )
+            ),
+            selectInput(
+              ns('condition'),
+              'Condition',
+              choices = c('Le duele la verga',
+                          'Le duele la cola',
+                          'Le huele la cola',
+                          'Suegra',
+                          'Autre...' = 'Autre'),
+              selected = ifelse(is.null(hold), "", hold$condition)
+            ),
+            conditionalPanel("input.condition == 'Autre'",
+                             textInput(
+                               ns('description'),
+                               'Description',
+                               placeholder = "Decrivez..."
+                             ),
+                             ns = ns)
           )
         ),
         title = modal_title,

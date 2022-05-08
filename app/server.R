@@ -21,6 +21,7 @@ function(input, output, session) {
   callModule(
     patients_table_module,
     "patients_table",
-    reactive(credentials()$user_auth)
+    reactive(credentials()$user_auth),
+    reactive(credentials()$info[["permissions"]])
   )
 }

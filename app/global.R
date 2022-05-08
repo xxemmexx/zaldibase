@@ -15,10 +15,10 @@ require(dbplyr)
 source('R/supporting_functions.R')
 
 user_base <- tibble(
-  user = c("zaldijn001", "zaldijn002", "zaldipe001"),
-  password = c("pendejouw", "pendejouw", "pendejobrouw"),
-  permissions = c("admin", "end user", "standard"),
-  name = c("Julian Zaldivar", "Julien Zaldivar", "Pierre Zaldivar"))
+  user = c("zaldijn001", "zaldijn002", "zaldijn003"),
+  password = c("pendejouw", "pendejouw", "pendejouw"),
+  permissions = c("admin", "resident", "user"),
+  name = c("Julien Zaldivar", "Julien Zaldivar", "Julien Zaldivar"))
 
 db_config <- config::get()$db
 

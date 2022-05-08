@@ -3,6 +3,7 @@ tagList(shinyFeedback::useShinyFeedback(),
         shinyjs::useShinyjs(),
   
         navbarPage(title = "Pendejapp",
+                   id = "tabs",
                    collapsible = TRUE,
                    windowTitle = "Garde",
                    theme = shinytheme("flatly"), 
@@ -26,12 +27,14 @@ tagList(shinyFeedback::useShinyFeedback(),
                               "----",
                               "Recherche",
                               tabPanel("Archive",
+                                       HTML("<h2>Under construction...</h2>")
                                        
                               ),
                               "----",
                               "Configuration",
                               tabPanel("Bonjour",
-                                       HTML("<h1>Bonjour!</h1>"))
+                                       HTML("<h2>Under construction...</h2>")
+                                       )
                    )
         )
 )
