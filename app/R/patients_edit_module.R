@@ -71,10 +71,11 @@ patients_edit_module <- function(input, output, session,
               selected = ifelse(is.null(hold), "", hold$condition)
             ),
             conditionalPanel("input.condition == 'Autre'",
-                             textInput(
+                             textAreaInput(
                                ns('description'),
                                'Description',
-                               placeholder = "Decrivez..."
+                               placeholder = "Decrivez...",
+                               height = '150%'
                              ),
                              ns = ns)
           )
