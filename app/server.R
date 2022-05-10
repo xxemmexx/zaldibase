@@ -11,17 +11,29 @@ function(input, output, session) {
                                          pwd_col = password,
                                          log_out = reactive(logout_init()))
   
+  
+  
+  
   # call the logout module with reactive trigger to hide/show
   logout_init <- shinyauthr::logoutServer(id = "logout",
                                           active = reactive(credentials()$user_auth))
   # shinyauthr ----------------------------------------------------------------
   
-  output$privilege <- renderText({noquote(credentials()$info[["permissions"]][[1]])})
+  output$role <- renderText({
+    req(credentials()$user_auth)
+    # use is.null(session$user) so it still works when testing locally
+    credentials()$info[['permissions']]
+
+  })
 
   # Call the server function portion of the `patients_table_module.R` module file
   callModule(
     patients_table_module,
     "patients_table",
-    reactive(credentials()$user_auth)
+    reactive(credentials()$user_auth),
+    reactive(credentials()$info[['permissions']])
   )
+  
+  # set suspendWhenHidden to FALSE so it renders even without output
+  outputOptions(output, 'role', suspendWhenHidden = FALSE)
 }

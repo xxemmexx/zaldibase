@@ -29,8 +29,7 @@ patients_table_module_ui <- function(id) {
           class = "btn-success",
           style = "color: #fff;",
           icon = icon('plus'),
-          width = '66%'
-        ),
+          width = '66%'),
         tags$br(),
         tags$br()
       )
@@ -41,7 +40,6 @@ patients_table_module_ui <- function(id) {
         title = "Mes patients",
         DTOutput(ns('patients_table')) %>%
           withSpinner(),
-        #textOutput(ns('myRole')),
         tags$br(),
         tags$br()
       )
@@ -65,7 +63,7 @@ patients_table_module_ui <- function(id) {
 #'
 #' @return None
 
-patients_table_module <- function(input, output, session, user_autho) {
+patients_table_module <- function(input, output, session, user_autho, permissions) {
   
   
   # trigger to reload data from the "patients" table
@@ -75,10 +73,16 @@ patients_table_module <- function(input, output, session, user_autho) {
   output$titleMesPatients <- renderUI({
     req(user_autho())
     
-    body <- '<h2>Mes patients</h2></br></br>'
+    body <- ifelse(permissions() == 'user', 
+                   '<h2>Mes patients</h2></br></br>',
+                   '<h2>Mes dossiers</h2></br></br>')
     
     HTML(body)
   })
+  
+
+
+    
   
   # Read in "patients" table from the database
   patients <- reactive({
@@ -195,7 +199,8 @@ patients_table_module <- function(input, output, session, user_autho) {
     "add_patient",
     modal_title = "Registrer un nouveau patient",
     patient_to_edit = function() NULL,
-    modal_trigger = reactive({input$add_patient})
+    modal_trigger = reactive({input$add_patient}),
+    permissions()
   )
 
   observeEvent(is.null(user_autho()), {
@@ -214,7 +219,8 @@ patients_table_module <- function(input, output, session, user_autho) {
     "edit_patient",
     modal_title = "Modification du profil",
     patient_to_edit = patient_to_edit,
-    modal_trigger = reactive({input$patient_id_to_edit})
+    modal_trigger = reactive({input$patient_id_to_edit}),
+    permissions()
   )
 
   patient_to_delete <- eventReactive(input$patient_id_to_delete, {
