@@ -31,7 +31,7 @@ tagList(
       conditionalPanel(condition = "output.role == 'admin'",
                        tabsetPanel(
                          tabPanel("Mes dossiers",
-                                  patients_table_module_ui("patients_table")),
+                                  patientsTableModuleUI("patients_table")),
                          tabPanel("Garde",
                                   HTML('<h2> Some beautiful content and all power </h2>'))
                        )),
