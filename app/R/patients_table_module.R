@@ -19,10 +19,6 @@ patientsTableModuleUI <- function(id) {
         width = 4,
         tags$br(),
         tags$br(),
-        tags$br(),
-        uiOutput(ns('titleMesPatients')),
-        tags$br(),
-        tags$br(),
         actionButton(
           ns("add_patient"),
           "Nouveau patient",
@@ -73,13 +69,6 @@ patientsTableModuleServer <- function(id, user_autho) {
                  session$userData$patients_trigger <- reactiveVal(0)
                  
                  
-                 output$titleMesPatients <- renderUI({
-                   req(user_autho())
-                   
-                   body <- '<h2>Mes dossiers</h2></br></br>'
-                   
-                   HTML(body)
-                 })
                  
                  # Read in "patients" table from the database
                  patients <- reactive({
@@ -200,16 +189,6 @@ patientsTableModuleServer <- function(id, user_autho) {
                                              NULL,
                                            modal_trigger = reactive({input$add_patient}))
                  
-                 # callModule(
-                 #   patients_edit_module,
-                 #   "add_patient",
-                 #   modal_title = "Registrer un nouveau patient",
-                 #   patient_to_edit = function()
-                 #     NULL,
-                 #   modal_trigger = reactive({
-                 #     input$add_patient
-                 #   })
-                 # )
                  
                  observeEvent(is.null(user_autho()), {
                    toggle("add_patient")
@@ -226,15 +205,6 @@ patientsTableModuleServer <- function(id, user_autho) {
                                           patient_to_edit = patient_to_edit,
                                           modal_trigger = reactive({input$patient_id_to_edit})
                                           )
-                 # callModule(
-                 #   patients_edit_module,
-                 #   "edit_patient",
-                 #   modal_title = "Modification du profil",
-                 #   patient_to_edit = patient_to_edit,
-                 #   modal_trigger = reactive({
-                 #     input$patient_id_to_edit
-                 #   })
-                 # )
                  
                  patient_to_delete <-
                    eventReactive(input$patient_id_to_delete, {
@@ -252,17 +222,7 @@ patientsTableModuleServer <- function(id, user_autho) {
                      input$patient_id_to_delete
                    })
                  )
-                 
-                 # callModule(
-                 #   patients_delete_module,
-                 #   "delete_patient",
-                 #   modal_title = "Effacer profil",
-                 #   patient_to_delete = patient_to_delete,
-                 #   modal_trigger = reactive({
-                 #     input$patient_id_to_delete
-                 #   })
-                 # )
+
                })
-  
   
 }

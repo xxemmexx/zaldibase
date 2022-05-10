@@ -9,7 +9,8 @@ tagList(
     id = "tabs",
     collapsible = TRUE,
     windowTitle = "Garde",
-    theme = shinytheme("flatly"),
+    theme = shinytheme("cosmo"),
+    #theme = bs_theme(version = 4, bootswatch = "minty"),
     
     
     tabPanel(

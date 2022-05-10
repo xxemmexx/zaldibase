@@ -8,6 +8,13 @@ printToastMessage <- function(aModalTitle) {
   
 }
 
+printButtonLabel <- function(aModalTitle) {
+  switch (aModalTitle,
+          "Modification du profil" = "Modifier",
+          "Registrer un nouveau patient" = "Ajouter patient",
+          "C'est bon!")
+}
+
 computeDateGarde <- function(aTimestamp) {
   
   timestampNowParts <- str_split(aTimestamp, " ")

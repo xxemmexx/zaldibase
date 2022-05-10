@@ -91,8 +91,8 @@ patientsEditModuleServer <-
                          modalButton('Annuler'),
                          actionButton(
                            ns('submit'),
-                           'Modifier',
-                           class = "btn btn-primary",
+                           printButtonLabel(modal_title),
+                           class = "btn btn-primary mb1 bg-olive",
                            style = "color: white"
                          )
                        )
