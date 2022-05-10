@@ -37,4 +37,4 @@ shiny::onStop(function() {
 options(scipen = 999)
 
 # Set spinner type (for loading)
-options(spinner.type = 8)
+options(spinner.type = 1)
