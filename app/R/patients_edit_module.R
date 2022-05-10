@@ -29,12 +29,11 @@ patients_edit_module <- function(input, output, session,
         fluidRow(
           column(
             width = 5,
-            conditionalPanel(condition = "permissions == 'user'",
             textInput(
               ns("nom"),
               'Nom',
               value = ifelse(is.null(hold), "", hold$nom)
-            )),
+            ),
             textInput(
               ns("prenom"),
               'Prénom',
@@ -68,10 +67,10 @@ patients_edit_module <- function(input, output, session,
                           'Le duele la cola',
                           'Le huele la cola',
                           'Suegra',
-                          'Autre...' = 1),
+                          'Autre...' = 'Autre'),
               selected = ifelse(is.null(hold), "", hold$condition)
             ),
-            conditionalPanel("input.condition == 1",
+            conditionalPanel("input.condition == 'Autre'",
                              textAreaInput(
                                ns('description'),
                                'Description',
