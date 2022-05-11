@@ -39,3 +39,12 @@ options(scipen = 999)
 
 # Set spinner type (for loading)
 options(spinner.type = 1)
+
+# HTML
+
+printAbout <- '<h2 style="font-family: Garamond">Zal<b>di|b</b>ase</h2> <br>
+                                 <p>Un projet pour et par pendejos qui veulent une
+                                 administration simple pour les chefs de garde du CHU.<br><br>
+                                 Avez-vous des questions? Gardez-les pour vous.</p>'
+
+printLogo <- '<p style="font-family: Garamond">Zal<b>di|b</b>ase</p>'

@@ -5,11 +5,11 @@ tagList(
   shinyjs::useShinyjs(),
   
   navbarPage(
-    title = HTML('<p style="font-family: Garamond">Zal<b>di|b</b>ase</p>'),
+    title = HTML(printLogo),
     id = "tabs",
     collapsible = TRUE,
     windowTitle = "Garde",
-    theme = shinytheme("cosmo"),
+    theme = shinytheme("sandstone"),
     #theme = bs_theme(version = 4, bootswatch = "minty"),
     
     
@@ -49,7 +49,7 @@ tagList(
       conditionalPanel(condition = "output.role == 'user'",
                        tabsetPanel(tabPanel(
                          "Mes dossiers",
-                         HTML('<h2> Huevos puto! </h2>')
+                         dossiersTableModuleUI("dossiers_table")
                          
                          
                        )))
@@ -58,10 +58,7 @@ tagList(
     tabPanel(
       "About",
       HTML(
-        '<h2 style="font-family: Garamond">Zal<b>di|b</b>ase</h2> <br>
-                                 <p>Un projet pour et par pendejos qui veulent une
-                                 administration simple pour les chefs de garde du CHU.<br><br>
-                                 Avez-vous des questions? Gardez-les pour vous.</p>'
+        printAbout
       )
     )
   )

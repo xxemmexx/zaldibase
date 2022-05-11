@@ -29,12 +29,9 @@ function(input, output, session) {
   # Call the server function portion of the `patients_table_module.R` module file
   patientsTableModuleServer("patients_table",
                             reactive(credentials()$user_auth))
-  # callModule(
-  #   patients_table_module,
-  #   "patients_table",
-  #   reactive(credentials()$user_auth),
-  #   reactive(credentials()$info[['permissions']])
-  # )
+  
+  dossiersTableModuleServer("dossiers_table",
+                            reactive(credentials()$user_auth))
   
   # set suspendWhenHidden to FALSE so it renders even without output
   outputOptions(output, 'role', suspendWhenHidden = FALSE)
