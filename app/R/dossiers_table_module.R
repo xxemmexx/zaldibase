@@ -121,7 +121,7 @@ dossiersTableModuleServer <- function(id, user_autho) {
                    
                    # Select relevant columns for the user
                    out <- out %>%
-                     select(nom, prenom, date_naissance, condition)
+                     select(nom, prenom, date_naissance, condition, pre_decision, def_decision)
                    
                    # Set the Action Buttons row to the first column of the `dossiers` table
                    out <- cbind(tibble(" " = actions),
@@ -154,7 +154,8 @@ dossiersTableModuleServer <- function(id, user_autho) {
                    datatable(
                      out,
                      rownames = FALSE,
-                     colnames = c('Nom', 'Prénom', 'Date de naissance', 'Condition'),
+                     colnames = c('Nom', 'Prénom', 'Date de naissance', 
+                                  'Condition', 'Décision préliminaire', 'Décision finale'),
                      #'Hôpital', 'Personne de contact', 'Created At',
                      #'Created By', 'Modified At', 'Modified By'),
                      selection = "none",

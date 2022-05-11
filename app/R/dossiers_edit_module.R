@@ -84,6 +84,17 @@ dossiersEditModuleServer <-
                                            'Description',
                                            placeholder = "Decrivez..."),
                              ns = ns
+                           ),
+                           selectInput(
+                             ns('pre_decision'),
+                             "Décision préliminaire",
+                             choices = c(
+                               'Manden al paciente a casa. Que no mame.',
+                               'Operen al paciente como puedan',
+                               'Traiganme al paciente',
+                               'Traiganme a la suegra'
+                             ),
+                             selected = ifelse(is.null(hold), "", hold$pre_decision)
                            )
                          )
                        ),
@@ -129,9 +140,8 @@ dossiersEditModuleServer <-
                          "nom" = input$nom,
                          "prenom" = input$prenom,
                          "date_naissance" = format(as.Date(input$date_naissance), '%Y-%m-%d'),
-                         "condition" = input$condition
-                         # "hopital" = input$hopital,
-                         # "contact" = input$contact
+                         "condition" = input$condition,
+                         "pre_decision" = input$pre_decision
                        )
                      )
                      
@@ -177,9 +187,10 @@ dossiersEditModuleServer <-
                          
                          dbExecute(
                            conn,
-                           "INSERT INTO patients (uid, nom, prenom, date_naissance, condition, 
-          created_at, created_by, modified_at, modified_by) VALUES
-          ($1, $2, $3, $4, $5, $6, $7, $8, $9)",
+                           "INSERT INTO patients (uid, nom, prenom, date_naissance, 
+                           condition, pre_decision, created_at, 
+                           created_by, modified_at, modified_by) VALUES
+                           ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)",
                            params = c(list(uid),
                                       unname(dat$data))
                          )
@@ -189,16 +200,19 @@ dossiersEditModuleServer <-
                          
                          dbExecute(
                            conn,
-                           "UPDATE patients SET nom=$1, prenom=$2, date_naissance=$3, condition=$4, 
-          created_at=$5, created_by=$6, modified_at=$7, modified_by=$8
-          WHERE uid=$9",
+                           "UPDATE patients SET nom=$1, prenom=$2, date_naissance=$3, 
+                           condition=$4, pre_decision=$5,
+                           created_at=$6, created_by=$7, modified_at=$8, modified_by=$9
+                           WHERE uid=$10",
                            params = c(unname(dat$data),
                                       list(dat$uid))
                          )
                        }
                        
                        session$userData$dossiers_trigger(session$userData$dossiers_trigger() + 1)
+                       
                        showToast("success", message = printToastMessage(modal_title))
+                       
                      }, error = function(error) {
                        msg <- paste0("Erreur - contactez votre admin")
                        

@@ -32,8 +32,8 @@ tagList(
       conditionalPanel(condition = "output.role == 'admin'",
                        tabsetPanel(
                          tabPanel("Mes dossiers",
-                                  dossiersTableModuleUI("dossiers_table"),
-                                  textOutput("role")),
+                                  dossiersTableModuleUI("dossiers_table")
+                                  ),
                          tabPanel("Garde",
                                   HTML('<h2> Some beautiful content and all power </h2>'))
                        )),

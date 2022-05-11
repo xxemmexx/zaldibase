@@ -121,7 +121,7 @@ patientsTableModuleServer <- function(id, user_autho) {
                    
                    # Select relevant columns for the user
                    out <- out %>%
-                     select(nom, prenom, date_naissance, condition)
+                     select(nom, prenom, date_naissance, condition, pre_decision, def_decision)
                    
                    # Set the Action Buttons row to the first column of the `patients` table
                    out <- cbind(tibble(" " = actions),
@@ -154,7 +154,8 @@ patientsTableModuleServer <- function(id, user_autho) {
                    datatable(
                      out,
                      rownames = FALSE,
-                     colnames = c('Nom', 'Prénom', 'Date de naissance', 'Condition'),
+                     colnames = c('Nom', 'Prénom', 'Date de naissance', 
+                                  'Condition', 'Décision préliminaire', 'Décision finale'),
                      #'Hôpital', 'Personne de contact', 'Created At',
                      #'Created By', 'Modified At', 'Modified By'),
                      selection = "none",
@@ -205,23 +206,6 @@ patientsTableModuleServer <- function(id, user_autho) {
                                           patient_to_edit = patient_to_edit,
                                           modal_trigger = reactive({input$patient_id_to_edit})
                                           )
-                 
-                 # patient_to_delete <-
-                 #   eventReactive(input$patient_id_to_delete, {
-                 #     patients() %>%
-                 #       filter(uid == input$patient_id_to_delete) %>%
-                 #       as.list()
-                 #   })
-                 # 
-                 # 
-                 # patientsDeleteModuleServer(
-                 #   "delete_patient",
-                 #   modal_title = "Effacer profil",
-                 #   patient_to_delete = patient_to_delete,
-                 #   modal_trigger = reactive({
-                 #     input$patient_id_to_delete
-                 #   })
-                 # )
 
                })
   

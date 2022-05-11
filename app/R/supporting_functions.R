@@ -4,6 +4,7 @@ printToastMessage <- function(aModalTitle) {
   "Effacer profil" = "Le profil a été supprimé",
   "Modification du profil" = "Le profil a bien été modifié",
   "Registrer un nouveau patient" = "Les données ont bien été enregistrées",
+  "Registrer un nouveau dossier" = "Les données ont bien été enregistrées",
   "C'est fait!")
   
 }
@@ -11,6 +12,7 @@ printToastMessage <- function(aModalTitle) {
 printButtonLabel <- function(aModalTitle) {
   switch (aModalTitle,
           "Modification du profil" = "Modifier",
+          "Modification du dossier" = "Modifier",
           "Registrer un nouveau patient" = "Ajouter patient",
           "C'est bon!")
 }
