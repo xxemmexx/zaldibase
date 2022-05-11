@@ -111,11 +111,11 @@ patientsTableModuleServer <- function(id, user_autho) {
                        '<div class="btn-group" style="width: 75px;" role="group" aria-label="Basic example">
           <button class="btn btn-primary btn-sm edit_btn" data-toggle="tooltip" data-placement="top" title="Modifier" id = ',
                        id_,
-                       ' style="margin: 0"><i class="fa fa-pencil-square-o"></i></button>
-          <button class="btn btn-danger btn-sm delete_btn" data-toggle="tooltip" data-placement="top" title="Effacer" id = ',
-                       id_,
-                       ' style="margin: 0"><i class="fa fa-times-circle"></i></button>
-        </div>'
+                       ' style="margin: 0"><i class="fa fa-pencil-square-o"></i></button>',
+          # <button class="btn btn-danger btn-sm delete_btn" data-toggle="tooltip" data-placement="top" title="Effacer" id = ',
+          #              id_,
+          #              ' style="margin: 0"><i class="fa fa-times-circle"></i></button>
+        '</div>'
                      )
                    })
                    
@@ -181,6 +181,11 @@ patientsTableModuleServer <- function(id, user_autho) {
                    
                  })
                  
+                 observeEvent(is.null(user_autho()), {
+                   toggle("add_patient")
+                   
+                 })
+                 
                  patients_table_proxy <- DT::dataTableProxy('patients_table')
                  
                  patientsEditModuleServer("add_patient",
@@ -189,11 +194,6 @@ patientsTableModuleServer <- function(id, user_autho) {
                                              NULL,
                                            modal_trigger = reactive({input$add_patient}))
                  
-                 
-                 observeEvent(is.null(user_autho()), {
-                   toggle("add_patient")
-                   
-                 })
                  
                  patient_to_edit <- eventReactive(input$patient_id_to_edit, {
                    patients() %>%
@@ -206,22 +206,22 @@ patientsTableModuleServer <- function(id, user_autho) {
                                           modal_trigger = reactive({input$patient_id_to_edit})
                                           )
                  
-                 patient_to_delete <-
-                   eventReactive(input$patient_id_to_delete, {
-                     patients() %>%
-                       filter(uid == input$patient_id_to_delete) %>%
-                       as.list()
-                   })
-                 
-                 
-                 patientsDeleteModuleServer(
-                   "delete_patient",
-                   modal_title = "Effacer profil",
-                   patient_to_delete = patient_to_delete,
-                   modal_trigger = reactive({
-                     input$patient_id_to_delete
-                   })
-                 )
+                 # patient_to_delete <-
+                 #   eventReactive(input$patient_id_to_delete, {
+                 #     patients() %>%
+                 #       filter(uid == input$patient_id_to_delete) %>%
+                 #       as.list()
+                 #   })
+                 # 
+                 # 
+                 # patientsDeleteModuleServer(
+                 #   "delete_patient",
+                 #   modal_title = "Effacer profil",
+                 #   patient_to_delete = patient_to_delete,
+                 #   modal_trigger = reactive({
+                 #     input$patient_id_to_delete
+                 #   })
+                 # )
 
                })
   

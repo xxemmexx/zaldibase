@@ -2,7 +2,7 @@
 
 #' Add & Edit Module
 #'
-#' Module to add & edit patients in the patients database file
+#' Module to add & edit dossiers in the patients database file
 #'
 #' @importFrom shiny observeEvent showModal modalDialog removeModal fluidRow column textInput numericInput selectInput modalButton actionButton reactive eventReactive
 #' @importFrom shinyFeedback showFeedbackDanger hideFeedback showToast
@@ -12,30 +12,32 @@
 #' @importFrom DBI dbExecute
 #'
 #' @param modal_title string - the title for the modal
-#' @param patient_to_edit reactive returning a 1 row data frame of the patient to edit
+#' @param dossier_to_edit reactive returning a 1 row data frame of the dossier to edit
 #' @param modal_trigger reactive trigger to open the modal (Add or Edit buttons)
 #'
 #' @return None
 #'
-patientsEditModuleServer <-
+dossiersEditModuleServer <-
   function(id,
            modal_title,
-           patient_to_edit,
+           dossier_to_edit,
            modal_trigger) {
     moduleServer(id,
                  function(input, output, session) {
                    ns <- session$ns
                    
                    observeEvent(modal_trigger(), {
-                     hold <- patient_to_edit()
+                     hold <- dossier_to_edit()
                      
                      showModal(modalDialog(
                        fluidRow(
                          column(
                            width = 5,
-                           textInput(ns("nom"),
-                                     'Nom',
-                                     value = ifelse(is.null(hold), "", hold$nom)),
+                           textInput(
+                             ns("nom"),
+                             'Nom',
+                             value = ifelse(is.null(hold), "", hold$nom)
+                           ),
                            textInput(
                              ns("prenom"),
                              'Prénom',
@@ -98,7 +100,7 @@ patientsEditModuleServer <-
                        )
                      ))
                      
-                     # Observe event for "Nom" text input in Add/Edit Patient
+                     # Observe event for "Nom" text input in Add/Edit Dossier
                      # `shinyFeedback`
                      observeEvent(input$nom, {
                        if (input$nom == "") {
@@ -115,8 +117,8 @@ patientsEditModuleServer <-
                    
                    
                    
-                   edit_patient_dat <- reactive({
-                     hold <- patient_to_edit()
+                   edit_dossier_dat <- reactive({
+                     hold <- dossier_to_edit()
                      
                      out <- list(
                        uid = if (is.null(hold))
@@ -137,13 +139,13 @@ patientsEditModuleServer <-
                        as.character(lubridate::with_tz(Sys.time(), tzone = "UTC"))
                      
                      if (is.null(hold)) {
-                       # adding a new patient
+                       # adding a new dossier
                        
                        out$data$created_at <- time_now
                        out$data$created_by <- session$userData$email
                        
                      } else {
-                       # Editing existing patient
+                       # Editing existing dossier
                        
                        out$data$created_at <- as.character(hold$created_at)
                        out$data$created_by <- hold$created_by
@@ -157,7 +159,7 @@ patientsEditModuleServer <-
                    })
                    
                    validate_edit <- eventReactive(input$submit, {
-                     dat <- edit_patient_dat()
+                     dat <- edit_dossier_dat()
                      
                      # Logic to validate inputs...
                      
@@ -182,7 +184,7 @@ patientsEditModuleServer <-
                                       unname(dat$data))
                          )
                        } else {
-                         # editing an existing car
+                         # editing an existing dossier
                          #print('About to execute')
                          
                          dbExecute(
@@ -195,7 +197,7 @@ patientsEditModuleServer <-
                          )
                        }
                        
-                       session$userData$patients_trigger(session$userData$patients_trigger() + 1)
+                       session$userData$dossiers_trigger(session$userData$dossiers_trigger() + 1)
                        showToast("success", message = printToastMessage(modal_title))
                      }, error = function(error) {
                        msg <- paste0("Erreur - contactez votre admin")

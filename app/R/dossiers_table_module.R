@@ -20,8 +20,8 @@ dossiersTableModuleUI <- function(id) {
         tags$br(),
         tags$br(),
         actionButton(
-          ns("add_patient"),
-          "Nouveau patient",
+          ns("add_dossier"),
+          "Nouveau dossier",
           class = "btn-success",
           style = "color: #fff;",
           icon = icon('plus'),
@@ -41,14 +41,14 @@ dossiersTableModuleUI <- function(id) {
         tags$br()
       )
     ),
-    tags$script(src = "patients_table_module.js"),
+    tags$script(src = "dossiers_table_module.js"),
     tags$script(paste0(
-      "patients_table_module_js('", ns(''), "')"
+      "dossiers_table_module_js('", ns(''), "')"
     ))
   )
 }
 
-#' Patients Table Module Server
+#' Dossiers Table Module Server
 #'
 #' The Server portion of the module for displaying the datatable
 #'
@@ -66,13 +66,13 @@ dossiersTableModuleServer <- function(id, user_autho) {
   moduleServer(id,
                function(input, output, session) {
                  # trigger to reload data from the "patients" table
-                 session$userData$patients_trigger <- reactiveVal(0)
+                 session$userData$dossiers_trigger <- reactiveVal(0)
                  
                  
                  
                  # Read in "patients" table from the database
-                 patients <- reactive({
-                   session$userData$patients_trigger()
+                 dossiers <- reactive({
+                   session$userData$dossiers_trigger()
                    
                    out <- NULL
                    tryCatch({
@@ -99,10 +99,10 @@ dossiersTableModuleServer <- function(id, user_autho) {
                  })
                  
                  #user_autho <- reactiveVal(NULL)
-                 patients_table_prep <- reactiveVal(NULL)
+                 dossiers_table_prep <- reactiveVal(NULL)
                  
-                 observeEvent(patients(), {
-                   out <- patients()
+                 observeEvent(dossiers(), {
+                   out <- dossiers()
                    
                    ids <- out$uid
                    
@@ -123,19 +123,19 @@ dossiersTableModuleServer <- function(id, user_autho) {
                    out <- out %>%
                      select(nom, prenom, date_naissance, condition)
                    
-                   # Set the Action Buttons row to the first column of the `patients` table
+                   # Set the Action Buttons row to the first column of the `dossiers` table
                    out <- cbind(tibble(" " = actions),
                                 out)
                    
-                   if (is.null(patients_table_prep())) {
+                   if (is.null(dossiers_table_prep())) {
                      # loading data into the table for the first time, so we render the entire table
                      # rather than using a DT proxy
-                     patients_table_prep(out)
+                     dossiers_table_prep(out)
                      
                    } else {
                      # table has already rendered, so use DT proxy to update the data in the
                      # table without rerendering the entire table
-                     replaceData(patients_table_proxy,
+                     replaceData(dossiers_table_proxy,
                                  out,
                                  resetPaging = FALSE,
                                  rownames = FALSE)
@@ -146,15 +146,15 @@ dossiersTableModuleServer <- function(id, user_autho) {
                  
                  
                  output$dossiers_table <- renderDT({
-                   req(user_autho(), patients_table_prep())
+                   req(user_autho(), dossiers_table_prep())
                    
                    
-                   out <- patients_table_prep()
+                   out <- dossiers_table_prep()
                    
                    datatable(
                      out,
                      rownames = FALSE,
-                     colnames = c('Nom', 'Prénom', 'Date de naissance', 'Dolorcito'),
+                     colnames = c('Nom', 'Prénom', 'Date de naissance', 'Condition'),
                      #'Hôpital', 'Personne de contact', 'Created At',
                      #'Created By', 'Modified At', 'Modified By'),
                      selection = "none",
@@ -181,45 +181,47 @@ dossiersTableModuleServer <- function(id, user_autho) {
                    
                  })
                  
-                 patients_table_proxy <- DT::dataTableProxy('dossiers_table')
-                 
-                 patientsEditModuleServer("add_patient",
-                                           modal_title = "Registrer un nouveau patient",
-                                           patient_to_edit = function()
-                                             NULL,
-                                           modal_trigger = reactive({input$add_patient}))
-                 
-                 
                  observeEvent(is.null(user_autho()), {
-                   toggle("add_patient")
+                   toggle("add_dossier")
                    
                  })
                  
-                 patient_to_edit <- eventReactive(input$patient_id_to_edit, {
-                   patients() %>%
-                     filter(uid == input$patient_id_to_edit)
+                 dossiers_table_proxy <- DT::dataTableProxy('dossiers_table')
+                 
+                 dossiersEditModuleServer("add_dossier",
+                                           modal_title = "Registrer un nouveau dossier",
+                                           dossier_to_edit = function()
+                                             NULL,
+                                           modal_trigger = reactive({input$add_dossier}))
+                 
+                 
+
+                 
+                 dossier_to_edit <- eventReactive(input$dossier_id_to_edit, {
+                   dossiers() %>%
+                     filter(uid == input$dossier_id_to_edit)
                  })
                  
-                 patientsEditModuleServer("edit_patient",
+                 dossiersEditModuleServer("edit_dossier",
                                           modal_title = "Modification du profil",
-                                          patient_to_edit = patient_to_edit,
-                                          modal_trigger = reactive({input$patient_id_to_edit})
+                                          dossier_to_edit = dossier_to_edit,
+                                          modal_trigger = reactive({input$dossier_id_to_edit})
                                           )
                  
-                 patient_to_delete <-
-                   eventReactive(input$patient_id_to_delete, {
-                     patients() %>%
-                       filter(uid == input$patient_id_to_delete) %>%
+                 dossier_to_delete <-
+                   eventReactive(input$dossier_id_to_delete, {
+                     dossiers() %>%
+                       filter(uid == input$dossier_id_to_delete) %>%
                        as.list()
                    })
                  
                  
-                 patientsDeleteModuleServer(
-                   "delete_patient",
+                 dossiersDeleteModuleServer(
+                   "delete_dossier",
                    modal_title = "Effacer profil",
-                   patient_to_delete = patient_to_delete,
+                   dossier_to_delete = dossier_to_delete,
                    modal_trigger = reactive({
-                     input$patient_id_to_delete
+                     input$dossier_id_to_delete
                    })
                  )
 

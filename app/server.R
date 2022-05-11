@@ -26,12 +26,17 @@ function(input, output, session) {
 
   })
 
-  # Call the server function portion of the `patients_table_module.R` module file
+  # Call the server functions in the module files in the R dir
   patientsTableModuleServer("patients_table",
                             reactive(credentials()$user_auth))
   
   dossiersTableModuleServer("dossiers_table",
                             reactive(credentials()$user_auth))
+  
+  #load saved parameters 
+  # observeEvent(reactive(logout_init()), {
+  #   updateNavbarPage(session, "tabs", selected = "About")
+  # })  
   
   # set suspendWhenHidden to FALSE so it renders even without output
   outputOptions(output, 'role', suspendWhenHidden = FALSE)

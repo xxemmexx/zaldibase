@@ -32,7 +32,8 @@ tagList(
       conditionalPanel(condition = "output.role == 'admin'",
                        tabsetPanel(
                          tabPanel("Mes dossiers",
-                                  patientsTableModuleUI("patients_table")),
+                                  dossiersTableModuleUI("dossiers_table"),
+                                  textOutput("role")),
                          tabPanel("Garde",
                                   HTML('<h2> Some beautiful content and all power </h2>'))
                        )),
@@ -49,8 +50,7 @@ tagList(
       conditionalPanel(condition = "output.role == 'user'",
                        tabsetPanel(tabPanel(
                          "Mes dossiers",
-                         dossiersTableModuleUI("dossiers_table")
-                         
+                         patientsTableModuleUI("patients_table")
                          
                        )))
       
