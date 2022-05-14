@@ -30,89 +30,129 @@ dossiersEditModuleServer <-
                      hold <- dossier_to_edit()
                      
                      showModal(modalDialog(
+                       div(
+                         style = "padding: 30px;",
                        fluidRow(
+                         HTML("<h5><em>Données du centre hospitalier d'origine</em></h4>"),
                          column(
-                           width = 5,
-                           textInput(
-                             ns("nom"),
-                             'Nom',
-                             value = ifelse(is.null(hold), "", hold$nom)
+                           width = 6,
+                           selectInput(ns("hopital"),
+                                       "Centre Hospitalier d'origine",
+                                       choices = c("CHU", "CHAM"),
+                                       selected = ifelse(is.null(hold), "", hold$hopital))
+                         ),
+                         column(
+                           width = 6,
+                           selectInput(
+                             ns('contact'),
+                             "Personne de contact",
+                             choices = c('Cassandra Gotsi', 'Albert Malfait'),
+                             selected = ifelse(is.null(hold), "", hold$contact))
+                         ),
+                         HTML("<h5><em>Données du patient</em></h5>"),
+                           fluidRow(
+                             column(
+                             width = 6,
+                             textInput(
+                               ns("nom"),
+                               'Nom',
+                               value = ifelse(is.null(hold), "", hold$nom)
+                             ),
+                            
+                             dateInput(
+                               ns("date_naissance"),
+                               'Date de naissance',
+                               value = ifelse(is.null(hold), "", hold$date_naissance),
+                               language = "fr"
+                             )
                            ),
+                         column(
+                           width = 6,
                            textInput(
                              ns("prenom"),
                              'Prénom',
                              value = ifelse(is.null(hold), "", hold$prenom)
                            ),
-                           dateInput(
-                             ns("date_naissance"),
-                             'Date de naissance',
-                             value = ifelse(is.null(hold), "", hold$date_naissance),
-                             language = "fr"
-                           ),
-                         ),
-                         column(
-                           width = 7,
-                           # selectInput(
-                           #   ns('hopital'),
-                           #   "Hôpital d'origine",
-                           #   choices = c(
-                           #     'Centre Hospitalier Albertville-Moûtiers',
-                           #     'Centre Hospitalier Universitaire de Grenoble'
-                           #   ),
-                           #   selected = ifelse(is.null(hold), "", hold$hopital)
-                           # ),
-                           # textInput(
-                           #   ns("contact"),
-                           #   'Personne de contact',
-                           #   value = ifelse(is.null(hold), "", hold$contact)
-                           # ),
-                           selectInput(
-                             ns('condition'),
-                             'Condition',
-                             choices = c(
-                               'Le duele la verga',
-                               'Le duele la cola',
-                               'Le huele la cola',
-                               'Suegra',
-                               'Autre...' = 'Autre'
-                             ),
-                             selected = ifelse(is.null(hold), "", hold$condition)
-                           ),
-                           conditionalPanel(
-                             "input.condition == 'Autre'",
-                             textAreaInput(ns('description'),
-                                           'Description',
-                                           placeholder = "Decrivez..."),
-                             ns = ns
-                           ),
-                           selectInput(
-                             ns('pre_decision'),
-                             "Décision préliminaire",
-                             choices = c(
-                               'Manden al paciente a casa. Que no mame.',
-                               'Operen al paciente como puedan',
-                               'Traiganme al paciente',
-                               'Traiganme a la suegra'
-                             ),
-                             selected = ifelse(is.null(hold), "", hold$pre_decision)
+                           textInput(
+                             ns("phone_number_patient"),
+                             'Numéro de téléphone',
+                             value = ifelse(is.null(hold), "", hold$phone_number_patient)
                            )
-                         )
-                       ),
+                           )
+                         ),
+                         fluidRow(
+                           column(
+                             width = 6,
+                             selectInput(
+                               ns('pathologie'),
+                               'Pathologie',
+                               choices = pathologies,
+                               selected = ifelse(is.null(hold), "", hold$pathologie)
+                             ),
+                             conditionalPanel(
+                               "input.pathologie == 'Autre...'",
+                               textAreaInput(ns('description'),
+                                             'Description',
+                                             placeholder = "Decrivez..."),
+                               ns = ns
+                             )
+                           ),
+                           column(
+                             width = 6,
+                             selectInput(
+                               ns('pre_decision'),
+                               "Décision préliminaire",
+                               choices = decisions,
+                               selected = ifelse(is.null(hold), "", hold$pre_decision)
+                             )
+                           )
+                         
+                         ) # Close fluidRow
+                           
+                           
+                       ) # Close fluidrow
+                       ), # Close div
+                       
                        title = modal_title,
-                       size = 'm',
+                       size = 'l',
                        footer = list(
                          modalButton('Annuler'),
                          actionButton(
                            ns('submit'),
                            printButtonLabel(modal_title),
                            class = "btn btn-primary mb1 bg-olive",
-                           style = "color: white"
-                         )
-                       )
-                     ))
+                           style = "color: white")
+                       ) # Close list in footer
+                     ) # Close modal dialog
+                     ) # Close showModal
+                   
+                           
+                        
                      
                      # Observe event for "Nom" text input in Add/Edit Dossier
                      # `shinyFeedback`
+                     observeEvent(input$contact, {
+                       if (input$contact == "") {
+                         shinyFeedback::showFeedbackDanger("contact",
+                                                           text = "La personne de contact est obligatoire!")
+                         shinyjs::disable('submit')
+                       } else {
+                         shinyFeedback::hideFeedback("contact")
+                         shinyjs::enable('submit')
+                       }
+                     })
+                     
+                     observeEvent(input$hopital, {
+                       if (input$hopital == "") {
+                         shinyFeedback::showFeedbackDanger("hopital",
+                                                           text = "L'hôpital d'origine est obligatoire!")
+                         shinyjs::disable('submit')
+                       } else {
+                         shinyFeedback::hideFeedback("hopital")
+                         shinyjs::enable('submit')
+                       }
+                     })
+                     
                      observeEvent(input$nom, {
                        if (input$nom == "") {
                          shinyFeedback::showFeedbackDanger("nom",
@@ -123,6 +163,56 @@ dossiersEditModuleServer <-
                          shinyjs::enable('submit')
                        }
                      })
+                     
+                     observeEvent(input$prenom, {
+                       if (input$prenom == "") {
+                         shinyFeedback::showFeedbackDanger("prenom",
+                                                           text = "Le prénom du patient est obligatoire!")
+                         shinyjs::disable('submit')
+                       } else {
+                         shinyFeedback::hideFeedback("prenom")
+                         shinyjs::enable('submit')
+                       }
+                     })
+                     
+                     observeEvent(input$date_naissance, {
+                       if (length(input$date_naissance) < 1) {
+                         shinyFeedback::showFeedbackDanger("date_naissance",
+                                                           text = "Le date de naissance du patient est obligatoire!")
+                         shinyjs::disable('submit')
+                       } else {
+                         shinyFeedback::hideFeedback("date_naissance")
+                         shinyjs::enable('submit')
+                       }
+                     })
+                     
+                     observeEvent(input$phone_number_patient, {
+                       if (input$phone_number_patient == "") {
+                         shinyFeedback::showFeedbackDanger("phone_number_patient",
+                                                           text = "Le numéro de téléphone est obligatoire!")
+                         shinyjs::disable('submit')
+                       } else {
+                         shinyFeedback::hideFeedback("phone_number_patient")
+                         shinyjs::enable('submit')
+                       }
+                     })
+                     
+                     observeEvent(input$pathologie, {
+                       if (input$pathologie == 'Autre...' ) {
+                         
+                         observeEvent(input$description, {
+                           
+                           if(input$description == "") {
+                             shinyFeedback::showFeedbackDanger("description",
+                                                               text = "Une description est obligatoire!")
+                             shinyjs::disable('submit')
+                           } else {
+                             shinyFeedback::hideFeedback("description")
+                             shinyjs::enable('submit')
+                           }
+                         }) # Close description observer
+                       } # Close if statement pathologie == 'Autre'
+                     }) # Close pathologie observer
                      
                    })
                    
@@ -140,7 +230,7 @@ dossiersEditModuleServer <-
                          "nom" = input$nom,
                          "prenom" = input$prenom,
                          "date_naissance" = format(as.Date(input$date_naissance), '%Y-%m-%d'),
-                         "condition" = input$condition,
+                         "pathologie" = input$pathologie,
                          "pre_decision" = input$pre_decision
                        )
                      )
@@ -188,7 +278,7 @@ dossiersEditModuleServer <-
                          dbExecute(
                            conn,
                            "INSERT INTO patients (uid, nom, prenom, date_naissance, 
-                           condition, pre_decision, created_at, 
+                           pathologie, pre_decision, created_at, 
                            created_by, modified_at, modified_by) VALUES
                            ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)",
                            params = c(list(uid),
@@ -201,7 +291,7 @@ dossiersEditModuleServer <-
                          dbExecute(
                            conn,
                            "UPDATE patients SET nom=$1, prenom=$2, date_naissance=$3, 
-                           condition=$4, pre_decision=$5,
+                           pathologie=$4, pre_decision=$5,
                            created_at=$6, created_by=$7, modified_at=$8, modified_by=$9
                            WHERE uid=$10",
                            params = c(unname(dat$data),

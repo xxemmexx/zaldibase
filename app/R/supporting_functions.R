@@ -14,6 +14,7 @@ printButtonLabel <- function(aModalTitle) {
           "Modification du profil" = "Modifier",
           "Modification du dossier" = "Modifier",
           "Registrer un nouveau patient" = "Ajouter patient",
+          "Registrer un nouveau dossier" = "Ajouter dossier",
           "C'est bon!")
 }
 

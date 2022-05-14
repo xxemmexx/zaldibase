@@ -6,7 +6,7 @@ require(dplyr)
 # Create a connection object with SQLite
 conn <- dbConnect(
   RSQLite::SQLite(),
-  "data/patients.sqlite3"
+  "data/zaldibase.sqlite3"
 )
 
 # Create a query to prepare the 'mtcars' table with additional 'uid', 'id',
@@ -16,12 +16,13 @@ create_patients_query = "CREATE TABLE patients (
   nom                             TEXT,
   prenom                          TEXT,
   date_naissance                  TEXT,
-  condition                       TEXT,
+  phone_number_patient            TEXT,
+  pathologie                      TEXT,
   description                     TEXT,
   pre_decision                    TEXT,
   def_decision                    TEXT,
-  hopital                         TEXT,
-  contact                         TEXT,
+  interne_id                      NUMERIC,
+  contact_id                      NUMERIC,
   created_at                      TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   created_by                      TEXT,
   modified_at                     TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -53,6 +54,37 @@ DBI::dbWriteTable(
   append = TRUE
 )
 
+# & the 4 created/modified columns
+create_contacts_query = "CREATE TABLE contacts (
+  contact_id                      INTEGER PRIMARY KEY,
+  nom                             TEXT,
+  prenom                          TEXT,
+  phone_number_contact            TEXT,
+  email                           TEXT,
+  affiliation                     TEXT
+)"
+
+# dbExecute() executes a SQL statement with a connection object
+# Drop the table if it already exists
+dbExecute(conn, "DROP TABLE IF EXISTS contacts")
+# Execute the query created above
+dbExecute(conn, create_contacts_query)
+
+# Read in the RDS file created in 'data_prep.R'
+dat <- readRDS("data/contacts_dummy.RDS")
+
+# reorder the columns
+dat <- dat %>%
+  mutate(contact_id = c(1, 2, 3, 4, 5, 6))
+
+# Fill in the SQLite table with the values from the RDS file
+DBI::dbWriteTable(
+  conn,
+  name = "contacts",
+  value = dat,
+  overwrite = FALSE,
+  append = TRUE
+)
 # List tables to confirm 'mtcars' table exists
 dbListTables(conn)
 

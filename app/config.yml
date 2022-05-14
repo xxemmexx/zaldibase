@@ -1,4 +1,4 @@
 default:
   app_name: "zaldibase"
   db:
-    dbname: 'data/patients.sqlite3'
+    dbname: 'data/zaldibase.sqlite3'

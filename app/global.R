@@ -15,12 +15,18 @@ require(bslib)
 #require(twilio)
 #source('R/supporting_functions.R')
 
+# Hard-coded data
+
 user_base <- tibble(
   user = c("zaldijn001", "zaldijn002", "zaldijn003"),
   password = c("pendejouw", "pendejouw", "pendejouw"),
   permissions = c("admin", "resident", "user"),
   name = c("Julien Zaldivar", "Julien Zaldivar", "Julien Zaldivar"))
 
+decisions <- c(" ", "Chirurgie", "A rappatrier", "Conservateur", "Hospitaliser", "Autre avis")
+pathologies <- c("Le duele la cola", "Le huele la cola", "Le duele la verga", "Suegra", "Autre...")
+
+# Configuration
 db_config <- config::get()$db
 
 # Create database connection

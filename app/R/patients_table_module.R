@@ -121,7 +121,7 @@ patientsTableModuleServer <- function(id, user_autho) {
                    
                    # Select relevant columns for the user
                    out <- out %>%
-                     select(nom, prenom, date_naissance, condition, pre_decision, def_decision)
+                     select(nom, prenom, date_naissance, pathologie, pre_decision, def_decision)
                    
                    # Set the Action Buttons row to the first column of the `patients` table
                    out <- cbind(tibble(" " = actions),
@@ -155,7 +155,7 @@ patientsTableModuleServer <- function(id, user_autho) {
                      out,
                      rownames = FALSE,
                      colnames = c('Nom', 'Prénom', 'Date de naissance', 
-                                  'Condition', 'Décision préliminaire', 'Décision finale'),
+                                  'Pathologie', 'Décision préliminaire', 'Décision finale'),
                      #'Hôpital', 'Personne de contact', 'Created At',
                      #'Created By', 'Modified At', 'Modified By'),
                      selection = "none",
