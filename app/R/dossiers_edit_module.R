@@ -114,7 +114,16 @@ dossiersEditModuleServer <-
                              )
                            )
                          
-                         ) # Close fluidRow
+                         ), # Close fluidRow
+                         fluidRow(
+                           column(
+                             width = 12,
+                             textAreaInput(ns('histoire'),
+                                           'Histoire',
+                                           placeholder = "Décrivez...",
+                                           width = '740'),
+                           )
+                         )
                            
                            
                        ) # Close fluidrow
