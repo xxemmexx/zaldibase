@@ -104,6 +104,13 @@ dossiersEditModuleServer <-
                                "Décision préliminaire",
                                choices = decisions,
                                selected = ifelse(is.null(hold), "", hold$pre_decision)
+                             ),
+                             conditionalPanel(
+                               "input.pre_decision !== ' '",
+                               textAreaInput(ns('explanation'),
+                                             'Explication',
+                                             placeholder = "Expliquez votre avis..."),
+                               ns = ns
                              )
                            )
                          
