@@ -16,7 +16,6 @@ require(bslib)
 require(cyphr)
 #require(twilio)
 
-
 user_base <- readRDS("data/user_base_encryp.rds")
 
 db_config <- readRDS("data/config_encryp.rds")
