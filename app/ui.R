@@ -1,5 +1,3 @@
-
-
 tagList(
   shinyFeedback::useShinyFeedback(),
   shinyjs::useShinyjs(),
@@ -10,7 +8,6 @@ tagList(
     collapsible = TRUE,
     windowTitle = "Garde",
     theme = shinytheme("sandstone"),
-    #theme = bs_theme(version = 4, bootswatch = "minty"),
     
     
     tabPanel(
@@ -31,18 +28,22 @@ tagList(
       
       conditionalPanel(condition = "output.role == 'admin'",
                        tabsetPanel(
-                         tabPanel("Mes dossiers",
-                                  dossiersTableModuleUI("dossiers_table")
-                                  ),
-                         tabPanel("Garde",
+                         tabPanel("Mes dossiers", icon = icon("list-ul"), value = "dossiers",
+                                  dossiersTableModuleUI("dossiers_table")),
+                         tabPanel("Fiche patient", icon = icon("eye"), value = "fiche",
+                                  fichePatientModuleUI("fiche_patient")),
+                         tabPanel("Archive", icon = icon("box-open"), value = "archive",
+                                  HTML('<h2> Some beautiful archive content</h2>')),
+                         tabPanel("Garde", icon = icon("user-nurse"), value = "garde",
                                   HTML('<h2> Some beautiful content and all power </h2>'))
-                       )),
+                         ) # Close tabset panel
+                       ), # Close conditional panel admin
       
       conditionalPanel(condition = "output.role == 'resident'",
                        tabsetPanel(
                          tabPanel("Mes dossiers",
                                   #patients_table_module_ui("patients_table")
-                                  ),
+                         ),
                          tabPanel("Garde",
                                   HTML('<h2> Some standard content </h2>'))
                        )),
@@ -50,16 +51,10 @@ tagList(
       conditionalPanel(condition = "output.role == 'user'",
                        tabsetPanel(tabPanel(
                          "Mes dossiers",
-                         patientsTableModuleUI("patients_table")
+                         #patientsTableModuleUI("patients_table")
                          
                        )))
       
-    ),
-    tabPanel(
-      "About",
-      HTML(
-        printAbout
-      )
     )
   )
 )

@@ -1,4 +1,0 @@
-default:
-  app_name: "zaldibase"
-  db:
-    dbname: 'data/zaldibase.sqlite3'

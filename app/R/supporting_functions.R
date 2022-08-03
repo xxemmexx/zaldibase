@@ -18,6 +18,57 @@ printButtonLabel <- function(aModalTitle) {
           "C'est bon!")
 }
 
+placePatientUID <- function(aUID) {
+  
+  if(is.null(aUID)) {
+    thisPatientUID <- ' '
+  } else {
+    thisPatientUID <- aUID
+  }
+  
+  thisPatientUID
+}
+
+deliverUID <- function(aValueOnHold) {
+  
+  thisUID <- NA
+  
+  if (!is.null(aValueOnHold)) {
+    thisUID <- aValueOnHold$uid
+  } 
+  
+  thisUID
+}
+
+deliverCreator <- function(aValueOnHold, aUsername) {
+  
+  thisCreator <- aUsername
+  
+  if (!is.null(aValueOnHold)) {
+    thisCreator <- aValueOnHold$created_by
+  } 
+  
+  thisCreator
+}
+
+deliverCreationTime <- function(aValueOnHold, aTimeNow) {
+  
+  thisTime <- aTimeNow
+  
+  if (!is.null(aValueOnHold)) {
+    thisTime <- aValueOnHold$created_at
+  } 
+  
+  thisTime
+}
+
+writeISODate <- function(aDateString) {
+  
+  aDateString %>%
+    as.Date() %>%
+    format('%Y-%m-%d')
+}
+
 computeDateGarde <- function(aTimestamp) {
   
   timestampNowParts <- str_split(aTimestamp, " ")
@@ -40,5 +91,45 @@ computeDateGarde <- function(aTimestamp) {
   
 }
 
+generateIdentifier <- function(aFirstName, aSurname) {
+  
+  letters <- paste0(str_to_upper(str_sub(aFirstName, 1, 1)),
+                    str_to_upper(str_sub(aSurname, 1, 1)))
+  
+  Sys.time() %>%
+    str_replace_all(":", "") %>%
+    str_replace_all("-", "") %>%
+    str_replace_all(" ", letters) %>%
+    str_sub(3, -1)
+  
+}
+
+writeQuery <- function(aUID, aNom, aPrenom, aDateNaissance, aPhoneNumber,
+                       aPathologie,
+                       aPreDecision, aCreatedAt, aCreatedBy, aModifiedAt, 
+                       aModifiedBy, aStatement = c("insert", "update")) {
+  
+  thisQuery = switch(aStatement,
+                     
+                     "insert" = paste0("INSERT INTO patients (uid, nom, prenom, 
+                     date_naissance, phone_number_patient, pathologie, pre_decision, created_at,
+                     created_by, modified_at, modified_by) VALUES ('",
+                     aUID, "', '", aNom, "', '", aPrenom, "', '", aDateNaissance, "', '",
+                     aPhoneNumber, "', '", aPathologie, "', '", aPreDecision, "', '", 
+                     aCreatedAt, "', '", aCreatedBy, "', '", 
+                     aModifiedAt, "', '", aModifiedBy, "');"),
+                     
+                     "update" = paste0("UPDATE patients SET nom='", aNom, "', prenom='", 
+                                       aPrenom, "', date_naissance='", aDateNaissance,
+                                       "', phone_number_patient='", aPhoneNumber,
+                                       "', pathologie='", aPathologie, "', pre_decision='",
+                                       aPreDecision, "', created_at='", aCreatedAt, 
+                                       "', created_by='", aCreatedBy, "', modified_at='",
+                                       aModifiedAt, "', modified_by='", aModifiedBy,
+                                       "' WHERE uid='", aUID, "';")
+                     )
+  thisQuery
+  
+}
 
 

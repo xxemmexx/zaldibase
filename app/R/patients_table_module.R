@@ -85,7 +85,7 @@ patientsTableModuleServer <- function(id, user_autho) {
                        ) %>%
                        arrange(desc(modified_at))
                    }, error = function(err) {
-                     msg <- "Database Connection Error"
+                     msg <- "Could not find the patients table!"
                      # print `msg` so that we can find it in the logs
                      print(msg)
                      # print the actual error to log it

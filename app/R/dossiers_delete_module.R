@@ -1,6 +1,3 @@
-
-
-
 #' Patient Delete Module
 #'
 #' This module is for deleting a row's information from the patients database file
@@ -15,45 +12,34 @@
 #'
 #' @return None
 #'
-dossiersDeleteModuleServer <-
-  function(id,
-           modal_title,
-           dossier_to_delete,
-           modal_trigger) {
+dossiersDeleteModuleServer <- function(id,
+                                       modal_title, dossier_to_delete, modal_trigger) {
     moduleServer(id,
                  function(input, output, session) {
+                   
                    ns <- session$ns
+                   
                    # Observes trigger for this module (here, the Delete Button)
                    observeEvent(modal_trigger(), {
                      # Authorize who is able to access particular buttons (here, modules)
                      #req(session$userData$email == 'notification@subvertising.org')
                      
                      showModal(modalDialog(
-                       div(
-                         style = "padding: 30px;",
-                         class = "text-center",
-                         h2(
-                           style = "line-height: 1.75;",
-                           paste0(
-                             'Etes-vous sûr de vouloir effacer le profil de M./Mme. ',
-                             dossier_to_delete()$nom,
-                             '?'
-                           )
-                         )
-                       ),
+                       div(style = "padding: 30px;", class = "text-center",
+                           h2(style = "line-height: 1.75;",
+                              paste0('Etes-vous sûr de vouloir effacer le profil de M./Mme. ',
+                                     dossier_to_delete()$nom,
+                                     '?'))),
                        title = modal_title,
                        size = "m",
-                       footer = list(
-                         modalButton("Annuler"),
-                         actionButton(
-                           ns("submit_delete"),
-                           "Effacer profil",
-                           class = "btn-danger",
-                           style = "color: #fff;"
-                         )
-                       )
-                     ))
-                   })
+                       footer = list(modalButton("Annuler"),
+                                     actionButton(ns("submit_delete"),
+                                                  "Effacer profil",
+                                                  class = "btn-danger",
+                                                  style = "color: #fff;"))
+                       ) # Close modal dialog
+                       ) # Close show modal
+                     }) # Close observer
                    
                    observeEvent(input$submit_delete, {
                      req(dossier_to_delete())
@@ -63,9 +49,8 @@ dossiersDeleteModuleServer <-
                      tryCatch({
                        uid <- dossier_to_delete()$uid
                        
-                       DBI::dbExecute(conn,
-                                      "DELETE FROM patients WHERE uid=$1",
-                                      params = c(uid))
+                       dbExecute(conn,
+                                 "DELETE FROM patients WHERE uid=$1", params = c(uid))
                        
                        session$userData$dossiers_trigger(session$userData$dossiers_trigger() + 1)
                        
@@ -82,5 +67,5 @@ dossiersDeleteModuleServer <-
                        showToast("error", msg)
                      })
                    })
-                 })
-  }
+                 }) # Close module server
+  } # Close dossiersDeleteModuleServer

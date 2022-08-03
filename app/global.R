@@ -3,6 +3,7 @@ require(shiny)
 require(DT)
 require(DBI)
 require(RSQLite)
+require(RPostgres)
 require(shinythemes)
 require(shinyjs)
 require(shinycssloaders)
@@ -12,28 +13,49 @@ require(stringr)
 require(dplyr)
 require(dbplyr)
 require(bslib)
+require(cyphr)
 #require(twilio)
-#source('R/supporting_functions.R')
 
-# Hard-coded data
 
-user_base <- tibble(
-  user = c("zaldijn001", "zaldijn002", "zaldijn003"),
-  password = c("pendejouw", "pendejouw", "pendejouw"),
-  permissions = c("admin", "resident", "user"),
-  name = c("Julien Zaldivar", "Julien Zaldivar", "Julien Zaldivar"))
+user_base <- readRDS("data/user_base_encryp.rds")
 
-decisions <- c(" ", "Chirurgie", "A rappatrier", "Conservateur", "Hospitaliser", "Autre avis")
-pathologies <- c("Le duele la cola", "Le huele la cola", "Le duele la verga", "Suegra", "Autre...")
+db_config <- readRDS("data/config_encryp.rds")
 
-# Configuration
-db_config <- config::get()$db
+my_key <- readRDS("data/key")
 
-# Create database connection
-conn <- dbConnect(
-  RSQLite::SQLite(),
-  dbname = db_config$dbname
-)
+dbInfo <- str_split(cyphr::decrypt_string(db_config, my_key), ":")
+
+conn <- DBI::dbConnect(RPostgres::Postgres(), 
+                       dbname = dbInfo[[1]][[1]], 
+                       host = dbInfo[[1]][[2]], 
+                       port = dbInfo[[1]][[3]], 
+                       user = dbInfo[[1]][[4]], 
+                       password = dbInfo[[1]][[5]])
+
+
+decisions <- c(" ", "Opérés",
+               "A opérer",
+               "Examen complementaire",
+               "Surveillance",
+               "Traitement Conservateur",
+               "Contrôle à la consultation des internes",
+               "Contrôle à la consultation du chef",
+               "Avis à autre discipline",
+               "Autre",
+               "Rien / Abstention")
+
+pathologies <- c(" ", "HSDC",               
+                 "Trauma Cranien",
+                 "Trauma Spinal",
+                 "Degeneratif Spinal",
+                 "Tumeur Cranienne",
+                 "Tumeur Spinale",
+                 "Vasculaire",
+                 "Complications - Infections",
+                 "Infections primaires",
+                 "Troubles Hydrauliques",
+                 "Pediatrie",
+                 "Autre...")
 
 # Stop database connection when application stops
 shiny::onStop(function() {
