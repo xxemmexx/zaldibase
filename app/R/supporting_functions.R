@@ -104,28 +104,50 @@ generateIdentifier <- function(aFirstName, aSurname) {
   
 }
 
-writeQuery <- function(aUID, aNom, aPrenom, aDateNaissance, aPhoneNumber,
+writeQuery <- function(aUID, 
+                       aNom, 
+                       aPrenom, 
+                       aDateNaissance, 
+                       aPhoneNumber,
                        aPathologie,
-                       aPreDecision, aCreatedAt, aCreatedBy, aModifiedAt, 
-                       aModifiedBy, aStatement = c("insert", "update")) {
+                       aPreDecision, 
+                       aContactPerson,
+                       aContactPhone,
+                       aContactEmail,
+                       aHospital,
+                       aCreatedAt, 
+                       aCreatedBy, 
+                       aModifiedAt, 
+                       aModifiedBy, 
+                       aStatement = c("insert", "update")) {
   
   thisQuery = switch(aStatement,
                      
                      "insert" = paste0("INSERT INTO patients (uid, nom, prenom, 
-                     date_naissance, phone_number_patient, pathologie, pre_decision, created_at,
+                     date_naissance, phone_number_patient, pathologie, pre_decision, 
+                     contact_person, contact_phone, contact_email, hopital, created_at,
                      created_by, modified_at, modified_by) VALUES ('",
                      aUID, "', '", aNom, "', '", aPrenom, "', '", aDateNaissance, "', '",
-                     aPhoneNumber, "', '", aPathologie, "', '", aPreDecision, "', '", 
+                     aPhoneNumber, "', '", aPathologie, "', '", aPreDecision, "', '",
+                     aContactPerson, "', '", aContactPhone, "', '", aContactEmail, "', '",
+                     aHospital, "', '",
                      aCreatedAt, "', '", aCreatedBy, "', '", 
                      aModifiedAt, "', '", aModifiedBy, "');"),
                      
-                     "update" = paste0("UPDATE patients SET nom='", aNom, "', prenom='", 
-                                       aPrenom, "', date_naissance='", aDateNaissance,
+                     "update" = paste0("UPDATE patients SET nom='", aNom, 
+                                       "', prenom='", aPrenom, 
+                                       "', date_naissance='", aDateNaissance,
                                        "', phone_number_patient='", aPhoneNumber,
-                                       "', pathologie='", aPathologie, "', pre_decision='",
-                                       aPreDecision, "', created_at='", aCreatedAt, 
-                                       "', created_by='", aCreatedBy, "', modified_at='",
-                                       aModifiedAt, "', modified_by='", aModifiedBy,
+                                       "', pathologie='", aPathologie, 
+                                       "', pre_decision='", aPreDecision,
+                                       "', contact_person='", aContactPerson,
+                                       "', contact_phone='", aContactPhone,
+                                       "', contact_email='", aContactEmail,
+                                       "', hopital='", aHospital,
+                                       "', created_at='", aCreatedAt, 
+                                       "', created_by='", aCreatedBy, 
+                                       "', modified_at='", aModifiedAt, 
+                                       "', modified_by='", aModifiedBy,
                                        "' WHERE uid='", aUID, "';")
                      )
   thisQuery

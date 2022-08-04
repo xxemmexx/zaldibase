@@ -245,6 +245,10 @@ dossiersEditModuleServer <- function(id,
                                            "phone_number_patient" = input$phone_number_patient,
                                            "pathologie" = input$pathologie,
                                            "pre_decision" = input$pre_decision,
+                                           "contact_person" = input$contact,
+                                           "contact_phone" = input$contact_phone,
+                                           "contact_email" = input$contact_email,
+                                           "hopital" = input$hopital,
                                            "created_at" = deliverCreationTime(hold, time_now),
                                            "created_by" = deliverCreator(hold, session$userData$username()),
                                            "modified_at" = time_now,
@@ -291,12 +295,22 @@ dossiersEditModuleServer <- function(id,
                          
                        }
                      
-                     thisQuery <- writeQuery(uid, dat$data$nom, dat$data$prenom,
-                                             dat$data$date_naissance, dat$data$phone_number_patient,
+                     thisQuery <- writeQuery(uid, 
+                                             dat$data$nom, 
+                                             dat$data$prenom,
+                                             dat$data$date_naissance, 
+                                             dat$data$phone_number_patient,
                                              dat$data$pathologie,
-                                             dat$data$pre_decision, dat$data$created_at, 
-                                             dat$data$created_by, dat$data$modified_at, 
-                                             dat$data$modified_by, aStatement = statement)
+                                             dat$data$pre_decision, 
+                                             dat$data$contact,
+                                             dat$data$contact_phone,
+                                             dat$data$contact_email,
+                                             dat$data$hopital,
+                                             dat$data$created_at, 
+                                             dat$data$created_by, 
+                                             dat$data$modified_at, 
+                                             dat$data$modified_by, 
+                                             aStatement = statement)
                      
                      dbExecute(conn, thisQuery)
                      
