@@ -40,6 +40,15 @@ deliverUID <- function(aValueOnHold) {
   thisUID
 }
 
+deliverHopital <- function(aHospital, anOtherHospital) {
+  
+  if(aHospital == "Autre...") {
+    return(anOtherHospital)
+  }
+  
+  aHospital
+}
+
 deliverCreator <- function(aValueOnHold, aUsername) {
   
   thisCreator <- aUsername

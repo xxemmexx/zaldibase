@@ -140,6 +140,23 @@ dossiersEditModuleServer <- function(id,
                        }
                      })
                      
+                     observeEvent(input$hopital, {
+                       if (input$hopital == 'Autre...' ) {
+                         
+                         observeEvent(input$hopital_autre, {
+                           
+                           if(input$hopital_autre == "") {
+                             shinyFeedback::showFeedbackDanger("hopital_autre",
+                                                               text = "Hôpital/clinque est obligatoire!")
+                             shinyjs::disable('submit')
+                           } else {
+                             shinyFeedback::hideFeedback("hopital_autre")
+                             shinyjs::enable('submit')
+                           }
+                         }) # Close description observer
+                       } # Close if statement pathologie == 'Autre'
+                     }) # Close pathologie observer
+                     
                      observeEvent(input$contact_phone, {
                        if (input$contact_phone == "") {
                          shinyFeedback::showFeedbackDanger("contact_phone",
@@ -207,6 +224,17 @@ dossiersEditModuleServer <- function(id,
                      })
                      
                      observeEvent(input$pathologie, {
+                       if (input$pathologie == " ") {
+                         shinyFeedback::showFeedbackDanger("pathologie",
+                                                           text = "La pathologie est obligatoire!")
+                         shinyjs::disable('submit')
+                       } else {
+                         shinyFeedback::hideFeedback("pathologie")
+                         shinyjs::enable('submit')
+                       }
+                     })
+                     
+                     observeEvent(input$pathologie, {
                        if (input$pathologie == 'Autre...' ) {
                          
                          observeEvent(input$description, {
@@ -248,7 +276,7 @@ dossiersEditModuleServer <- function(id,
                                            "contact_person" = input$contact,
                                            "contact_phone" = input$contact_phone,
                                            "contact_email" = input$contact_email,
-                                           "hopital" = input$hopital,
+                                           "hopital" = deliverHopital(input$hopital, input$hopital_autre),
                                            "created_at" = deliverCreationTime(hold, time_now),
                                            "created_by" = deliverCreator(hold, session$userData$username()),
                                            "modified_at" = time_now,
