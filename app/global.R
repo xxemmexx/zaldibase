@@ -36,29 +36,48 @@ conn <- DBI::dbConnect(RPostgres::Postgres(),
                        password = dbInfo[[1]][[5]])
 
 
-decisions <- c(" ", "Opérés",
-               "A opérer",
-               "Examen complementaire",
-               "Surveillance",
-               "Traitement Conservateur",
-               "Contrôle à la consultation des internes",
-               "Contrôle à la consultation du chef",
+decisions <- c(" ", "A opérer",
+               "Abstention",
                "Avis à autre discipline",
-               "Autre",
-               "Rien / Abstention")
+               "Contrôle à la consultation du chef",
+               "Contrôle à la consultation des internes",
+               "Examen complémentaire",
+               "Opérés",
+               "Surveillance",
+               "Traitement conservateur",
+               "Autre"
+               )
 
-pathologies <- c(" ", "HSDC",               
-                 "Trauma Cranien",
-                 "Trauma Spinal",
-                 "Degeneratif Spinal",
-                 "Tumeur Cranienne",
-                 "Tumeur Spinale",
-                 "Vasculaire",
-                 "Complications - Infections",
+pathologies <- c(" ", "Complications - Infections",
+                 "Dégénératif spinal",
+                 "HSDC", 
                  "Infections primaires",
-                 "Troubles Hydrauliques",
-                 "Pediatrie",
+                 "Pédiatrie",
+                 "Trauma crânien",
+                 "Trauma spinal",
+                 "Troubles hydrauliques",
+                 "Tumeur crânienne",
+                 "Tumeur spinale",
+                 "Vasculaire",
                  "Autre...")
+
+hopitaux <- c(" ", "Aix-les-Bains", 
+              "Albertville",
+              "Annecy",
+              "Bourg-Saint-Maurice",
+              "Briançon",
+              "CHU - Autres",
+              "CHU - Urgences",
+              "Chambéry",
+              "Clinique Belledonne",
+              "Clinique des Cèdres",
+              "Clinique Mutualiste",
+              "Médecin généraliste",
+              "Romans-sur-Isère",
+              "Saint-Jean-de-Maurienne",
+              "SSR",
+              "Voiron",
+              "Autre...")
 
 # Stop database connection when application stops
 shiny::onStop(function() {

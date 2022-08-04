@@ -93,7 +93,7 @@ function(input, output, session) {
     
     # Select relevant columns for the user
     out <- out %>%
-      select(nom, prenom, date_naissance, pathologie, pre_decision, def_decision)
+      select(nom, prenom, date_naissance, pathologie, pre_decision)
     
     # Set the Action Buttons row to the first column of the `dossiers` table
     out <- cbind(tibble(" " = actions),
@@ -123,7 +123,7 @@ function(input, output, session) {
     out %>%
       datatable(rownames = FALSE,
                 colnames = c('Nom', 'Prénom', 'Date de naissance', 
-                             'Pathologie', 'Décision préliminaire', 'Décision finale'),
+                             'Pathologie', 'Décision préliminaire'),
                 selection = "single",
                 class = "compact stripe row-border nowrap",
                 escape = -1,  # Escape the HTML in all except 1st column (which has the buttons)

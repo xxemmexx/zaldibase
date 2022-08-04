@@ -34,21 +34,30 @@ dossiersEditModuleServer <- function(id,
                        modalDialog(
                          div(style = "padding: 30px;",
                              fluidRow(HTML("<h5><em>Données du centre hospitalier d'origine</em></h4>"),
-                                      column(width = 6
-                                             # selectInput(ns("hopital"),
-                                             #             "Centre Hospitalier d'origine",
-                                             #             choices = c("CHU", "CHAM"),
-                                             #             selected = ifelse(is.null(hold), "", hold$hopital))
+                                      column(width = 6,
+                                             textInput(ns('contact'),
+                                                       "Personne de contact",
+                                                       value = ifelse(is.null(hold), "", hold$contact)),
+                                             selectInput(ns("hopital"),
+                                                         "Centre Hospitalier d'origine",
+                                                         choices = hopitaux,
+                                                         selected = ifelse(is.null(hold), "", hold$hopital)),
+                                             conditionalPanel("input.hopital == 'Autre...'",
+                                                              textInput(ns('hopital_autre'),
+                                                                        'Hôpital/Clinique',
+                                                                        placeholder = "Ecrivez le nom de l'hôpital..."),
+                                                              ns = ns)
                                       ),
-                                      column(width = 6
-                                             # selectInput(
-                                             #   ns('contact'),
-                                             #   "Personne de contact",
-                                             #   choices = c('Cassandra Gotsi', 'Albert Malfait'),
-                                             #   selected = ifelse(is.null(hold), "", hold$contact))
+                                      column(width = 6,
+                                             textInput(ns('contact_phone'),
+                                                       "Numéro de téléphone du contact",
+                                                       value = ifelse(is.null(hold), "", hold$contact_phone)),
+                                             textInput(ns('contact_email'),
+                                                       "Email",
+                                                       value = ifelse(is.null(hold), "", hold$contact_email)))
                                       ),
-                                      HTML("<h5><em>Données du patient</em></h5>"),
-                                      fluidRow(column(width = 6,
+                                      fluidRow(HTML("<h5><em>Données du patient</em></h5>"),
+                                               fluidRow(column(width = 6,
                                                       textInput(ns("nom"),
                                                                 'Nom',
                                                                 value = ifelse(is.null(hold), "", hold$nom)),
@@ -61,7 +70,7 @@ dossiersEditModuleServer <- function(id,
                                                                 'Prénom',
                                                                 value = ifelse(is.null(hold), "", hold$prenom)),
                                                       textInput(ns("phone_number_patient"),
-                                                                'Numéro de téléphone',
+                                                                'Numéro de téléphone du patient',
                                                                 value = ifelse(is.null(hold), "", hold$phone_number_patient)))
                                                ), # Close fluidRow
                                       fluidRow(column(width = 12,
@@ -121,12 +130,34 @@ dossiersEditModuleServer <- function(id,
                      })
                      
                      observeEvent(input$hopital, {
-                       if (input$hopital == "") {
+                       if (input$hopital == " ") {
                          shinyFeedback::showFeedbackDanger("hopital",
                                                            text = "L'hôpital d'origine est obligatoire!")
                          shinyjs::disable('submit')
                        } else {
                          shinyFeedback::hideFeedback("hopital")
+                         shinyjs::enable('submit')
+                       }
+                     })
+                     
+                     observeEvent(input$contact_phone, {
+                       if (input$contact_phone == "") {
+                         shinyFeedback::showFeedbackDanger("contact_phone",
+                                                           text = "Le numéro de téléphone du contact est obligatoire!")
+                         shinyjs::disable('submit')
+                       } else {
+                         shinyFeedback::hideFeedback("contact_phone")
+                         shinyjs::enable('submit')
+                       }
+                     })
+                     
+                     observeEvent(input$contact_email, {
+                       if (input$contact_email == "") {
+                         shinyFeedback::showFeedbackDanger("contact_email",
+                                                           text = "L'email de la personne de contact est obligatoire!")
+                         shinyjs::disable('submit')
+                       } else {
+                         shinyFeedback::hideFeedback("contact_email")
                          shinyjs::enable('submit')
                        }
                      })
