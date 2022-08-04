@@ -13,16 +13,19 @@ require(stringr)
 require(dplyr)
 require(dbplyr)
 require(bslib)
-require(cyphr)
 #require(twilio)
 
 user_base <- readRDS("data/user_base_encryp.rds")
-
 db_config <- readRDS("data/config_encryp.rds")
+my_key <- readRDS("data/key.rds")
 
-my_key <- readRDS("data/key")
+config_df <- db_config %>%
+  data_decrypt(my_key) %>%
+  unserialize() 
+  
+dbInfo <- config_df[['secret']] %>%
+  str_split(":")
 
-dbInfo <- str_split(cyphr::decrypt_string(db_config, my_key), ":")
 
 conn <- DBI::dbConnect(RPostgres::Postgres(), 
                        dbname = dbInfo[[1]][[1]], 
