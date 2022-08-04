@@ -1,7 +1,5 @@
 function(input, output, session) {
 
-
-  
   # Everything related to shinyauthr ------------------------------------------
   credentials <- shinyauthr::loginServer(id = "login",
                                          data = user_base,
@@ -130,15 +128,16 @@ function(input, output, session) {
                 class = "compact stripe row-border nowrap",
                 escape = -1,  # Escape the HTML in all except 1st column (which has the buttons)
                 options = list(scrollX = TRUE,
-                               dom = 't',
+                               dom = 'tp',
                                columnDefs = list(list(targets = 0, orderable = FALSE)),
+                               pageLength = 10,
+                               language = list(emptyTable = "Vous n'avez pas de dossiers actifs",
+                                               paginate = list(`next` = 'Suivant',
+                                                               previous = 'Précédant')),
                                drawCallback = JS("function(settings) {
                                               // removes any lingering tooltips
                                               $('.tooltip').remove()}"))
-      ) #%>%
-    # formatDate(
-    #   columns = c("created_at", "modified_at"),
-    #   method = 'toLocaleString')
+      ) 
     
   })
   

@@ -13,6 +13,7 @@ require(stringr)
 require(dplyr)
 require(dbplyr)
 require(bslib)
+require(sodium)
 #require(twilio)
 
 user_base <- readRDS("data/user_base_encryp.rds")
