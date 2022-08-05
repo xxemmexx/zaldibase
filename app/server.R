@@ -93,7 +93,7 @@ function(input, output, session) {
     
     # Select relevant columns for the user
     out <- out %>%
-      select(nom, prenom, date_naissance, pathologie, pre_decision)
+      select(nom, prenom, date_naissance, pathologie_1, pre_decision)
     
     # Set the Action Buttons row to the first column of the `dossiers` table
     out <- cbind(tibble(" " = actions),
@@ -173,13 +173,13 @@ function(input, output, session) {
     patientRow
   })
   
-  output$select_patient_banner <- eventReactive(input$dossiers_table_rows_selected, {
-    if(is.null(input$dossiers_table_rows_selected)) {
-      paste0('Banner')
-    } else {
-      paste0('No Banner')
-    }
-  })
+  # output$select_patient_banner <- eventReactive(input$dossiers_table_rows_selected, {
+  #   if(is.null(input$dossiers_table_rows_selected)) {
+  #     paste0('Banner')
+  #   } else {
+  #     paste0('No Banner')
+  #   }
+  # })
   
   output$patient_display_name <- renderText({
     

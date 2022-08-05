@@ -74,11 +74,11 @@ dossiersEditModuleServer <- function(id,
                                                                 value = ifelse(is.null(hold), "", hold$phone_number_patient)))
                                                ), # Close fluidRow
                                       fluidRow(column(width = 12,
-                                                      selectInput(ns('pathologie'),
+                                                      selectInput(ns('pathologie_1'),
                                                                   'Pathologie',
                                                                   choices = pathologies,
-                                                                  selected = ifelse(is.null(hold), "", hold$pathologie)),
-                                                      conditionalPanel("input.pathologie == 'Autre...'",
+                                                                  selected = ifelse(is.null(hold), "", hold$pathologie_1)),
+                                                      conditionalPanel("input.pathologie_1 == 'Autre...'",
                                                                        textAreaInput(ns('description'),
                                                                                      'Description',
                                                                                      placeholder = "Decrivez..."),
@@ -223,19 +223,19 @@ dossiersEditModuleServer <- function(id,
                        }
                      })
                      
-                     observeEvent(input$pathologie, {
-                       if (input$pathologie == " ") {
-                         shinyFeedback::showFeedbackDanger("pathologie",
+                     observeEvent(input$pathologie_1, {
+                       if (input$pathologie_1 == " ") {
+                         shinyFeedback::showFeedbackDanger("pathologie_1",
                                                            text = "La pathologie est obligatoire!")
                          shinyjs::disable('submit')
                        } else {
-                         shinyFeedback::hideFeedback("pathologie")
+                         shinyFeedback::hideFeedback("pathologie_1")
                          shinyjs::enable('submit')
                        }
                      })
                      
-                     observeEvent(input$pathologie, {
-                       if (input$pathologie == 'Autre...' ) {
+                     observeEvent(input$pathologie_1, {
+                       if (input$pathologie_1 == 'Autre...' ) {
                          
                          observeEvent(input$description, {
                            
@@ -271,7 +271,7 @@ dossiersEditModuleServer <- function(id,
                                            "prenom" = input$prenom,
                                            "date_naissance" = writeISODate(input$date_naissance),
                                            "phone_number_patient" = input$phone_number_patient,
-                                           "pathologie" = input$pathologie,
+                                           "pathologie_1" = input$pathologie_1,
                                            "pre_decision" = input$pre_decision,
                                            "contact_person" = input$contact,
                                            "contact_phone" = input$contact_phone,
@@ -328,7 +328,7 @@ dossiersEditModuleServer <- function(id,
                                              dat$data$prenom,
                                              dat$data$date_naissance, 
                                              dat$data$phone_number_patient,
-                                             dat$data$pathologie,
+                                             dat$data$pathologie_1,
                                              dat$data$pre_decision, 
                                              dat$data$contact,
                                              dat$data$contact_phone,
