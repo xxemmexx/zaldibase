@@ -142,7 +142,7 @@ function(input, output, session) {
   })
   
   
-  
+  # Fetch data based on row -------- ------------------------------------------
   
   patient_data <- eventReactive(input$dossiers_table_rows_selected, {
     
@@ -173,13 +173,8 @@ function(input, output, session) {
     patientRow
   })
   
-  # output$select_patient_banner <- eventReactive(input$dossiers_table_rows_selected, {
-  #   if(is.null(input$dossiers_table_rows_selected)) {
-  #     paste0('Banner')
-  #   } else {
-  #     paste0('No Banner')
-  #   }
-  # })
+  
+  # Patient data -------------------------------------------------------------
   
   output$patient_display_name <- renderText({
     
@@ -189,28 +184,33 @@ function(input, output, session) {
   
   output$patient_age <-renderText({
     
-    if(patient_data()$date_naissance == '') {
-      return("Sélectionnez un dossier")
-    }
-    
     paste0("âgé(e) de ", deliverAge(patient_data()$date_naissance), " ans")
     
   })
   
-  # output$patient_prenom <- patient_data()$prenom
-  # output$patient_age <- patient_data()$date_naissance
-  
-  output$target_uid_2 <- renderText({
+  output$pathologies <-renderUI({
+    req(patient_data()$pathologie_1)
     
-    dossiers()[input$dossiers_table_rows_selected,][[1]]
+    x <- buildUnorderedList(list(patient_data()$pathologie_1,
+                                 patient_data()$pathologie_2,
+                                 patient_data()$pathologie_3),
+                            "Pathologie(s)")
+    
+    
+    HTML(x)
     
   })
-
-  # observeEvent(is.null(credentials()$user_auth), {
-  # 
-  #   toggle("add_dossier")
-  # 
-  # })
+  
+  output$description_histoire <-renderUI({
+    req(patient_data()$description)
+    
+    x <- buildParagraph(patient_data()$description, "Histoire")
+    
+    HTML(x)
+    
+  })
+  
+  # Edit/Delete modules---------------------------------------------------------
   
   dossiers_table_proxy <- DT::dataTableProxy('dossiers_table')
   

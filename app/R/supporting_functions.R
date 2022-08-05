@@ -22,6 +22,27 @@ deliverAge <- function(aDateNaissance) {
   interval(ymd(aDateNaissance), today()) %/% years(1)
 }
 
+buildUnorderedList <- function(aList, aTitle) {
+  
+  n <- length(aList)
+  
+  items <- paste0('<li>', aList[[1]], '</li>')
+  
+  for(i in 2:n) {
+    if(!(aList[[i]] == '')) {
+      items <- paste0(items, '<li>', aList[[i]], '</li>')
+    }
+  }
+  
+  paste0('<h5 style = "padding-right: 150px;"><b>', aTitle,'</b></h5><br>', '<ul>', items, '</ul>')
+}
+
+buildParagraph <- function(aParagraph, aTitle) {
+  
+  paste0('<h5 style = "padding-right: 150px;"><b>', aTitle,'</b><br><br>', aParagraph, '</h5>')
+}
+
+
 placePatientUID <- function(aUID) {
   
   if(is.null(aUID)) {

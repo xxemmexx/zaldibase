@@ -53,9 +53,14 @@ tagList(
                                   fluidRow(column(width = 1),
                                            column(width = 10,
                                                   wellPanel(
-                                                    h5(textOutput('select_patient_banner')),
                                                     h3(textOutput('patient_display_name')),
-                                                    h4(textOutput('patient_age')))),
+                                                    h4(textOutput('patient_age')),
+                                                    tags$br(),
+                                                    tags$br(),
+                                                    uiOutput('pathologies'),
+                                                    tags$br(),
+                                                    uiOutput('description_histoire')
+                                                    )),
                                            column(width = 1)
                                            ) # Close fluid row
                                   ),
