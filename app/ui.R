@@ -43,17 +43,21 @@ tagList(
                                   ), # Close fluid row
                                   fluidRow(column(width = 12,
                                                   title = "Mes dossiers",
-                                                  DTOutput('dossiers_table') %>% withSpinner(),
-                                                  textOutput('target_uid'))
+                                                  DTOutput('dossiers_table') %>% withSpinner())
                                   ), # Close fluid row
                                   tags$script(src = "dossiers_table_module.js"),
                                   tags$script(paste0("dossiers_table_module_js('')"))),
                          tabPanel("Fiche patient", icon = icon("eye"), value = "fiche",
-                                  fluidRow(column(width = 12,
-                                                  title = "Mon choix",
-                                                  HTML('<h2> Try outputting the UID </h2>'),
-                                                  textOutput('target_uid_2')
-                                                  ))
+                                  tags$br(),
+                                  tags$br(),
+                                  fluidRow(column(width = 1),
+                                           column(width = 10,
+                                                  wellPanel(
+                                                    h5(textOutput('select_patient_banner')),
+                                                    h3(textOutput('patient_display_name')),
+                                                    h4(textOutput('patient_age')))),
+                                           column(width = 1)
+                                           ) # Close fluid row
                                   ),
                          tabPanel("Archive", icon = icon("box-open"), value = "archive",
                                   HTML('<h2> Some beautiful archive content</h2>')),

@@ -142,11 +142,63 @@ function(input, output, session) {
   })
   
   
-  output$target_uid <- renderText({
+  
+  
+  patient_data <- eventReactive(input$dossiers_table_rows_selected, {
     
-    dossiers()[input$dossiers_table_rows_selected,][[1]]
+    patientUID <- dossiers()[input$dossiers_table_rows_selected,][[1]]
+    
+    patientRow <- NULL
+    tryCatch({
+      patientRow <- conn %>%
+        tbl('patients') %>%
+        collect() %>%
+        mutate(created_at = as.POSIXct(created_at, tz = "UTC"),
+               modified_at = as.POSIXct(modified_at, tz = "UTC")) %>%
+        arrange(desc(modified_at)) %>%
+        filter(uid == patientUID)
+      
+    }, 
+    error = function(err) {
+      msg <- "Could not find that particular patient!"
+      # print `msg` so that we can find it in the logs
+      print(msg)
+      # print the actual error to log it
+      print(error)
+      # show error `msg` to user.  User can then tell us about error and we can
+      # quickly identify where it cam from based on the value in `msg`
+      showToast("error", msg)
+    })
+    
+    patientRow
+  })
+  
+  output$select_patient_banner <- eventReactive(input$dossiers_table_rows_selected, {
+    if(is.null(input$dossiers_table_rows_selected)) {
+      paste0('Banner')
+    } else {
+      paste0('No Banner')
+    }
+  })
+  
+  output$patient_display_name <- renderText({
+    
+    paste0(patient_data()$prenom, ' ', str_to_upper(patient_data()$nom, locale = 'fr'))
     
   })
+  
+  output$patient_age <-renderText({
+    
+    if(patient_data()$date_naissance == '') {
+      return("Sélectionnez un dossier")
+    }
+    
+    paste0("âgé(e) de ", deliverAge(patient_data()$date_naissance), " ans")
+    
+  })
+  
+  # output$patient_prenom <- patient_data()$prenom
+  # output$patient_age <- patient_data()$date_naissance
   
   output$target_uid_2 <- renderText({
     

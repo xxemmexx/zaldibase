@@ -18,6 +18,10 @@ printButtonLabel <- function(aModalTitle) {
           "C'est bon!")
 }
 
+deliverAge <- function(aDateNaissance) {
+  interval(ymd(aDateNaissance), today()) %/% years(1)
+}
+
 placePatientUID <- function(aUID) {
   
   if(is.null(aUID)) {
