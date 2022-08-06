@@ -210,6 +210,14 @@ function(input, output, session) {
     
   })
   
+  output$decisions <-renderUI({
+    
+    x <- buildDecisionBanner(patient_data()$pre_decision, patient_data()$def_decision)
+    
+    HTML(x)
+    
+  })
+  
   # Edit/Delete modules---------------------------------------------------------
   
   dossiers_table_proxy <- DT::dataTableProxy('dossiers_table')

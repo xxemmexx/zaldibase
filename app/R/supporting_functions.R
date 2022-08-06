@@ -22,6 +22,15 @@ deliverAge <- function(aDateNaissance) {
   interval(ymd(aDateNaissance), today()) %/% years(1)
 }
 
+buildDecisionBanner <- function(aPreDecision, aDefDecision) {
+  if(aDefDecision == '' | is.null(aDefDecision)) {
+    paste0('<div class="pull-right"><b>Décision préliminaire: ', aPreDecision, '</b></div>')
+  } else {
+    paste0('<div class="pull-right", style="color:#A9A9A9;"><b>Décision préliminaire: ', aPreDecision, '</b></div><br>',
+           '<div class="pull-right""><b>Décision définitive: ', aDefDecision, '</b></div>')
+  }
+}
+
 buildUnorderedList <- function(aList, aTitle) {
   
   n <- length(aList)
