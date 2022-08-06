@@ -65,13 +65,13 @@ deliverUID <- function(aValueOnHold) {
   thisUID
 }
 
-deliverHopital <- function(aHospital, anOtherHospital) {
+deliverStandardOrCustom <- function(aStandard, anOtherValue) {
   
-  if(aHospital == "Autre...") {
-    return(anOtherHospital)
+  if(aStandard == "Autre...") {
+    return(anOtherValue)
   }
   
-  aHospital
+  aStandard
 }
 
 deliverCreator <- function(aValueOnHold, aUsername) {
