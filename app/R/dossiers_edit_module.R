@@ -79,7 +79,7 @@ dossiersEditModuleServer <- function(id,
                                                                   choices = pathologies,
                                                                   selected = ifelse(is.null(hold), "", hold$pathologie_1)),
                                                       conditionalPanel("input.pathologie_1 == 'Autre...'",
-                                                                       textAreaInput(ns('description'),
+                                                                       textAreaInput(ns('description_pathologie_1'),
                                                                                      'Description',
                                                                                      placeholder = "Decrivez..."),
                                                                        ns = ns))
@@ -153,9 +153,9 @@ dossiersEditModuleServer <- function(id,
                              shinyFeedback::hideFeedback("hopital_autre")
                              shinyjs::enable('submit')
                            }
-                         }) # Close description observer
-                       } # Close if statement pathologie == 'Autre'
-                     }) # Close pathologie observer
+                       }) # Close hopital_autre  observer
+                       } # Close if statement hopital == 'Autre'
+                     }) # Close hopital observer
                      
                      observeEvent(input$contact_phone, {
                        if (input$contact_phone == "") {
@@ -237,14 +237,14 @@ dossiersEditModuleServer <- function(id,
                      observeEvent(input$pathologie_1, {
                        if (input$pathologie_1 == 'Autre...' ) {
                          
-                         observeEvent(input$description, {
+                         observeEvent(input$description_pathologie_1, {
                            
-                           if(input$description == "") {
-                             shinyFeedback::showFeedbackDanger("description",
+                           if(input$description_pathologie_1 == "") {
+                             shinyFeedback::showFeedbackDanger("description_pathologie_1",
                                                                text = "Une description est obligatoire!")
                              shinyjs::disable('submit')
                            } else {
-                             shinyFeedback::hideFeedback("description")
+                             shinyFeedback::hideFeedback("description_pathologie_1")
                              shinyjs::enable('submit')
                            }
                          }) # Close description observer
@@ -271,7 +271,7 @@ dossiersEditModuleServer <- function(id,
                                            "prenom" = input$prenom,
                                            "date_naissance" = writeISODate(input$date_naissance),
                                            "phone_number_patient" = input$phone_number_patient,
-                                           "pathologie_1" = input$pathologie_1,
+                                           "pathologie_1" = deliverStandardOrCustom(input$pathologie_1, input$description_pathologie_1)
                                            "pre_decision" = input$pre_decision,
                                            "contact_person" = input$contact,
                                            "contact_phone" = input$contact_phone,

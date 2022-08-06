@@ -202,9 +202,9 @@ function(input, output, session) {
   })
   
   output$description_histoire <-renderUI({
-    req(patient_data()$description)
+    req(patient_data()$description_histoire)
     
-    x <- buildParagraph(patient_data()$description, "Histoire")
+    x <- buildParagraph(patient_data()$description_histoire, "Histoire")
     
     HTML(x)
     
