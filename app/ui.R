@@ -13,19 +13,6 @@ tagList(
     tabPanel(
       "Home",
       
-      # add logout button UI
-      div(class = "pull-right", shinyauthr::logoutUI(id = "logout")),
-      # add login panel UI function
-      shinyauthr::loginUI(
-        id = "login",
-        title = "Bienvenue!",
-        user_title = "Identifiant",
-        pass_title = "Mot de passe",
-        login_title = "Se connecter",
-        error_message = "Identifiant ou mot de passe invalides!"
-      ),
-      
-      
       conditionalPanel(condition = "output.role == 'admin'",
                        tabsetPanel(
                          tabPanel("Mes dossiers", icon = icon("list-ul"), value = "dossiers",
@@ -60,16 +47,31 @@ tagList(
                                                     uiOutput('pathologies'),
                                                     tags$br(),
                                                     uiOutput('description_histoire')
-                                                    )),
+                                                  )),
                                            column(width = 1)
-                                           ) # Close fluid row
-                                  ),
+                                  ) # Close fluid row
+                         ),
                          tabPanel("Archive", icon = icon("box-open"), value = "archive",
                                   HTML('<h2> Some beautiful archive content</h2>')),
                          tabPanel("Garde", icon = icon("user-nurse"), value = "garde",
                                   HTML('<h2> Some beautiful content and all power </h2>'))
-                         ) # Close tabset panel
-                       ) # Close conditional panel admin
+                       ) # Close tabset panel
+      ), # Close conditional panel admin
+      
+      # add logout button UI
+      div(class = "pull-right", shinyauthr::logoutUI(id = "logout")),
+      # add login panel UI function
+      shinyauthr::loginUI(
+        id = "login",
+        title = "Bienvenue!",
+        user_title = "Identifiant",
+        pass_title = "Mot de passe",
+        login_title = "Se connecter",
+        error_message = "Identifiant ou mot de passe invalides!"
+      )
+      
+      
+      
       
       
       

@@ -271,7 +271,7 @@ dossiersEditModuleServer <- function(id,
                                            "prenom" = input$prenom,
                                            "date_naissance" = writeISODate(input$date_naissance),
                                            "phone_number_patient" = input$phone_number_patient,
-                                           "pathologie_1" = deliverStandardOrCustom(input$pathologie_1, input$description_pathologie_1)
+                                           "pathologie_1" = deliverStandardOrCustom(input$pathologie_1, input$description_pathologie_1),
                                            "pre_decision" = input$pre_decision,
                                            "contact_person" = input$contact,
                                            "contact_phone" = input$contact_phone,
