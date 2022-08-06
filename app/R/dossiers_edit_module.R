@@ -33,11 +33,11 @@ dossiersEditModuleServer <- function(id,
                      showModal(
                        modalDialog(
                          div(style = "padding: 30px;",
-                             fluidRow(HTML("<h5><em>Données du centre hospitalier d'origine</em></h4>"),
+                             fluidRow(HTML("<h4>Données du centre hospitalier d'origine</h4>"),
                                       column(width = 6,
-                                             textInput(ns('contact'),
+                                             textInput(ns('contact_person'),
                                                        "Personne de contact",
-                                                       value = ifelse(is.null(hold), "", hold$contact)),
+                                                       value = ifelse(is.null(hold), "", hold$contact_person)),
                                              selectInput(ns("hopital"),
                                                          "Centre Hospitalier d'origine",
                                                          choices = hopitaux,
@@ -56,7 +56,7 @@ dossiersEditModuleServer <- function(id,
                                                        "Email",
                                                        value = ifelse(is.null(hold), "", hold$contact_email)))
                                       ),
-                                      fluidRow(HTML("<h5><em>Données du patient</em></h5>"),
+                                      fluidRow(HTML("<h4>Données du patient</em></h4>"),
                                                fluidRow(column(width = 6,
                                                       textInput(ns("nom"),
                                                                 'Nom',
@@ -88,6 +88,7 @@ dossiersEditModuleServer <- function(id,
                                                       textAreaInput(ns('histoire'),
                                                                     'Histoire',
                                                                     placeholder = "Décrivez...",
+                                                                    value = ifelse(is.null(hold), "", hold$description_histoire),
                                                                     width = '740'))
                                                ), # Close fluidRow
                                       fluidRow(column(width = 12,
@@ -118,13 +119,13 @@ dossiersEditModuleServer <- function(id,
                      #------------FIELD VALIDATION - FEEDBACK-------------------
                      
                      
-                     observeEvent(input$contact, {
-                       if (input$contact == "") {
-                         shinyFeedback::showFeedbackDanger("contact",
+                     observeEvent(input$contact_person, {
+                       if (input$contact_person == "") {
+                         shinyFeedback::showFeedbackDanger("contact_person",
                                                            text = "La personne de contact est obligatoire!")
                          shinyjs::disable('submit')
                        } else {
-                         shinyFeedback::hideFeedback("contact")
+                         shinyFeedback::hideFeedback("contact_person")
                          shinyjs::enable('submit')
                        }
                      })
@@ -273,7 +274,7 @@ dossiersEditModuleServer <- function(id,
                                            "phone_number_patient" = input$phone_number_patient,
                                            "pathologie_1" = deliverStandardOrCustom(input$pathologie_1, input$description_pathologie_1),
                                            "pre_decision" = input$pre_decision,
-                                           "contact_person" = input$contact,
+                                           "contact_person" = input$contact_person,
                                            "contact_phone" = input$contact_phone,
                                            "contact_email" = input$contact_email,
                                            "hopital" = deliverStandardOrCustom(input$hopital, input$hopital_autre),
@@ -330,7 +331,7 @@ dossiersEditModuleServer <- function(id,
                                              dat$data$phone_number_patient,
                                              dat$data$pathologie_1,
                                              dat$data$pre_decision, 
-                                             dat$data$contact,
+                                             dat$data$contact_person,
                                              dat$data$contact_phone,
                                              dat$data$contact_email,
                                              dat$data$hopital,

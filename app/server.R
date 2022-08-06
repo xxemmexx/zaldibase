@@ -44,7 +44,7 @@ function(input, output, session) {
   session$userData$dossiers_trigger <- reactiveVal(0)
   
   
-  # Read in "patients" table from the database
+  # Read in Mes Dossiers table from the database
   dossiers <- reactive({
     req(credentials()$user_auth)
     
@@ -58,7 +58,8 @@ function(input, output, session) {
         mutate(created_at = as.POSIXct(created_at, tz = "UTC"),
                modified_at = as.POSIXct(modified_at, tz = "UTC")) %>%
         arrange(desc(modified_at)) %>%
-        filter(modified_by == credentials()$info[['user']])
+        filter(modified_by == credentials()$info[['user']],
+               has_definitive_decision == 0)
       
     }, 
     error = function(err) {
@@ -217,6 +218,8 @@ function(input, output, session) {
     HTML(x)
     
   })
+  
+  
   
   # Edit/Delete modules---------------------------------------------------------
   
