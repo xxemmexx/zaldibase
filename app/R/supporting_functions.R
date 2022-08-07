@@ -23,7 +23,7 @@ deliverAge <- function(aDateNaissance) {
 }
 
 buildDecisionBanner <- function(aPreDecision, aDefDecision) {
-  if(aDefDecision == '' | is.null(aDefDecision)) {
+  if(aDefDecision == '') {
     paste0('<div class="pull-right"><b>Décision préliminaire: ', aPreDecision, '</b></div>')
   } else {
     paste0('<div class="pull-right", style="color:#A9A9A9;"><b>Décision préliminaire: ', aPreDecision, '</b></div><br>',
@@ -74,13 +74,19 @@ deliverUID <- function(aValueOnHold) {
   thisUID
 }
 
-deliverStandardOrCustom <- function(aStandard, anOtherValue) {
+deliverStandardOrCustom <- function(aStandard, anOtherValue, include = TRUE) {
   
-  if(aStandard == "Autre...") {
-    return(anOtherValue)
+  if(include) {
+    
+    if(aStandard == "Autre...") {
+      return(anOtherValue)
+    }
+    
+    aStandard
+    
+  } else {
+    return('')
   }
-  
-  aStandard
 }
 
 deliverCreator <- function(aValueOnHold, aUsername) {
@@ -152,7 +158,9 @@ writeQuery <- function(aUID,
                        aPrenom, 
                        aDateNaissance, 
                        aPhoneNumber,
-                       aPathologie,
+                       aPathologie1,
+                       aPathologie2,
+                       aPathologie3,
                        aPreDecision, 
                        aContactPerson,
                        aContactPhone,
@@ -167,12 +175,14 @@ writeQuery <- function(aUID,
   thisQuery = switch(aStatement,
                      
                      "insert" = paste0("INSERT INTO patients (uid, nom, prenom, 
-                     date_naissance, phone_number_patient, pathologie_1, pre_decision, 
+                     date_naissance, phone_number_patient, pathologie_1, 
+                     pathologie_2, pathologie_3, pre_decision, def_decision, 
                      contact_person, contact_phone, contact_email, hopital, 
                      has_definitive_decision, is_reported, created_at,
                      created_by, modified_at, modified_by) VALUES ('",
                      aUID, "', '", aNom, "', '", aPrenom, "', '", aDateNaissance, "', '",
-                     aPhoneNumber, "', '", aPathologie, "', '", aPreDecision, "', '",
+                     aPhoneNumber, "', '", aPathologie1, "', '", aPathologie2, "', '",
+                     aPathologie3, "', '", aPreDecision, "', '', '",
                      aContactPerson, "', '", aContactPhone, "', '", aContactEmail, "', '",
                      aHospital, "', 0, 0, '",
                      aCreatedAt, "', '", aCreatedBy, "', '", 
@@ -182,7 +192,9 @@ writeQuery <- function(aUID,
                                        "', prenom='", aPrenom, 
                                        "', date_naissance='", aDateNaissance,
                                        "', phone_number_patient='", aPhoneNumber,
-                                       "', pathologie_1='", aPathologie, 
+                                       "', pathologie_1='", aPathologie1, 
+                                       "', pathologie_2='", aPathologie2, 
+                                       "', pathologie_3='", aPathologie3, 
                                        "', pre_decision='", aPreDecision,
                                        "', contact_person='", aContactPerson,
                                        "', contact_phone='", aContactPhone,
