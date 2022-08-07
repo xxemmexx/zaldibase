@@ -186,6 +186,7 @@ writeQuery <- function(aUID,
                        aPathologie1,
                        aPathologie2,
                        aPathologie3,
+                       aHistory,
                        aPreDecision, 
                        aContactPerson,
                        aContactPhone,
@@ -201,13 +202,13 @@ writeQuery <- function(aUID,
                      
                      "insert" = paste0("INSERT INTO patients (uid, nom, prenom, 
                      date_naissance, phone_number_patient, pathologie_1, 
-                     pathologie_2, pathologie_3, pre_decision, def_decision, 
+                     pathologie_2, pathologie_3, description_histoire, pre_decision, def_decision, 
                      contact_person, contact_phone, contact_email, hopital, 
                      has_definitive_decision, is_reported, created_at,
                      created_by, modified_at, modified_by) VALUES ('",
                      aUID, "', '", aNom, "', '", aPrenom, "', '", aDateNaissance, "', '",
                      aPhoneNumber, "', '", aPathologie1, "', '", aPathologie2, "', '",
-                     aPathologie3, "', '", aPreDecision, "', '', '",
+                     aPathologie3, "', '", aHistory, "', '", aPreDecision, "', '', '",
                      aContactPerson, "', '", aContactPhone, "', '", aContactEmail, "', '",
                      aHospital, "', 0, 0, '",
                      aCreatedAt, "', '", aCreatedBy, "', '", 
@@ -220,6 +221,7 @@ writeQuery <- function(aUID,
                                        "', pathologie_1='", aPathologie1, 
                                        "', pathologie_2='", aPathologie2, 
                                        "', pathologie_3='", aPathologie3, 
+                                       "', description_histoire='", aHistory,
                                        "', pre_decision='", aPreDecision,
                                        "', contact_person='", aContactPerson,
                                        "', contact_phone='", aContactPhone,
@@ -233,6 +235,42 @@ writeQuery <- function(aUID,
                      )
   thisQuery
   
+}
+
+transferFile <- function(aPathToFile, aUID, aHostAddress, index, extension, test = FALSE) {
+  
+  if(test) {
+    zaldir <- "zalditest"
+  } else {
+    zaldir <- "zaldibase"
+  }
+  
+  aTimestamp <- Sys.time() %>%
+    str_replace_all(":", "") %>%
+    str_replace_all("-", "") %>%
+    str_replace_all(" ", "")
+  
+  aFileName <- paste0("Fichier_", index, "_", aTimestamp, ".", extension)
+  
+  remoteLocation <- paste0("sftp://",
+                           aHostAddress,
+                           "//home/tospiti/prog/R-projects/zaldibase/imgs/",
+                           zaldir,
+                           "/",
+                           aUID,
+                           "/",
+                           aFileName)
+  
+  RCurl::ftpUpload(what = aPathToFile,
+                   asText = FALSE,
+                   to = remoteLocation,
+                   port =22,
+                   userpwd = "tospiti:%Rpi%ContrasenaSuperSegura!",
+                   connecttimeout = 30,
+                   ssl.verifypeer = FALSE, 
+                   ssl.verifyhost = FALSE,
+                   verbose = TRUE,
+                   ftp.create.missing.dirs = TRUE)
 }
 
 

@@ -114,7 +114,7 @@ dossiersEditModuleServer <- function(id,
                                                       ) # Close column
                                                ), # Close fluidRow
                                       fluidRow(column(width = 12,
-                                                      textAreaInput(ns('histoire'),
+                                                      textAreaInput(ns('description_histoire'),
                                                                     'Histoire',
                                                                     placeholder = "Décrivez...",
                                                                     value = ifelse(is.null(hold), "", hold$description_histoire),
@@ -125,11 +125,15 @@ dossiersEditModuleServer <- function(id,
                                                                   "Décision préliminaire",
                                                                   choices = decisions,
                                                                   selected = ifelse(is.null(hold), "", hold$pre_decision)),
-                                                      conditionalPanel("input.pre_decision !== ' '",
-                                                                       textAreaInput(ns('explanation'),
-                                                                                     'Explication',
-                                                                                     placeholder = "Expliquez cette décision..."),
-                                                                       ns = ns))
+                                                      textAreaInput(ns('explanation'),
+                                                                    'Explication',
+                                                                    placeholder = "Expliquez cette décision..."),
+                                                      fileInput(ns('photos'),
+                                                                "Ajouter des images",
+                                                                multiple = TRUE,
+                                                                accept = 'image/*',
+                                                                buttonLabel = "Parcourir...",
+                                                                placeholder = "Aucun fichier n'a été trouvé"))
                                                ) # Close fluidRow
                                       ) # Close fluidrow
                              ), # Close div
@@ -315,6 +319,7 @@ dossiersEditModuleServer <- function(id,
                                            "pathologie_1" = deliverStandardOrCustom(input$pathologie_1, input$description_pathologie_1),
                                            "pathologie_2" = deliverStandardOrCustom(input$pathologie_2, input$description_pathologie_2, input$add_pathologie_2),
                                            "pathologie_3" = deliverStandardOrCustom(input$pathologie_3, input$description_pathologie_3, input$add_pathologie_3),
+                                           "description_histoire" = input$description_histoire,
                                            "pre_decision" = input$pre_decision,
                                            "contact_person" = input$contact_person,
                                            "contact_phone" = input$contact_phone,
@@ -356,7 +361,7 @@ dossiersEditModuleServer <- function(id,
                      
                      if (is.na(dat$uid)) {
                        
-                       uid <- generateIdentifier(dat$data$prenom, dat$data$nom) #uuid::UUIDgenerate()
+                       uid <- generateIdentifier(dat$data$prenom, dat$data$nom) 
                        statement = "insert"
                        
                        } else {
@@ -366,6 +371,25 @@ dossiersEditModuleServer <- function(id,
                          
                        }
                      
+                     if(!is.null(input$photos)) {
+                       files <- nrow(input$photos)
+                       
+                       if(files>=1) {
+                         for(i in 1:files) {
+                           thisFile <- input$photos[[i, "datapath"]]
+                           ext <- tools::file_ext(thisFile)
+                           
+                           transferFile(thisFile,
+                                        uid,
+                                        dbInfo[[1]][[2]],
+                                        i,
+                                        ext,
+                                        TRUE)
+                         }
+                       }
+                     }
+                     
+                     
                      thisQuery <- writeQuery(uid, 
                                              dat$data$nom, 
                                              dat$data$prenom,
@@ -374,6 +398,7 @@ dossiersEditModuleServer <- function(id,
                                              dat$data$pathologie_1,
                                              dat$data$pathologie_2,
                                              dat$data$pathologie_3,
+                                             dat$data$description_histoire,
                                              dat$data$pre_decision, 
                                              dat$data$contact_person,
                                              dat$data$contact_phone,
