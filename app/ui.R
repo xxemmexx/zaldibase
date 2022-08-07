@@ -52,6 +52,9 @@ tagList(
                                   fluidRow(column(width = 1),
                                            column(width = 10,
                                                   wellPanel(
+                                                    tags$span(actionButton("show_contact_details", 
+                                                                           "Contact"),
+                                                              style = "position:absolute;right:2em;"),
                                                     h3(textOutput('patient_display_name')),
                                                     h4(textOutput('patient_age')),
                                                     uiOutput('decisions'),

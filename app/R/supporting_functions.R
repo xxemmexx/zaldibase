@@ -32,6 +32,30 @@ buildDecisionBanner <- function(aPreDecision, aDefDecision) {
   }
 }
 
+sd <- stamp_date("26/09/2018")
+
+buildContactCard <- function(aPatientPhone, aContactPerson, aContactPhone, 
+                             aContactEmail, aHospital, aCreatedAt, 
+                             aCreatedBy, aUserTibble) {
+  
+  thisDate <- sd(ymd_hms(aCreatedAt))
+  
+  thisUser <- aUserTibble %>%
+    filter(user == aCreatedBy) %>%
+    select(name)
+  
+  paste0('<div>
+        Enregistré(e) le ', thisDate, ' par ', thisUser[[1]], '<br><br>
+         <h4><b>Données de la personne de contact</b></h4><br>
+         <b>Nom: </b> ', aContactPerson, '<br>
+         <b>Centre hospitalier d`origine: </b> ', aHospital, '<br>
+         <b>Numéro de téléphone: </b> ', aContactPhone, '<br>
+         <b>Email: </b>', aContactEmail, '<br><br>
+         <h4><b>Données du patient</b></h4><br>
+         <b>Numéro de téléphone: </b> ', aPatientPhone, '<br>
+         </div>')
+}
+
 buildUnorderedList <- function(aList, aTitle) {
   
   n <- length(aList)

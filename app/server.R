@@ -177,6 +177,7 @@ function(input, output, session) {
   
   # Patient data -------------------------------------------------------------
   
+  
   output$patient_display_name <- renderText({
     
     paste0(patient_data()$prenom, ' ', str_to_upper(patient_data()$nom, locale = 'fr'))
@@ -187,6 +188,22 @@ function(input, output, session) {
     
     paste0("âgé(e) de ", deliverAge(patient_data()$date_naissance), " ans")
     
+  })
+  
+  observeEvent(input$show_contact_details, {
+    showModal(modalDialog(
+      title = paste0(patient_data()$prenom, ' ', str_to_upper(patient_data()$nom, locale = 'fr')),
+      buildContactCard(patient_data()$phone_number_patient,
+                       patient_data()$contact_person, 
+                       patient_data()$contact_phone, 
+                       patient_data()$contact_email,
+                       patient_data()$hopital, 
+                       patient_data()$created_at, 
+                       patient_data()$created_by, 
+                       user_base) %>% HTML(),
+      easyClose = TRUE,
+      footer = modalButton("Fermer")
+    ))
   })
   
   output$pathologies <-renderUI({
