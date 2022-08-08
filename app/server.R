@@ -145,6 +145,14 @@ function(input, output, session) {
   
   # Fetch data based on row -------- ------------------------------------------
   
+  observe({
+    if(is.null(input$dossiers_table_rows_selected)) {
+      shinyjs::hide("show_contact_details")
+    } else {
+      shinyjs::show("show_contact_details")
+    }    
+    })
+  
   patient_data <- eventReactive(input$dossiers_table_rows_selected, {
     
     patientUID <- dossiers()[input$dossiers_table_rows_selected,][[1]]

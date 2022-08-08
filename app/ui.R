@@ -34,7 +34,7 @@ tagList(
                                                   actionButton("add_dossier",
                                                                "Nouveau dossier",
                                                                class = "btn-success",
-                                                               style = "color: #fff;",
+                                                               style = "color: #FFF0F5; background-color: #2E8B57",
                                                                icon = icon('plus'),
                                                                width = '66%'),
                                                   tags$br(),
@@ -53,7 +53,8 @@ tagList(
                                            column(width = 10,
                                                   wellPanel(
                                                     tags$span(actionButton("show_contact_details", 
-                                                                           "Contact"),
+                                                                           "Contact",
+                                                                           style="color: #FFF0F5; background-color: #696969"),
                                                               style = "position:absolute;right:2em;"),
                                                     h3(textOutput('patient_display_name')),
                                                     h4(textOutput('patient_age')),
@@ -79,9 +80,13 @@ tagList(
                                                   tags$br(),
                                                   tags$br(),
                                                   tags$span(actionButton("take_garde", 
-                                                                         "Je prends la garde"),
+                                                                         "Je prends la garde",
+                                                                         icon("share"),
+                                                                         style="color: #FFF0F5; background-color: #2E8B57"),
                                                             actionButton("staff_meeting", 
-                                                                         "Staff meeting"),
+                                                                         "Staff meeting",
+                                                                         icon("users"), 
+                                                                         style="color: #FFF0F5; background-color: #696969"),
                                                             style = "position:absolute;right:2em;"))
                                            ) # Close Fluid row
                                   ) # Close tabpanel Garde
