@@ -295,7 +295,8 @@ function(input, output, session) {
         tbl('garde') %>%
         collect() %>%
         mutate(modified_at = as.POSIXct(modified_at, tz = "UTC")) %>%
-        arrange(desc(modified_at)) 
+        arrange(desc(modified_at)) %>%
+        slice_head(n = 1)
       
     }, 
     error = function(err) {
@@ -321,8 +322,8 @@ function(input, output, session) {
     
     # Select relevant columns for the user
     out <- out %>%
-      transmute(`En garde maintenant:` = convertUsernameToDisplayname(modified_by, user_base)) %>%
-      slice_head(n = 1)
+      transmute(`En garde maintenant:` = convertUsernameToDisplayname(modified_by, user_base))
+      
 
     
     if (is.null(garde_table_prep())) {
@@ -340,6 +341,7 @@ function(input, output, session) {
     }
   })
   
+  garde_table_proxy <- DT::dataTableProxy('garde_table')
   
   output$garde_table <- renderDT({
     req(garde_table_prep())
@@ -349,16 +351,42 @@ function(input, output, session) {
     out %>%
       datatable(rownames = FALSE,
                 colnames = c('En garde maintenant:'),
-                class = "compact stripe row-border nowrap",
+                class = "compact stripe nowrap",
                 escape = -1,  # Escape the HTML in all except 1st column (which has the buttons)
-                options = list(scrollX = TRUE,
+                options = list(scrollX = FALSE,
                                dom = 't',
-                               columnDefs = list(list(targets = 0, orderable = FALSE),
-                                                 list(className = 'dt-center')),
+                               columnDefs = list(list(className = 'dt-center', targets = 0)),
                                initComplete = jsHeader,
                                language = list(emptyTable = "Personne n'a pris la garde"))
       ) 
     
+  })
+  
+  observeEvent(input$take_garde, {
+    
+    tryCatch({
+      
+      thisQuery <- writeGardeQuery(credentials()$info[['user']],
+                                   ymd_hms(Sys.time()))
+      
+      dbExecute(conn, thisQuery)
+      
+      session$userData$garde_trigger(session$userData$garde_trigger() + 1)
+      
+      showToast("success", message = "Vous avez bien pris la garde")}, 
+      
+      error = function(error) {
+        
+        msg <- paste0("Erreur - contactez votre admin")
+        # print `msg` so that we can find it in the logs
+        print(msg)
+        # print the actual error to log it
+        print(error)
+        # show error `msg` to user.  User can then tell us about error and we can
+        # quickly identify where it cam from based on the value in `msg`
+        showToast("error", msg)
+      }
+    ) # Close try-catch
   })
  
   # set suspendWhenHidden to FALSE so it renders even without output

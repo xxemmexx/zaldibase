@@ -182,6 +182,13 @@ generateIdentifier <- function(aFirstName, aSurname) {
   
 }
 
+writeGardeQuery <- function(aUsername, aTimestamp) {
+  
+  paste0("INSERT INTO garde (modified_at, modified_by) VALUES ('",
+         aTimestamp, "', '", aUsername, "');")
+  
+}
+
 writeQuery <- function(aUID, 
                        aNom, 
                        aPrenom, 
@@ -241,6 +248,14 @@ writeQuery <- function(aUID,
   
 }
 
+makeTimestampNow <- function() {
+  
+  Sys.time() %>%
+    str_replace_all(":", "") %>%
+    str_replace_all("-", "") %>%
+    str_replace_all(" ", "")
+}
+
 transferFile <- function(aPathToFile, aUID, aHostAddress, index, extension, test = FALSE) {
   
   if(test) {
@@ -249,10 +264,7 @@ transferFile <- function(aPathToFile, aUID, aHostAddress, index, extension, test
     zaldir <- "zaldibase"
   }
   
-  aTimestamp <- Sys.time() %>%
-    str_replace_all(":", "") %>%
-    str_replace_all("-", "") %>%
-    str_replace_all(" ", "")
+  aTimestamp <- makeTimestampNow()
   
   aFileName <- paste0("Fichier_", index, "_", aTimestamp, ".", extension)
   

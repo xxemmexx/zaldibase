@@ -80,7 +80,9 @@ tagList(
                                                   tags$br(),
                                                   tags$span(actionButton("take_garde", 
                                                                          "Je prends la garde"),
-                                                            style = "position:absolute;left:2em;"))
+                                                            actionButton("staff_meeting", 
+                                                                         "Staff meeting"),
+                                                            style = "position:absolute;right:2em;"))
                                            ) # Close Fluid row
                                   ) # Close tabpanel Garde
                        ) # Close tabset panel

@@ -101,6 +101,6 @@ printLogo <- '<p style="font-family: Garamond">Zal<b>di|b</b>ase</p>'
 
 
 jsHeader <- JS("function(settings, json) {",
-"$(this.api().table().header()).css({'background-color': '#CD5C5C', 'color': '#FFF0F5'});",
+"$(this.api().table().header()).css({'background-color': '#B22222', 'color': '#FFF0F5'});",
 "}")
 
