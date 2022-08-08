@@ -71,7 +71,14 @@ tagList(
                          tabPanel("Archive", icon = icon("box-open"), value = "archive",
                                   HTML('<h2> Some beautiful archive content</h2>')),
                          tabPanel("Garde", icon = icon("user-nurse"), value = "garde",
-                                  HTML('<h2> Some beautiful content and all power </h2>'))
+                                  fluidRow(column(width = 12, 
+                                                  wellPanel(style = "background: #D2B48C",
+                                                            tags$span(actionButton("take_garde", 
+                                                                                   "Je prends la garde"),
+                                                                      style = "position:absolute;right:2em;")) 
+                                                  ) # Close column
+                                           ) # Close Fluid row
+                                  ) # Close tabpanel Garde
                        ) # Close tabset panel
       ) # Close conditional panel admin
       
