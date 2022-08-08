@@ -32,6 +32,13 @@ buildDecisionBanner <- function(aPreDecision, aDefDecision) {
   }
 }
 
+convertUsernameToDisplayname <- function(aUsername, aUserTibble) {
+  
+  aUserTibble %>%
+    filter(user == aUsername) %>%
+    select(name)
+}
+
 sd <- stamp_date("26/09/2018")
 
 buildContactCard <- function(aPatientPhone, aContactPerson, aContactPhone, 
@@ -39,10 +46,7 @@ buildContactCard <- function(aPatientPhone, aContactPerson, aContactPhone,
                              aCreatedBy, aUserTibble) {
   
   thisDate <- sd(ymd_hms(aCreatedAt))
-  
-  thisUser <- aUserTibble %>%
-    filter(user == aCreatedBy) %>%
-    select(name)
+  thisUser <- convertUsernameToDisplayname(aCreatedBy, aUserTibble)
   
   paste0('<div>
         Enregistré(e) le ', thisDate, ' par ', thisUser[[1]], '<br><br>

@@ -98,3 +98,9 @@ printAbout <- '<h2 style="font-family: Garamond">Zal<b>di|b</b>ase</h2> <br>
                                  Avez-vous des questions? Gardez-les pour vous.</p>'
 
 printLogo <- '<p style="font-family: Garamond">Zal<b>di|b</b>ase</p>'
+
+
+jsHeader <- JS("function(settings, json) {",
+"$(this.api().table().header()).css({'background-color': '#CD5C5C', 'color': '#FFF0F5'});",
+"}")
+

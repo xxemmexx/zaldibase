@@ -71,12 +71,16 @@ tagList(
                          tabPanel("Archive", icon = icon("box-open"), value = "archive",
                                   HTML('<h2> Some beautiful archive content</h2>')),
                          tabPanel("Garde", icon = icon("user-nurse"), value = "garde",
-                                  fluidRow(column(width = 12, 
-                                                  wellPanel(style = "background: #D2B48C",
-                                                            tags$span(actionButton("take_garde", 
-                                                                                   "Je prends la garde"),
-                                                                      style = "position:absolute;right:2em;")) 
-                                                  ) # Close column
+                                  fluidRow(column(width = 4,
+                                                  tags$br(),
+                                                  tags$br(),
+                                                  DTOutput('garde_table')),
+                                           column(width = 8,
+                                                  tags$br(),
+                                                  tags$br(),
+                                                  tags$span(actionButton("take_garde", 
+                                                                         "Je prends la garde"),
+                                                            style = "position:absolute;left:2em;"))
                                            ) # Close Fluid row
                                   ) # Close tabpanel Garde
                        ) # Close tabset panel

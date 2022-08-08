@@ -274,6 +274,92 @@ function(input, output, session) {
                              modal_title = "Effacer profil",
                              dossier_to_delete = dossier_to_delete,
                              modal_trigger = reactive({input$dossier_id_to_delete}))
+  
+  
+  # Garde table ------------------------------------------------------------
+  
+  
+  # trigger to reload data from the "garde" table
+  session$userData$garde_trigger <- reactiveVal(0)
+  
+  
+  # Read in Mes Dossiers table from the database
+  garde <- reactive({
+    req(credentials()$user_auth)
+    
+    session$userData$garde_trigger()
+    
+    out <- NULL
+    tryCatch({
+      out <- conn %>%
+        tbl('garde') %>%
+        collect() %>%
+        mutate(modified_at = as.POSIXct(modified_at, tz = "UTC")) %>%
+        arrange(desc(modified_at)) 
+      
+    }, 
+    error = function(err) {
+      msg <- "Could not find the garde you are looking for!"
+      # print `msg` so that we can find it in the logs
+      print(msg)
+      # print the actual error to log it
+      print(error)
+      # show error `msg` to user.  User can then tell us about error and we can
+      # quickly identify where it cam from based on the value in `msg`
+      showToast("error", msg)
+    })
+    
+    out 
+    
+  })
+  
+  garde_table_prep <- reactiveVal(NULL)
+  
+  observeEvent(garde(), {
+    
+    out <- garde()
+    
+    # Select relevant columns for the user
+    out <- out %>%
+      transmute(`En garde maintenant:` = convertUsernameToDisplayname(modified_by, user_base)) %>%
+      slice_head(n = 1)
+
+    
+    if (is.null(garde_table_prep())) {
+      # loading data into the table for the first time, so we render the entire table
+      # rather than using a DT proxy
+      garde_table_prep(out)
+      
+    } else {
+      # table has already rendered, so use DT proxy to update the data in the
+      # table without reendering the entire table
+      replaceData(garde_table_proxy,
+                  out,
+                  resetPaging = FALSE,
+                  rownames = FALSE)
+    }
+  })
+  
+  
+  output$garde_table <- renderDT({
+    req(garde_table_prep())
+    
+    out <- garde_table_prep() 
+    
+    out %>%
+      datatable(rownames = FALSE,
+                colnames = c('En garde maintenant:'),
+                class = "compact stripe row-border nowrap",
+                escape = -1,  # Escape the HTML in all except 1st column (which has the buttons)
+                options = list(scrollX = TRUE,
+                               dom = 't',
+                               columnDefs = list(list(targets = 0, orderable = FALSE),
+                                                 list(className = 'dt-center')),
+                               initComplete = jsHeader,
+                               language = list(emptyTable = "Personne n'a pris la garde"))
+      ) 
+    
+  })
  
   # set suspendWhenHidden to FALSE so it renders even without output
   outputOptions(output, 'role', suspendWhenHidden = FALSE) 
