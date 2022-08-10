@@ -142,8 +142,7 @@ dossiersEditModuleServer <- function(id,
                          footer = list(modalButton('Annuler'),
                                        actionButton(ns('submit'),
                                                     printButtonLabel(modal_title),
-                                                    class = "btn btn-primary mb1 bg-olive",
-                                                    style = "color: white")) 
+                                                    class = "btn btn-primary mb1 bg-olive")) 
                          ) # Close modal dialog
                        ) # Close showModal
                      
