@@ -153,6 +153,22 @@ function(input, output, session) {
     }    
     })
   
+  observe({
+    if(is.null(input$dossiers_table_rows_selected)) {
+      
+    } else {
+      archive_table_proxy %>% selectRows(NULL)
+    }     
+  })
+  
+  observe({
+    if(is.null(input$archive_table_rows_selected)) {
+      
+    } else {
+      dossiers_table_proxy %>% selectRows(NULL)
+    }     
+  })
+  
   patient_data <- eventReactive(input$dossiers_table_rows_selected, {
     
     patientUID <- dossiers()[input$dossiers_table_rows_selected,][[1]]
@@ -243,8 +259,6 @@ function(input, output, session) {
     
   })
   
-  
-  
   # Edit/Delete modules---------------------------------------------------------
   
   dossiers_table_proxy <- DT::dataTableProxy('dossiers_table')
@@ -329,22 +343,9 @@ function(input, output, session) {
     
     out <- archive_records()
     
-    #ids <- out$uid
-    
-    # actions <- purrr::map_chr(ids, function(id_) {
-    #   paste0('<div class="btn-group" style="width: 75px;" role="group" aria-label="Basic example">
-    #                  <button class="btn btn-primary btn-sm edit_btn" data-toggle="tooltip" data-placement="top" title="Modifier" id = ', id_, ' style="margin: 0"><i class="fa fa-pencil-square-o"></i></button>
-    #                  <button class="btn btn-danger btn-sm delete_btn" data-toggle="tooltip" data-placement="top" title="Effacer" id = ', id_, ' style="margin: 0"><i class="fa fa-times-circle"></i></button>
-    #                         </div>')
-    # })
-    
     # Select relevant columns for the user
     out <- out %>%
       select(nom, prenom, date_naissance, pathologie_1, pre_decision)
-    
-    # Set the Action Buttons row to the first column of the `dossiers` table
-    # out <- cbind(tibble(" " = actions),
-    #              out)
     
     if (is.null(archive_table_prep())) {
       # loading data into the table for the first time, so we render the entire table
@@ -388,11 +389,7 @@ function(input, output, session) {
     
   })
   
-  
-  
-  
   # Garde table ------------------------------------------------------------
-  
   
   # trigger to reload data from the "garde" table
   session$userData$garde_trigger <- reactiveVal(0)
