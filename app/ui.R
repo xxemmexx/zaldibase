@@ -70,7 +70,12 @@ tagList(
                                   ) # Close fluid row
                          ),
                          tabPanel("Archive", icon = icon("box-open"), value = "archive",
-                                  HTML('<h2> Some beautiful archive content</h2>')),
+                                  fluidRow(column(width = 12,
+                                                  title = "Mes dossiers",
+                                                  tags$br(),
+                                                  tags$br(),
+                                                  DTOutput('archive_table') %>% withSpinner()))
+                                           ),
                          tabPanel("Garde", icon = icon("user-nurse"), value = "garde",
                                   fluidRow(column(width = 8,
                                                   tags$br(),

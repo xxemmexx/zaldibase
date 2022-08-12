@@ -185,7 +185,6 @@ function(input, output, session) {
   
   # Patient data -------------------------------------------------------------
   
-  
   output$patient_display_name <- renderText({
     
     paste0(patient_data()$prenom, ' ', str_to_upper(patient_data()$nom, locale = 'fr'))
@@ -282,6 +281,114 @@ function(input, output, session) {
                              modal_title = "Effacer profil",
                              dossier_to_delete = dossier_to_delete,
                              modal_trigger = reactive({input$dossier_id_to_delete}))
+  
+  
+  
+  # Archive table ------------------------------------------------------------
+  
+  # trigger to reload data from the archive table
+  session$userData$archive_trigger <- reactiveVal(0)
+  
+  
+  # Read in Archive table from the database
+  archive_records <- reactive({
+    req(credentials()$user_auth)
+    
+    session$userData$archive_trigger()
+    
+    out <- NULL
+    tryCatch({
+      out <- conn %>%
+        tbl('patients') %>%
+        collect() %>%
+        mutate(created_at = as.POSIXct(created_at, tz = "UTC"),
+               modified_at = as.POSIXct(modified_at, tz = "UTC")) %>%
+        arrange(desc(modified_at)) 
+      
+    }, 
+    error = function(err) {
+      msg <- "Could not find the record you are looking for!"
+      # print `msg` so that we can find it in the logs
+      print(msg)
+      # print the actual error to log it
+      print(error)
+      # show error `msg` to user.  User can then tell us about error and we can
+      # quickly identify where it cam from based on the value in `msg`
+      showToast("error", msg)
+    })
+    
+    out 
+    
+  })
+  
+  
+  
+  archive_table_prep <- reactiveVal(NULL)
+  
+  observeEvent(archive_records(), {
+    
+    out <- archive_records()
+    
+    #ids <- out$uid
+    
+    # actions <- purrr::map_chr(ids, function(id_) {
+    #   paste0('<div class="btn-group" style="width: 75px;" role="group" aria-label="Basic example">
+    #                  <button class="btn btn-primary btn-sm edit_btn" data-toggle="tooltip" data-placement="top" title="Modifier" id = ', id_, ' style="margin: 0"><i class="fa fa-pencil-square-o"></i></button>
+    #                  <button class="btn btn-danger btn-sm delete_btn" data-toggle="tooltip" data-placement="top" title="Effacer" id = ', id_, ' style="margin: 0"><i class="fa fa-times-circle"></i></button>
+    #                         </div>')
+    # })
+    
+    # Select relevant columns for the user
+    out <- out %>%
+      select(nom, prenom, date_naissance, pathologie_1, pre_decision)
+    
+    # Set the Action Buttons row to the first column of the `dossiers` table
+    # out <- cbind(tibble(" " = actions),
+    #              out)
+    
+    if (is.null(archive_table_prep())) {
+      # loading data into the table for the first time, so we render the entire table
+      # rather than using a DT proxy
+      archive_table_prep(out)
+      
+    } else {
+      # table has already rendered, so use DT proxy to update the data in the
+      # table without reendering the entire table
+      replaceData(archive_table_proxy,
+                  out,
+                  resetPaging = FALSE,
+                  rownames = FALSE)
+    }
+  })
+  
+  archive_table_proxy <- DT::dataTableProxy('archive_table')
+  
+  
+  output$archive_table <- renderDT({
+    req(credentials()$user_auth, archive_table_prep())
+    
+    out <- archive_table_prep() 
+    
+    out %>%
+      datatable(rownames = FALSE,
+                colnames = c('Nom', 'Prénom', 'Date de naissance', 
+                             'Pathologie', 'Décision préliminaire'),
+                selection = "single",
+                class = "compact stripe row-border nowrap",
+                escape = -1,  # Escape the HTML in all except 1st column (which has the buttons)
+                options = list(scrollX = TRUE,
+                               dom = 'ftp',
+                               columnDefs = list(list(targets = 0, orderable = FALSE)),
+                               pageLength = 25,
+                               language = list(emptyTable = "Vous n'avez pas de dossiers actifs",
+                                               paginate = list(`next` = 'Suivant',
+                                                               previous = 'Précédant'),
+                                               search = 'Recherche: '))
+      ) 
+    
+  })
+  
+  
   
   
   # Garde table ------------------------------------------------------------
