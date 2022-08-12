@@ -199,7 +199,7 @@ function(input, output, session) {
   })
   
   
-  # Patient data -------------------------------------------------------------
+  # Patient data from dossiers -------------------------------------------------
   
   output$patient_display_name <- renderText({
     
