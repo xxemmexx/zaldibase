@@ -56,14 +56,23 @@ tagList(
                                                                            "Contact",
                                                                            style="color: #FFF0F5; background-color: #3E3F3A"),
                                                               style = "position:absolute;right:2em;"),
+                                                    tags$span(actionButton("archive_show_contact_details", 
+                                                                           "Contact",
+                                                                           style="color: #FFF0F5; background-color: #3E3F3A"),
+                                                              style = "position:absolute;right:2em;"),
                                                     h3(textOutput('patient_display_name')),
                                                     h4(textOutput('patient_age')),
+                                                    h3(textOutput('archive_patient_display_name')),
+                                                    h4(textOutput('archive_patient_age')),
                                                     uiOutput('decisions'),
+                                                    uiOutput('archive_decisions'),
                                                     tags$br(),
                                                     tags$br(),
                                                     uiOutput('pathologies'),
+                                                    uiOutput('archive_pathologies'),
                                                     tags$br(),
-                                                    uiOutput('description_histoire')
+                                                    uiOutput('description_histoire'),
+                                                    uiOutput('archive_description_histoire')
                                                     
                                                   )),
                                            column(width = 1)

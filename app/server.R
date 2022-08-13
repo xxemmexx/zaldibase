@@ -154,6 +154,14 @@ function(input, output, session) {
     })
   
   observe({
+    if(is.null(input$archive_table_rows_selected)) {
+      shinyjs::hide("archive_show_contact_details")
+    } else {
+      shinyjs::show("archive_show_contact_details")
+    }    
+  })
+  
+  observe({
     if(is.null(input$dossiers_table_rows_selected)) {
       
     } else {
@@ -198,6 +206,14 @@ function(input, output, session) {
     patientRow
   })
   
+  observeEvent(input$staff_meeting, {
+    showModal(modalDialog(
+      title = "Work in progress...",
+      "Aguanta, pendejouw!",
+      easyClose = TRUE,
+      footer = modalButton("Fermer")
+    ))
+  })
   
   # Patient data from dossiers -------------------------------------------------
   
@@ -258,6 +274,7 @@ function(input, output, session) {
     HTML(x)
     
   })
+  
   
   # Edit/Delete modules---------------------------------------------------------
   
@@ -336,7 +353,6 @@ function(input, output, session) {
   })
   
   
-  
   archive_table_prep <- reactiveVal(NULL)
   
   observeEvent(archive_records(), {
@@ -386,6 +402,97 @@ function(input, output, session) {
                                                                previous = 'Précédant'),
                                                search = 'Recherche: '))
       ) 
+    
+  })
+  
+  # Patient data from archive--------------------------------------------------
+  
+  archive_patient_data <- eventReactive(input$archive_table_rows_selected, {
+    
+    patientUID <- archive_records()[input$archive_table_rows_selected,][[1]]
+    
+    patientRow <- NULL
+    tryCatch({
+      patientRow <- conn %>%
+        tbl('patients') %>%
+        collect() %>%
+        mutate(created_at = as.POSIXct(created_at, tz = "UTC"),
+               modified_at = as.POSIXct(modified_at, tz = "UTC")) %>%
+        arrange(desc(modified_at)) %>%
+        filter(uid == patientUID)
+      
+    }, 
+    error = function(err) {
+      msg <- "Could not find that particular patient in archive!"
+      # print `msg` so that we can find it in the logs
+      print(msg)
+      # print the actual error to log it
+      print(error)
+      # show error `msg` to user.  User can then tell us about error and we can
+      # quickly identify where it cam from based on the value in `msg`
+      showToast("error", msg)
+    })
+    
+    patientRow
+  })
+  
+  # Patient data from archive -------------------------------------------------
+  
+  output$archive_patient_display_name <- renderText({
+    
+    paste0(archive_patient_data()$prenom, ' ', str_to_upper(archive_patient_data()$nom, locale = 'fr'))
+    
+  })
+  
+  output$archive_patient_age <-renderText({
+    
+    paste0("âgé(e) de ", deliverAge(archive_patient_data()$date_naissance), " ans")
+    
+  })
+  
+  observeEvent(input$archive_show_contact_details, {
+    showModal(modalDialog(
+      title = paste0(archive_patient_data()$prenom, ' ', str_to_upper(archive_patient_data()$nom, locale = 'fr')),
+      buildContactCard(archive_patient_data()$phone_number_patient,
+                       archive_patient_data()$contact_person, 
+                       archive_patient_data()$contact_phone, 
+                       archive_patient_data()$contact_email,
+                       archive_patient_data()$hopital, 
+                       archive_patient_data()$created_at, 
+                       archive_patient_data()$created_by, 
+                       user_base) %>% HTML(),
+      easyClose = TRUE,
+      footer = modalButton("Fermer")
+    ))
+  })
+  
+  output$archive_pathologies <-renderUI({
+    req(archive_patient_data()$pathologie_1)
+    
+    x <- buildUnorderedList(list(archive_patient_data()$pathologie_1,
+                                 archive_patient_data()$pathologie_2,
+                                 archive_patient_data()$pathologie_3),
+                            "Pathologie(s)")
+    
+    
+    HTML(x)
+    
+  })
+  
+  output$archive_description_histoire <-renderUI({
+    req(archive_patient_data()$description_histoire)
+    
+    x <- buildParagraph(archive_patient_data()$description_histoire, "Histoire")
+    
+    HTML(x)
+    
+  })
+  
+  output$archive_decisions <-renderUI({
+    
+    x <- buildDecisionBanner(archive_patient_data()$pre_decision, archive_patient_data()$def_decision)
+    
+    HTML(x)
     
   })
   
