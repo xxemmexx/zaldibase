@@ -206,6 +206,26 @@ function(input, output, session) {
     patientRow
   })
   
+  dossiers_patient_photos <- eventReactive(input$dossiers_table_rows_selected, {
+    
+    patientUID <- dossiers()[input$dossiers_table_rows_selected,][[1]]
+    
+    fetchFiles(patientUID, dbInfo[[1]][[2]], '22')
+    
+  })
+  
+  output$photos <-renderUI({
+    req(dossiers_patient_photos())
+    
+    x <- buildUnorderedList(dossiers_patient_photos(),
+                            "Photos")
+    
+    
+    HTML(x)
+    
+  })
+  
+  
   observeEvent(input$staff_meeting, {
     showModal(modalDialog(
       title = "Work in progress...",
@@ -435,6 +455,7 @@ function(input, output, session) {
     
     patientRow
   })
+  
   
   # Patient data from archive -------------------------------------------------
   

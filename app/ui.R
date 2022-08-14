@@ -74,6 +74,9 @@ tagList(
                                                     uiOutput('description_histoire'),
                                                     uiOutput('archive_description_histoire')
                                                     
+                                                  ),
+                                                  wellPanel(
+                                                    uiOutput('photos') %>% withSpinner()
                                                   )),
                                            column(width = 1)
                                   ) # Close fluid row

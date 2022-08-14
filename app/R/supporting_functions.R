@@ -63,17 +63,31 @@ buildContactCard <- function(aPatientPhone, aContactPerson, aContactPhone,
 
 buildUnorderedList <- function(aList, aTitle) {
   
-  n <- length(aList)
-  
-  items <- paste0('<li>', aList[[1]], '</li>')
-  
-  for(i in 2:n) {
-    if(!(aList[[i]] == '')) {
-      items <- paste0(items, '<li>', aList[[i]], '</li>')
+  if(is.null(aList)) {
+    
+    htmlList <- '<div></div>'
+    
+  } else {
+    
+    n <- length(aList)
+    
+    items <- paste0('<li>', aList[[1]], '</li>')
+    
+    for(i in 2:n) {
+      if(!(aList[[i]] == '')) {
+        items <- paste0(items, '<li>', aList[[i]], '</li>')
+      }
     }
+    
+    htmlList <- paste0('<h5 style = "padding-right: 150px;"><b>', 
+                       aTitle,
+                       '</b></h5><br>', 
+                       '<ul>', 
+                       items, 
+                       '</ul>')
   }
   
-  paste0('<h5 style = "padding-right: 150px;"><b>', aTitle,'</b></h5><br>', '<ul>', items, '</ul>')
+  return(htmlList)
 }
 
 buildParagraph <- function(aParagraph, aTitle) {
@@ -290,4 +304,50 @@ transferFile <- function(aPathToFile, aUID, aHostAddress, index, extension, test
                    ftp.create.missing.dirs = TRUE)
 }
 
+isFile <- function(aString) {
+  ifelse(aString == ".." | aString == "." | aString == "", FALSE, TRUE)
+}
+
+fetchFiles <- function(aZaldibaseDir, aHostAddress, aPort, aMode = 'test') {
+  
+  filenames <- NA
+  
+  zalDir <- ifelse(aMode == 'test', 'zalditest', 'zaldibase')
+  
+  aDestination <- paste0(url = "sftp://", 
+                         aHostAddress,
+                         ":", 
+                         aPort,
+                         "/home/tospiti/prog/R-projects/zaldibase/imgs/",
+                         zalDir,
+                         "/",
+                         aZaldibaseDir, 
+                         "/")
+  
+  tryCatch(filenames <- RCurl::getURL(aDestination, 
+                                      userpwd = "tospiti:%Rpi%ContrasenaSuperSegura!",
+                                      dirlistonly = TRUE,
+                                      verbose = FALSE,
+                                      ssl.verifyhost = FALSE),
+           error = function(e) {
+             message("The Zaldibase has no record of this patient")
+           }
+  )
+  
+  if(!is.na(filenames)) {
+    filenames_split <- filenames %>% 
+      str_split('\n')
+    
+    mask <- filenames_split[[1]] %>% 
+      isFile()
+    
+    availableFiles <- filenames_split[[1]][mask]
+    
+    if(identical(availableFiles, character(0))) {
+      message("No photos currently available in the Zaldibase")
+    } else {
+      return(availableFiles)
+    }
+  } 
+}
 
