@@ -14,6 +14,8 @@ require(dplyr)
 require(dbplyr)
 require(bslib)
 require(sodium)
+require(RCurl)
+#require(httr)
 #require(twilio)
 
 user_base <- readRDS("data/user_base_encryp.rds")
@@ -24,9 +26,11 @@ config_df <- db_config %>%
   data_decrypt(my_key) %>%
   unserialize() 
   
-dbInfo <- config_df[['secret']] %>%
+dbInfo <- config_df[['db']] %>%
   str_split(":")
 
+deviceInfo <- config_df[['device']] %>%
+  str_split(":")
 
 conn <- DBI::dbConnect(RPostgres::Postgres(), 
                        dbname = dbInfo[[1]][[1]], 

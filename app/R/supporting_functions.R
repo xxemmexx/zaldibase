@@ -271,7 +271,14 @@ makeTimestampNow <- function() {
     str_replace_all(" ", "")
 }
 
-transferFile <- function(aPathToFile, aUID, aHostAddress, index, extension, test = FALSE) {
+transferFile <- function(aPathToFile, 
+                         aUID, 
+                         aHostAddress, 
+                         index, 
+                         extension, 
+                         aDevice,
+                         anAccessCode,
+                         test = FALSE) {
   
   if(test) {
     zaldir <- "zalditest"
@@ -296,7 +303,7 @@ transferFile <- function(aPathToFile, aUID, aHostAddress, index, extension, test
                    asText = FALSE,
                    to = remoteLocation,
                    port =22,
-                   userpwd = "tospiti:%Rpi%ContrasenaSuperSegura!",
+                   userpwd = paste0(aDevice, ":", anAccessCode),
                    connecttimeout = 30,
                    ssl.verifypeer = FALSE, 
                    ssl.verifyhost = FALSE,
@@ -308,7 +315,12 @@ isFile <- function(aString) {
   ifelse(aString == ".." | aString == "." | aString == "", FALSE, TRUE)
 }
 
-fetchFiles <- function(aZaldibaseDir, aHostAddress, aPort, aMode = 'test') {
+fetchFiles <- function(aZaldibaseDir, 
+                       aHostAddress, 
+                       aPort, 
+                       aDevice,
+                       anAccessCode,
+                       aMode = 'test') {
   
   filenames <- NA
   

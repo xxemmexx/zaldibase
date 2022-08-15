@@ -177,6 +177,8 @@ function(input, output, session) {
     }     
   })
   
+  output$this_uid <- renderText({dossiers()[input$dossiers_table_rows_selected,][[1]]})
+  
   patient_data <- eventReactive(input$dossiers_table_rows_selected, {
     
     patientUID <- dossiers()[input$dossiers_table_rows_selected,][[1]]
@@ -210,7 +212,7 @@ function(input, output, session) {
     
     patientUID <- dossiers()[input$dossiers_table_rows_selected,][[1]]
     
-    fetchFiles(patientUID, dbInfo[[1]][[2]], '22')
+    fetchFiles(patientUID, dbInfo[[1]][[2]], '22', deviceInfo[[1]][[1]], deviceInfo[[1]][[2]])
     
   })
   

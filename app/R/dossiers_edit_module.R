@@ -383,6 +383,8 @@ dossiersEditModuleServer <- function(id,
                                         dbInfo[[1]][[2]],
                                         i,
                                         ext,
+                                        deviceInfo[[1]][[1]],
+                                        deviceInfo[[1]][[2]],
                                         TRUE)
                          }
                        }

@@ -38,7 +38,8 @@ tagList(
                                                                icon = icon('plus'),
                                                                width = '66%'),
                                                   tags$br(),
-                                                  tags$br())
+                                                  tags$br(),
+                                                  textOutput('this_uid'))
                                   ), # Close fluid row
                                   fluidRow(column(width = 12,
                                                   title = "Mes dossiers",
