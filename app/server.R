@@ -354,8 +354,6 @@ function(input, output, session) {
       out <- conn %>%
         tbl('patients') %>%
         collect() %>%
-        mutate(created_at = as.POSIXct(created_at, tz = "UTC"),
-               modified_at = as.POSIXct(modified_at, tz = "UTC")) %>%
         arrange(desc(modified_at)) 
       
     }, 
@@ -381,9 +379,26 @@ function(input, output, session) {
     
     out <- archive_records()
     
-    # Select relevant columns for the user
+    # Mutate table 
     out <- out %>%
-      select(nom, prenom, date_naissance, pathologie_1, pre_decision)
+      transmute(nom,
+                prenom,
+                date_naissance,
+                pathologie_1,
+                pathologie_2,
+                pathologie_3,
+                pre_decision,
+                def_decision,
+                phone_number_patient,
+                contact_person,
+                contact_phone,
+                contact_email,
+                hopital,
+                created_at,
+                created_by,
+                modified_at,
+                modified_by,
+                description_histoire)
     
     if (is.null(archive_table_prep())) {
       # loading data into the table for the first time, so we render the entire table
@@ -410,8 +425,24 @@ function(input, output, session) {
     
     out %>%
       datatable(rownames = FALSE,
-                colnames = c('Nom', 'Prénom', 'Date de naissance', 
-                             'Pathologie', 'Décision préliminaire'),
+                colnames = c('Nom', 
+                             'Prénom', 
+                             'Date de naissance',
+                             '1ère pathologie',
+                             '2ème pathologie',
+                             '3ème pathologie',
+                             'Décision préliminaire',
+                             'Décision définitive',
+                             'Numéro (patient)',
+                             'Personne de contact',
+                             'Numéro (contact)',
+                             'Email (contact)',
+                             'Hôpital/Clinique',
+                             'Enregistré(e) le',
+                             'Enregistré(e) par',
+                             'Dernière modification',
+                             'Modifié par',
+                             'Histoire'),
                 selection = "single",
                 class = "compact stripe row-border nowrap",
                 escape = -1,  # Escape the HTML in all except 1st column (which has the buttons)
