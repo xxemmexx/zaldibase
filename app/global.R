@@ -15,30 +15,37 @@ require(dbplyr)
 require(bslib)
 require(sodium)
 require(RCurl)
-#require(httr)
-#require(twilio)
+
+localDB = TRUE
+
+if(localDB) {
+  
+  conn <- dbConnect(RSQLite::SQLite(), dbname = 'data/zaldibase.sqlite3')
+  
+} else {
+  
+  db_config <- readRDS("data/config_encryp.rds")
+  my_key <- readRDS("data/key.rds")
+  
+  config_df <- db_config %>%
+    data_decrypt(my_key) %>%
+    unserialize() 
+  
+  dbInfo <- config_df[['db']] %>%
+    str_split(":")
+  
+  deviceInfo <- config_df[['device']] %>%
+    str_split(":")
+  
+  conn <- DBI::dbConnect(RPostgres::Postgres(), 
+                         dbname = dbInfo[[1]][[1]], 
+                         host = dbInfo[[1]][[2]], 
+                         port = dbInfo[[1]][[3]], 
+                         user = dbInfo[[1]][[4]], 
+                         password = dbInfo[[1]][[5]])
+}
 
 user_base <- readRDS("data/user_base_encryp.rds")
-db_config <- readRDS("data/config_encryp.rds")
-my_key <- readRDS("data/key.rds")
-
-config_df <- db_config %>%
-  data_decrypt(my_key) %>%
-  unserialize() 
-  
-dbInfo <- config_df[['db']] %>%
-  str_split(":")
-
-deviceInfo <- config_df[['device']] %>%
-  str_split(":")
-
-conn <- DBI::dbConnect(RPostgres::Postgres(), 
-                       dbname = dbInfo[[1]][[1]], 
-                       host = dbInfo[[1]][[2]], 
-                       port = dbInfo[[1]][[3]], 
-                       user = dbInfo[[1]][[4]], 
-                       password = dbInfo[[1]][[5]])
-
 
 decisions <- c(" ", "A opérer",
                "Abstention",
