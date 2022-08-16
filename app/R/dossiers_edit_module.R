@@ -415,6 +415,8 @@ dossiersEditModuleServer <- function(id,
                      
                      session$userData$dossiers_trigger(session$userData$dossiers_trigger() + 1)
                      
+                     session$userData$archive_trigger(session$userData$archive_trigger() + 1)
+                     
                      showToast("success", message = printToastMessage(modal_title))}, 
                      
                      error = function(error) {
