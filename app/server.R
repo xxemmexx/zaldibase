@@ -208,7 +208,7 @@ function(input, output, session) {
     patientRow
   })
   
-  dossiers_patient_photos <- eventReactive(input$dossiers_table_rows_selected, {
+  dossiers_patient_photo_filenames <- eventReactive(input$dossiers_table_rows_selected, {
     
     patientUID <- dossiers()[input$dossiers_table_rows_selected,][[1]]
     
@@ -216,10 +216,10 @@ function(input, output, session) {
     
   })
   
-  output$photos <-renderUI({
-    req(dossiers_patient_photos())
+  output$photo_filenames <-renderUI({
+    req(dossiers_patient_photo_filenames())
     
-    x <- buildUnorderedList(dossiers_patient_photos(),
+    x <- buildUnorderedList(dossiers_patient_photo_filenames(),
                             "Photos")
     
     

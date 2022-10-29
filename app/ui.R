@@ -76,7 +76,7 @@ tagList(
                                                     
                                                   ),
                                                   wellPanel(
-                                                    uiOutput('photos') %>% withSpinner()
+                                                    uiOutput('photo_filenames') %>% withSpinner()
                                                   )),
                                            column(width = 1)
                                   ) # Close fluid row
