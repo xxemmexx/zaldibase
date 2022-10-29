@@ -16,7 +16,7 @@ require(bslib)
 require(sodium)
 require(RCurl)
 
-localDB = TRUE
+localDB = FALSE
 
 if(localDB) {
   
