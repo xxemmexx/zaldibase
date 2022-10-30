@@ -217,14 +217,38 @@ function(input, output, session) {
   })
   
   output$photo_filenames <-renderUI({
-    req(dossiers_patient_photo_filenames())
+    req(dossiers_patient_photos())
     
-    x <- buildUnorderedList(dossiers_patient_photo_filenames(),
+    x <- buildUnorderedList(dossiers_patient_photos(),
                             "Photos")
     
     
     HTML(x)
     
+  })
+  
+  dossiers_patient_photos <- eventReactive(input$dossiers_table_rows_selected, {
+    
+    patientUID <- dossiers()[input$dossiers_table_rows_selected,][[1]]
+    
+    filenames <- fetchFiles(patientUID, 
+                            dbInfo[[1]][[2]], 
+                            '22', 
+                            deviceInfo[[1]][[1]], 
+                            deviceInfo[[1]][[2]])
+    
+    print(noquote("Entering for loop..."))
+    print(paste0("Currently in:", getwd()))
+    for(photo in filenames) {
+      fetchPhotos(patientUID,
+                  dbInfo[[1]][[2]],
+                  '22',
+                  deviceInfo[[1]][[1]],
+                  deviceInfo[[1]][[2]],
+                  photo)
+    }
+    
+    filenames
   })
   
   

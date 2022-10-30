@@ -315,6 +315,45 @@ isFile <- function(aString) {
   ifelse(aString == ".." | aString == "." | aString == "", FALSE, TRUE)
 }
 
+fetchPhotos <- function(aZaldibaseDir, 
+                        aHostAddress, 
+                        aPort, 
+                        aDevice,
+                        anAccessCode,
+                        aFilename,
+                        aMode = 'test') {
+  
+  zalDir <- ifelse(aMode == 'test', 'zalditest', 'zaldibase')
+  
+  anOrigin <- paste0(url = "sftp://", 
+                         aHostAddress,
+                         ":", 
+                         aPort,
+                         "/home/tospiti/prog/R-projects/zaldibase/imgs/",
+                         zalDir,
+                         "/",
+                         aZaldibaseDir, 
+                         "/",
+                         aFilename)
+  
+  aDestination <- paste0("data/tmp/", aFilename)
+  
+  
+  print(noquote(paste0("Opening connection to: ", aDestination)))
+  con = file(aDestination, "wb")
+  
+  print(noquote(paste0("Fetching from destination: ", anOrigin)))
+  RCurl::getBinaryURL(url = anOrigin,
+                      userpwd=paste(aDevice, anAccessCode, sep = ":"),
+                      verbose = TRUE,
+                      ssl.verifyhost = FALSE) %>%
+    writeBin(con)
+  
+  print(noquote(paste0("Closing connection to: ", aDestination)))
+  close(con)
+
+}
+
 fetchFiles <- function(aZaldibaseDir, 
                        aHostAddress, 
                        aPort, 
