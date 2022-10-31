@@ -320,37 +320,40 @@ fetchPhotos <- function(aZaldibaseDir,
                         aPort, 
                         aDevice,
                         anAccessCode,
-                        aFilename,
+                        aListOfFilenames,
                         aMode = 'test') {
   
   zalDir <- ifelse(aMode == 'test', 'zalditest', 'zaldibase')
   
-  anOrigin <- paste0(url = "sftp://", 
-                         aHostAddress,
-                         ":", 
-                         aPort,
-                         "/home/tospiti/prog/R-projects/zaldibase/imgs/",
-                         zalDir,
-                         "/",
-                         aZaldibaseDir, 
-                         "/",
-                         aFilename)
-  
-  aDestination <- paste0("data/tmp/", aFilename)
-  
-  
-  print(noquote(paste0("Opening connection to: ", aDestination)))
-  con = file(aDestination, "wb")
-  
-  print(noquote(paste0("Fetching from destination: ", anOrigin)))
-  RCurl::getBinaryURL(url = anOrigin,
-                      userpwd=paste(aDevice, anAccessCode, sep = ":"),
-                      verbose = TRUE,
-                      ssl.verifyhost = FALSE) %>%
-    writeBin(con)
-  
-  print(noquote(paste0("Closing connection to: ", aDestination)))
-  close(con)
+  for (filename in aListOfFilenames) {
+    
+    anOrigin <- paste0(url = "sftp://", 
+                       aHostAddress,
+                       ":", 
+                       aPort,
+                       "/home/tospiti/prog/R-projects/zaldibase/imgs/",
+                       zalDir,
+                       "/",
+                       aZaldibaseDir, 
+                       "/",
+                       filename)
+    
+    aDestination <- paste0("data/tmp/", filename)
+    
+    
+    #print(noquote(paste0("Opening connection to: ", aDestination)))
+    con = file(aDestination, "wb")
+    
+    #print(noquote(paste0("Fetching from destination: ", anOrigin)))
+    RCurl::getBinaryURL(url = anOrigin,
+                        userpwd=paste(aDevice, anAccessCode, sep = ":"),
+                        verbose = TRUE,
+                        ssl.verifyhost = FALSE) %>%
+      writeBin(con)
+    
+    #print(noquote(paste0("Closing connection to: ", aDestination)))
+    close(con)
+  }
 
 }
 

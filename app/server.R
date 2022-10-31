@@ -238,15 +238,15 @@ function(input, output, session) {
                             deviceInfo[[1]][[2]])
     
     print(noquote("Entering for loop..."))
-    print(paste0("Currently in:", getwd()))
-    for(photo in filenames) {
-      fetchPhotos(patientUID,
-                  dbInfo[[1]][[2]],
-                  '22',
-                  deviceInfo[[1]][[1]],
-                  deviceInfo[[1]][[2]],
-                  photo)
-    }
+    print(paste0("Currently in:", getwd()))          
+    
+    fetchPhotos(patientUID,
+                dbInfo[[1]][[2]],
+                '22',
+                deviceInfo[[1]][[1]],
+                deviceInfo[[1]][[2]],
+                filenames)
+    
     
     filenames
   })
