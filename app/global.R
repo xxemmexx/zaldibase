@@ -15,6 +15,7 @@ require(dbplyr)
 require(bslib)
 require(sodium)
 require(RCurl)
+require(magick)
 
 localDB = FALSE
 

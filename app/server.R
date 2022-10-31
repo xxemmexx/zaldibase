@@ -238,7 +238,7 @@ function(input, output, session) {
                             deviceInfo[[1]][[2]])
     
     print(noquote("Entering for loop..."))
-    print(paste0("Currently in:", getwd()))          
+    tac <- Sys.time()          
     
     fetchPhotos(patientUID,
                 dbInfo[[1]][[2]],
@@ -247,6 +247,9 @@ function(input, output, session) {
                 deviceInfo[[1]][[2]],
                 filenames)
     
+    tic <- Sys.time()
+    
+    print(tic-tac)
     
     filenames
   })

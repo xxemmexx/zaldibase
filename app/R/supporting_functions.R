@@ -354,6 +354,28 @@ fetchPhotos <- function(aZaldibaseDir,
     #print(noquote(paste0("Closing connection to: ", aDestination)))
     close(con)
   }
+  
+  frames <- NULL
+  
+  for (filename in aListOfFilenames) {
+    
+    print(noquote(paste0("Reading ", filename)))
+    img <- image_read(paste0("data/tmp/", filename))
+    frames <- c(frames, img)
+  }
+  
+  print(noquote(paste0(class(frames), " of length ", length(frames))))
+  
+  targetDir <- paste0('data/', aZaldibaseDir)
+  
+  if(!file.exists(targetDir)) {
+    dir.create(targetDir)
+  }
+  
+  frames %>%
+    image_join() %>%
+    image_write(path = paste0(targetDir, '/test.tiff'), 
+                format = "tiff")
 
 }
 
