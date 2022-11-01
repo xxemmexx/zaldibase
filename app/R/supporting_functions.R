@@ -347,7 +347,7 @@ fetchPhotos <- function(aZaldibaseDir,
     #print(noquote(paste0("Fetching from destination: ", anOrigin)))
     RCurl::getBinaryURL(url = anOrigin,
                         userpwd=paste(aDevice, anAccessCode, sep = ":"),
-                        verbose = TRUE,
+                        verbose = FALSE,
                         ssl.verifyhost = FALSE) %>%
       writeBin(con)
     

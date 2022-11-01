@@ -76,7 +76,10 @@ tagList(
                                                     
                                                   ),
                                                   wellPanel(
-                                                    uiOutput('photo_filenames') %>% withSpinner()
+                                                    uiOutput('photo_filenames') %>% withSpinner(),
+                                                    tags$br(),
+                                                    imageOutput("tiffImage")
+                                                           
                                                   )),
                                            column(width = 1)
                                   ) # Close fluid row

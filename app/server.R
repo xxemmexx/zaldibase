@@ -217,9 +217,9 @@ function(input, output, session) {
   })
   
   output$photo_filenames <-renderUI({
-    req(dossiers_patient_photos())
+    req(dossiers_patient_filenames())
     
-    x <- buildUnorderedList(dossiers_patient_photos(),
+    x <- buildUnorderedList(dossiers_patient_filenames(),
                             "Photos")
     
     
@@ -227,32 +227,59 @@ function(input, output, session) {
     
   })
   
-  dossiers_patient_photos <- eventReactive(input$dossiers_table_rows_selected, {
+  patientUID <- eventReactive(input$dossiers_table_rows_selected, {
     
-    patientUID <- dossiers()[input$dossiers_table_rows_selected,][[1]]
+    dossiers()[input$dossiers_table_rows_selected,][[1]]
     
-    filenames <- fetchFiles(patientUID, 
-                            dbInfo[[1]][[2]], 
-                            '22', 
-                            deviceInfo[[1]][[1]], 
-                            deviceInfo[[1]][[2]])
-    
-    print(noquote("Entering for loop..."))
-    tac <- Sys.time()          
-    
-    fetchPhotos(patientUID,
-                dbInfo[[1]][[2]],
-                '22',
-                deviceInfo[[1]][[1]],
-                deviceInfo[[1]][[2]],
-                filenames)
-    
-    tic <- Sys.time()
-    
-    print(tic-tac)
-    
-    filenames
   })
+  
+  dossiers_patient_filenames <- eventReactive(input$dossiers_table_rows_selected, {
+    
+    fetchFiles(patientUID(), 
+               dbInfo[[1]][[2]], 
+               '22', 
+               deviceInfo[[1]][[1]], 
+               deviceInfo[[1]][[2]])
+  })
+  
+  output$tiffImage <- renderImage(
+    {
+      req(dossiers_patient_filenames())
+      
+      print(noquote("Entering for loop..."))
+      tac <- Sys.time()          
+      
+      fetchPhotos(patientUID(),
+                  dbInfo[[1]][[2]],
+                  '22',
+                  deviceInfo[[1]][[1]],
+                  deviceInfo[[1]][[2]],
+                  dossiers_patient_filenames())
+      
+      tic <- Sys.time()
+      
+      print(tic-tac)
+      
+      patientPhotos <- image_read(paste0('data/', patientUID(), '/test.tiff'))
+      
+      # A temp file to save the output.
+      # This file will be removed later by renderImage
+      outfile <- tempfile(fileext = '.png')
+      
+      # Generate the PNG
+      #png(outfile, width = 400, height = 300)
+      patientPhotos[1] %>%
+        image_scale(geometry = "x350") %>%
+        image_write(path = outfile, format = "png")
+      #dev.off()
+      
+      # Return a list containing the filename
+      list(src = outfile,
+           contentType = 'image/png',
+           alt = "This is alternate text")
+    
+    }, 
+    deleteFile = TRUE)
   
   
   observeEvent(input$staff_meeting, {
