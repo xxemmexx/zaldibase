@@ -178,7 +178,7 @@ function(input, output, session) {
   })
   
   
-  patientUID <- eventReactive(input$dossiers_table_rows_selected, {
+  patientUID <- reactive({
     
     dossiers()[input$dossiers_table_rows_selected,][[1]]
     
