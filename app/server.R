@@ -232,6 +232,15 @@ function(input, output, session) {
     
   })
   
+
+  imgIdx <- 1
+  makeReactiveBinding('imgIdx')
+  
+  observeEvent(input$increase_index, {
+    imgIdx <<- imgIdx + 1
+  })
+  
+  
   output$tiffImage <- renderImage(
     {
       req(dossiers_patient_filenames())
@@ -258,7 +267,7 @@ function(input, output, session) {
       
       # Generate the PNG
       #png(outfile, width = 400, height = 300)
-      patientPhotos[1] %>%
+      patientPhotos[imgIdx] %>%
         image_scale(geometry = "x350") %>%
         image_write(path = outfile, format = "png")
       #dev.off()
