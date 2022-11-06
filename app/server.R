@@ -177,13 +177,17 @@ function(input, output, session) {
     }     
   })
   
-  output$this_uid <- renderText({dossiers()[input$dossiers_table_rows_selected,][[1]]})
+  
+  patientUID <- eventReactive(input$dossiers_table_rows_selected, {
+    
+    dossiers()[input$dossiers_table_rows_selected,][[1]]
+    
+  })
   
   patient_data <- eventReactive(input$dossiers_table_rows_selected, {
     
-    patientUID <- dossiers()[input$dossiers_table_rows_selected,][[1]]
-    
     patientRow <- NULL
+    
     tryCatch({
       patientRow <- conn %>%
         tbl('patients') %>%
@@ -191,7 +195,7 @@ function(input, output, session) {
         mutate(created_at = as.POSIXct(created_at, tz = "UTC"),
                modified_at = as.POSIXct(modified_at, tz = "UTC")) %>%
         arrange(desc(modified_at)) %>%
-        filter(uid == patientUID)
+        filter(uid == patientUID())
       
     }, 
     error = function(err) {
@@ -207,39 +211,25 @@ function(input, output, session) {
     
     patientRow
   })
+
   
-  dossiers_patient_photo_filenames <- eventReactive(input$dossiers_table_rows_selected, {
-    
-    patientUID <- dossiers()[input$dossiers_table_rows_selected,][[1]]
-    
-    fetchFiles(patientUID, dbInfo[[1]][[2]], '22', deviceInfo[[1]][[1]], deviceInfo[[1]][[2]])
-    
-  })
-  
-  output$photo_filenames <-renderUI({
-    req(dossiers_patient_filenames())
-    
-    x <- buildUnorderedList(dossiers_patient_filenames(),
-                            "Photos")
-    
-    
-    HTML(x)
-    
-  })
-  
-  patientUID <- eventReactive(input$dossiers_table_rows_selected, {
-    
-    dossiers()[input$dossiers_table_rows_selected,][[1]]
-    
-  })
-  
-  dossiers_patient_filenames <- eventReactive(input$dossiers_table_rows_selected, {
+  dossiers_patient_filenames <- reactive({
     
     fetchFiles(patientUID(), 
                dbInfo[[1]][[2]], 
                '22', 
                deviceInfo[[1]][[1]], 
                deviceInfo[[1]][[2]])
+  })
+  
+  output$photos_title <-renderUI({
+    req(dossiers_patient_filenames())
+    
+    x <- paste0('<h4> ', length(dossiers_patient_filenames()),
+                ' images trouvées </h4>')
+    
+    HTML(x)
+    
   })
   
   output$tiffImage <- renderImage(

@@ -76,7 +76,7 @@ tagList(
                                                     
                                                   ),
                                                   wellPanel(
-                                                    uiOutput('photo_filenames') %>% withSpinner(),
+                                                    uiOutput('photos_title') %>% withSpinner(),
                                                     tags$br(),
                                                     imageOutput("tiffImage")
                                                            
