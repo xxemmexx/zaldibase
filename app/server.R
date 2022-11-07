@@ -215,11 +215,21 @@ function(input, output, session) {
   
   dossiers_patient_filenames <- reactive({
     
-    fetchFiles(patientUID(), 
-               dbInfo[[1]][[2]], 
-               '22', 
-               deviceInfo[[1]][[1]], 
-               deviceInfo[[1]][[2]])
+    filenames <- fetchFiles(patientUID(), 
+                            dbInfo[[1]][[2]], 
+                            '22', 
+                            deviceInfo[[1]][[1]], 
+                            deviceInfo[[1]][[2]])
+    
+    fetchPhotos(patientUID(),
+                dbInfo[[1]][[2]],
+                '22',
+                deviceInfo[[1]][[1]],
+                deviceInfo[[1]][[2]],
+                filenames)
+    
+    return(filenames)
+    
   })
   
   output$photos_title <-renderUI({
@@ -237,7 +247,19 @@ function(input, output, session) {
   makeReactiveBinding('imgIdx')
   
   observeEvent(input$increase_index, {
-    imgIdx <<- imgIdx + 1
+    
+    if(imgIdx == length(dossiers_patient_filenames())) {
+      imgIdx <<- 1
+    } else {
+      imgIdx <<- imgIdx + 1
+    }
+  })
+  
+  patientPhotos <- reactive({
+    req(dossiers_patient_filenames())
+    
+    image_read(paste0('data/', patientUID(), '/test.tiff'))
+    
   })
   
   
@@ -245,29 +267,13 @@ function(input, output, session) {
     {
       req(dossiers_patient_filenames())
       
-      print(noquote("Entering for loop..."))
-      tac <- Sys.time()          
-      
-      fetchPhotos(patientUID(),
-                  dbInfo[[1]][[2]],
-                  '22',
-                  deviceInfo[[1]][[1]],
-                  deviceInfo[[1]][[2]],
-                  dossiers_patient_filenames())
-      
-      tic <- Sys.time()
-      
-      print(tic-tac)
-      
-      patientPhotos <- image_read(paste0('data/', patientUID(), '/test.tiff'))
-      
       # A temp file to save the output.
       # This file will be removed later by renderImage
       outfile <- tempfile(fileext = '.png')
       
       # Generate the PNG
       #png(outfile, width = 400, height = 300)
-      patientPhotos[imgIdx] %>%
+      patientPhotos()[imgIdx] %>%
         image_scale(geometry = "x350") %>%
         image_write(path = outfile, format = "png")
       #dev.off()
