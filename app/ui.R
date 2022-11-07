@@ -78,8 +78,13 @@ tagList(
                                                   wellPanel(
                                                     uiOutput('photos_title') %>% withSpinner(),
                                                     tags$br(),
-                                                    tags$span(actionButton("increase_index", 
-                                                                           "Suivante",
+                                                    tags$span(actionButton("decrease_index", 
+                                                                           "",
+                                                                           icon("arrow-left"),
+                                                                           style="color: #FFF0F5; background-color: #3E3F3A"),
+                                                              actionButton("increase_index", 
+                                                                           "",
+                                                                           icon("arrow-right"),
                                                                            style="color: #FFF0F5; background-color: #3E3F3A"),
                                                               style = "position:absolute;right:2em;"),
                                                     imageOutput("tiffImage")

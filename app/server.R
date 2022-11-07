@@ -255,6 +255,15 @@ function(input, output, session) {
     }
   })
   
+  observeEvent(input$decrease_index, {
+    
+    if(imgIdx == 1) {
+      imgIdx <<- length(dossiers_patient_filenames())
+    } else {
+      imgIdx <<- imgIdx - 1
+    }
+  })
+  
   patientPhotos <- reactive({
     req(dossiers_patient_filenames())
     
