@@ -280,10 +280,13 @@ function(input, output, session) {
       # This file will be removed later by renderImage
       outfile <- tempfile(fileext = '.png')
       
+      # width  <- session$clientData$output_tiffImage_width
+      # height <- session$clientData$output_tiffImage_height
+      
       # Generate the PNG
       #png(outfile, width = 400, height = 300)
       patientPhotos()[imgIdx] %>%
-        image_scale(geometry = "x350") %>%
+        image_scale(geometry = "x400") %>%
         image_write(path = outfile, format = "png")
       #dev.off()
       
