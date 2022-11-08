@@ -374,7 +374,10 @@ fetchPhotos <- function(aZaldibaseDir,
   
   frames %>%
     image_join() %>%
-    image_write(path = paste0(targetDir, '/test.tiff'), 
+    image_write(path = paste0(targetDir, '/', 
+                              aZaldibaseDir, '_', 
+                              length(aListOfFilenames), 
+                              '_.tiff'), 
                 format = "tiff")
 
 }

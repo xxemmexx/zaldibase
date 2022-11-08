@@ -213,29 +213,46 @@ function(input, output, session) {
   })
 
   
-  dossiers_patient_filenames <- reactive({
+  dossiers_patient_filenames_count <- reactive({
+    req(patientUID())
     
-    filenames <- fetchFiles(patientUID(), 
-                            dbInfo[[1]][[2]], 
-                            '22', 
-                            deviceInfo[[1]][[1]], 
-                            deviceInfo[[1]][[2]])
+    pathToPatientImages <- paste0('data/', patientUID())
     
-    fetchPhotos(patientUID(),
-                dbInfo[[1]][[2]],
-                '22',
-                deviceInfo[[1]][[1]],
-                deviceInfo[[1]][[2]],
-                filenames)
+    if(!file.exists(pathToPatientImages)) {
+      
+      filenames <- fetchFiles(patientUID(), 
+                              dbInfo[[1]][[2]], 
+                              '22', 
+                              deviceInfo[[1]][[1]], 
+                              deviceInfo[[1]][[2]])
+      
+      filename_count <- filenames %>%
+        length()
+        
+      
+      fetchPhotos(patientUID(),
+                  dbInfo[[1]][[2]],
+                  '22',
+                  deviceInfo[[1]][[1]],
+                  deviceInfo[[1]][[2]],
+                  filenames)
+    } else {
+      
+      filename_split <- list.files(pathToPatientImages, pattern = '.tiff') %>%
+        str_split('_')
+      
+      filename_count <- filename_split[[1]][[2]] %>% strtoi()
+      
+    }
     
-    return(filenames)
+    return(filename_count)
     
   })
   
   output$photos_title <-renderUI({
-    req(dossiers_patient_filenames())
+    req(dossiers_patient_filenames_count())
     
-    x <- paste0('<h4> ', length(dossiers_patient_filenames()),
+    x <- paste0('<h4> ', dossiers_patient_filenames_count(),
                 ' images trouvées </h4>')
     
     HTML(x)
@@ -248,7 +265,7 @@ function(input, output, session) {
   
   observeEvent(input$increase_index, {
     
-    if(imgIdx == length(dossiers_patient_filenames())) {
+    if(imgIdx == dossiers_patient_filenames_count()) {
       imgIdx <<- 1
     } else {
       imgIdx <<- imgIdx + 1
@@ -258,23 +275,28 @@ function(input, output, session) {
   observeEvent(input$decrease_index, {
     
     if(imgIdx == 1) {
-      imgIdx <<- length(dossiers_patient_filenames())
+      imgIdx <<- dossiers_patient_filenames_count()
     } else {
       imgIdx <<- imgIdx - 1
     }
   })
   
   patientPhotos <- reactive({
-    req(dossiers_patient_filenames())
+    req(dossiers_patient_filenames_count())
     
-    image_read(paste0('data/', patientUID(), '/test.tiff'))
+    targetDir <- paste0('data/', patientUID())
+                        
+    imageFile <- list.files(path = targetDir, pattern = '.tiff')
+    #pathToImage <- paste0('data/', patientUID(), '/test.tiff')
+    image_read(paste0(targetDir, '/', imageFile))
     
   })
   
   
+  
   output$tiffImage <- renderImage(
     {
-      req(dossiers_patient_filenames())
+      req(dossiers_patient_filenames_count())
       
       # A temp file to save the output.
       # This file will be removed later by renderImage

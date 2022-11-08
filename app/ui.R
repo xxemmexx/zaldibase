@@ -86,9 +86,11 @@ tagList(
                                                                            "",
                                                                            icon("arrow-right"),
                                                                            style="color: #FFF0F5; background-color: #3E3F3A"),
-                                                              style = "position:absolute;right:2em;"),
-                                                    tags$span(imageOutput("tiffImage"),
-                                                              style="padding-left:100px;")
+                                                              style = "position:absolute;left:250px;"),
+                                                    tags$br(),
+                                                    tags$br(),
+                                                    tags$br(),
+                                                    tags$span(imageOutput("tiffImage"))
                                                            
                                                   )),
                                            column(width = 1)
