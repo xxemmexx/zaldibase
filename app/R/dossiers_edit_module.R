@@ -133,7 +133,7 @@ dossiersEditModuleServer <- function(id,
                                                                 multiple = TRUE,
                                                                 accept = 'image/*',
                                                                 buttonLabel = "Parcourir...",
-                                                                placeholder = "Aucun fichier n'a été trouvé"))
+                                                                placeholder = "...ou placez fichier ici"))
                                                ) # Close fluidRow
                                       ) # Close fluidrow
                              ), # Close div

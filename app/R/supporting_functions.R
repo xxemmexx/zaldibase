@@ -323,62 +323,76 @@ fetchPhotos <- function(aZaldibaseDir,
                         aListOfFilenames,
                         aMode = 'test') {
   
-  zalDir <- ifelse(aMode == 'test', 'zalditest', 'zaldibase')
-  
-  for (filename in aListOfFilenames) {
-    
-    anOrigin <- paste0(url = "sftp://", 
-                       aHostAddress,
-                       ":", 
-                       aPort,
-                       "/home/tospiti/prog/R-projects/zaldibase/imgs/",
-                       zalDir,
-                       "/",
-                       aZaldibaseDir, 
-                       "/",
-                       filename)
-    
-    aDestination <- paste0("data/tmp/", filename)
-    
-    
-    #print(noquote(paste0("Opening connection to: ", aDestination)))
-    con = file(aDestination, "wb")
-    
-    #print(noquote(paste0("Fetching from destination: ", anOrigin)))
-    RCurl::getBinaryURL(url = anOrigin,
-                        userpwd=paste(aDevice, anAccessCode, sep = ":"),
-                        verbose = FALSE,
-                        ssl.verifyhost = FALSE) %>%
-      writeBin(con)
-    
-    #print(noquote(paste0("Closing connection to: ", aDestination)))
-    close(con)
-  }
-  
-  frames <- NULL
-  
-  for (filename in aListOfFilenames) {
-    
-    print(noquote(paste0("Reading ", filename)))
-    img <- image_read(paste0("data/tmp/", filename))
-    frames <- c(frames, img)
-  }
-  
-  print(noquote(paste0(class(frames), " of length ", length(frames))))
-  
   targetDir <- paste0('data/', aZaldibaseDir)
   
   if(!file.exists(targetDir)) {
     dir.create(targetDir)
   }
   
-  frames %>%
-    image_join() %>%
-    image_write(path = paste0(targetDir, '/', 
-                              aZaldibaseDir, '_', 
-                              length(aListOfFilenames), 
-                              '_.tiff'), 
-                format = "tiff")
+  if(length(aListOfFilenames) > 0) {
+    zalDir <- ifelse(aMode == 'test', 'zalditest', 'zaldibase')
+    
+    for (filename in aListOfFilenames) {
+      
+      anOrigin <- paste0(url = "sftp://", 
+                         aHostAddress,
+                         ":", 
+                         aPort,
+                         "/home/tospiti/prog/R-projects/zaldibase/imgs/",
+                         zalDir,
+                         "/",
+                         aZaldibaseDir, 
+                         "/",
+                         filename)
+      
+      aDestination <- paste0("data/tmp/", filename)
+      
+      
+      #print(noquote(paste0("Opening connection to: ", aDestination)))
+      con = file(aDestination, "wb")
+      
+      #print(noquote(paste0("Fetching from destination: ", anOrigin)))
+      RCurl::getBinaryURL(url = anOrigin,
+                          userpwd=paste(aDevice, anAccessCode, sep = ":"),
+                          verbose = FALSE,
+                          ssl.verifyhost = FALSE) %>%
+        writeBin(con)
+      
+      #print(noquote(paste0("Closing connection to: ", aDestination)))
+      close(con)
+    }
+    
+    frames <- NULL
+    
+    for (filename in aListOfFilenames) {
+      
+      print(noquote(paste0("Reading ", filename)))
+      img <- image_read(paste0("data/tmp/", filename))
+      frames <- c(frames, img)
+    }
+    
+    #print(noquote(paste0(class(frames), " of length ", length(frames))))
+    
+    frames %>%
+      image_join() %>%
+      image_write(path = paste0(targetDir, '/', 
+                                aZaldibaseDir, '_', 
+                                length(aListOfFilenames), 
+                                '_.tiff'), 
+                  format = "tiff")
+  } else {
+    
+    pathToTiff <- paste0(targetDir, '/', 
+                         aZaldibaseDir, '_', 
+                         length(aListOfFilenames), 
+                         '_.tiff')
+    print(pathToTiff)
+    image_read('www/grenoble.jpeg') %>%
+      image_write(path = pathToTiff, 
+                  format = "tiff")
+  }
+  
+  
 
 }
 
@@ -413,7 +427,9 @@ fetchFiles <- function(aZaldibaseDir,
            }
   )
   
-  if(!is.na(filenames)) {
+  if(is.na(filenames)) {
+    return(list())
+  } else {
     filenames_split <- filenames %>% 
       str_split('\n')
     
@@ -427,6 +443,6 @@ fetchFiles <- function(aZaldibaseDir,
     } else {
       return(availableFiles)
     }
-  } 
+  }
 }
 

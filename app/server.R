@@ -162,6 +162,16 @@ function(input, output, session) {
   })
   
   observe({
+    if(dossiers_patient_filenames_count() > 0) {
+      shinyjs::show("decrease_index")
+      shinyjs::show("increase_index")
+    } else {
+      shinyjs::hide("decrease_index")
+      shinyjs::hide("increase_index")
+    }    
+  })
+  
+  observe({
     if(is.null(input$dossiers_table_rows_selected)) {
       
     } else {
@@ -238,9 +248,12 @@ function(input, output, session) {
                   filenames)
     } else {
       
+      #print(pathToPatientImages)
+      
       filename_split <- list.files(pathToPatientImages, pattern = '.tiff') %>%
         str_split('_')
       
+      #print(filename_split)
       filename_count <- filename_split[[1]][[2]] %>% strtoi()
       
     }
@@ -252,8 +265,12 @@ function(input, output, session) {
   output$photos_title <-renderUI({
     req(dossiers_patient_filenames_count())
     
-    x <- paste0('<h4> ', dossiers_patient_filenames_count(),
-                ' images trouvées </h4>')
+    if(dossiers_patient_filenames_count() > 0) {
+      x <- paste0('<h4> ', dossiers_patient_filenames_count(),
+                  ' images trouvées </h4>')
+    } else {
+      x <- paste0("<h4> Aucune image n'a été trouvée </h4>")
+    }
     
     HTML(x)
     
@@ -308,7 +325,7 @@ function(input, output, session) {
       # Generate the PNG
       #png(outfile, width = 400, height = 300)
       patientPhotos()[imgIdx] %>%
-        image_scale(geometry = "x400") %>%
+        image_scale(geometry = "x375") %>%
         image_write(path = outfile, format = "png")
       #dev.off()
       
