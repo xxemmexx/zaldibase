@@ -78,19 +78,27 @@ tagList(
                                                   wellPanel(
                                                     uiOutput('photos_title') %>% withSpinner(),
                                                     tags$br(),
+                                                    tags$span(actionButton("refresh_images", 
+                                                                           "",
+                                                                           icon("refresh"),
+                                                                           style="color: #FFF0F5; background-color: #3E3F3A;"),
+                                                              style = "position:absolute;right:2em;"),
+                                                    tags$span(imageOutput("tiffImage"),
                                                     tags$span(actionButton("decrease_index", 
                                                                            "",
                                                                            icon("arrow-left"),
+                                                                           style="color: #FFF0F5; background-color: #3E3F3A"),
+                                                              actionButton("expand_image", 
+                                                                           "",
+                                                                           icon("arrows-alt"),
                                                                            style="color: #FFF0F5; background-color: #3E3F3A"),
                                                               actionButton("increase_index", 
                                                                            "",
                                                                            icon("arrow-right"),
                                                                            style="color: #FFF0F5; background-color: #3E3F3A"),
-                                                              style = "position:absolute;left:250px;"),
-                                                    tags$br(),
-                                                    tags$br(),
-                                                    tags$br(),
-                                                    tags$span(imageOutput("tiffImage"))
+                                                              
+                                                              style = "position:absolute;left:250px;")
+                                                    )
                                                            
                                                   )),
                                            column(width = 1)

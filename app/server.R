@@ -165,9 +165,13 @@ function(input, output, session) {
     if(dossiers_patient_filenames_count() > 0) {
       shinyjs::show("decrease_index")
       shinyjs::show("increase_index")
+      shinyjs::show("refresh_images")
+      shinyjs::show("expand_image")
     } else {
       shinyjs::hide("decrease_index")
       shinyjs::hide("increase_index")
+      shinyjs::hide("refresh_images")
+      shinyjs::hide("expand_image")
     }    
   })
   
@@ -222,9 +226,23 @@ function(input, output, session) {
     patientRow
   })
 
+  session$userData$emptyCache <- reactiveVal(0)
+  
+  observeEvent(input$refresh_images, {
+    req(patientUID())
+    
+    pathToPatientImages <- paste0('data/', patientUID())
+    
+    unlink(pathToPatientImages, recursive = TRUE)
+    
+    session$userData$emptyCache(session$userData$emptyCache() + 1)
+    
+  })
   
   dossiers_patient_filenames_count <- reactive({
     req(patientUID())
+    
+    session$userData$emptyCache()
     
     pathToPatientImages <- paste0('data/', patientUID())
     
@@ -248,14 +266,10 @@ function(input, output, session) {
                   filenames)
     } else {
       
-      #print(pathToPatientImages)
-      
       filename_split <- list.files(pathToPatientImages, pattern = '.tiff') %>%
         str_split('_')
       
-      #print(filename_split)
       filename_count <- filename_split[[1]][[2]] %>% strtoi()
-      
     }
     
     return(filename_count)
