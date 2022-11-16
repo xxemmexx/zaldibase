@@ -782,6 +782,10 @@ function(input, output, session) {
     "Show me!"
   })
   
+  observeEvent(input$toggle.main.button, {
+    shinyjs::toggle("main")
+  })
+  
   output$example_1 <- renderText({example_text()})
  
   # set suspendWhenHidden to FALSE so it renders even without output

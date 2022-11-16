@@ -130,10 +130,15 @@ tagList(
                                                   DTOutput('garde_table'))
                                            ), # Close Fluid row
                                   fluidRow(column(width = 2,
-                                                  conditionalPanel(condition = 'staff_meeting',
-                                                               textOutput('example_1')    
+                                                  actionButton("toggle.main.button", "Toggle Main"),
+                                                  div(id = "main",
+                                                      mainPanel(
+                                                        p("This paragraph is in main."),
+                                                        p("This one too!")
+                                                      )
+                                                  ) %>% shinyjs::hidden()   
                                                     
-                                                  )
+                                                  
                                     
                                   ) # Close column
                                     
