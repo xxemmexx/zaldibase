@@ -128,7 +128,16 @@ tagList(
                                                   tags$br(),
                                                   tags$br(),
                                                   DTOutput('garde_table'))
-                                           ) # Close Fluid row
+                                           ), # Close Fluid row
+                                  fluidRow(column(width = 2,
+                                                  conditionalPanel(condition = 'staff_meeting',
+                                                               textOutput('example_1')    
+                                                    
+                                                  )
+                                    
+                                  ) # Close column
+                                    
+                                  ) # Close Fluid row
                                   ) # Close tabpanel Garde
                        ) # Close tabset panel
       ) # Close conditional panel admin

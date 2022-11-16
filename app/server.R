@@ -353,15 +353,6 @@ function(input, output, session) {
     deleteFile = TRUE)
   
   
-  observeEvent(input$staff_meeting, {
-    showModal(modalDialog(
-      title = "Work in progress...",
-      "Aguanta, pendejouw!",
-      easyClose = TRUE,
-      footer = modalButton("Fermer")
-    ))
-  })
-  
   # Patient data from dossiers -------------------------------------------------
   
   output$patient_display_name <- renderText({
@@ -786,6 +777,12 @@ function(input, output, session) {
       }
     ) # Close try-catch
   })
+  
+  example_text <- eventReactive(input$staff_meeting, {
+    "Show me!"
+  })
+  
+  output$example_1 <- renderText({example_text()})
  
   # set suspendWhenHidden to FALSE so it renders even without output
   outputOptions(output, 'role', suspendWhenHidden = FALSE) 
