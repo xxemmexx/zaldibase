@@ -162,16 +162,17 @@ function(input, output, session) {
   })
   
   observe({
-    if(dossiers_patient_filenames_count() > 0) {
-      shinyjs::show("decrease_index")
-      shinyjs::show("increase_index")
-      shinyjs::show("refresh_images")
-      shinyjs::show("expand_image")
-    } else {
+    if((is.null(input$dossiers_table_rows_selected) && is.null(input$archive_table_rows_selected)) ||
+       dossiers_patient_filenames_count() < 1) {
       shinyjs::hide("decrease_index")
       shinyjs::hide("increase_index")
       shinyjs::hide("refresh_images")
       shinyjs::hide("expand_image")
+    } else {
+      shinyjs::show("decrease_index")
+      shinyjs::show("increase_index")
+      shinyjs::show("refresh_images")
+      shinyjs::show("expand_image")
     }    
   })
   
