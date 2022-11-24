@@ -777,6 +777,38 @@ function(input, output, session) {
       }
     ) # Close try-catch
   })
+
+  patient_data_staff <- eventReactive(input$staff_meeting, {
+
+    out <- NULL
+
+    tryCatch({
+      out <- conn %>%
+        tbl('patients') %>%
+        collect() %>%
+        mutate(created_at = as.POSIXct(created_at, tz = "UTC"),
+               modified_at = as.POSIXct(modified_at, tz = "UTC")) %>%
+        arrange(desc(modified_at)) %>%
+        filter(has_definitive_decision == 0)
+
+    },
+    error = function(err) {
+      msg <- "Could not find that particular patient!"
+      # print `msg` so that we can find it in the logs
+      print(msg)
+      # print the actual error to log it
+      print(error)
+      # show error `msg` to user.  User can then tell us about error and we can
+      # quickly identify where it cam from based on the value in `msg`
+      showToast("error", msg)
+    })
+
+    out
+  })
+  
+  #patient_data_staff()
+  
+  #names_patients_staff <- composeNameAndAge(patient_data_staff())
   
   example_text <- eventReactive(input$staff_meeting, {
     "Show me!"

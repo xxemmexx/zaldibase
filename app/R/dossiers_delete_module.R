@@ -47,10 +47,15 @@ dossiersDeleteModuleServer <- function(id,
                      removeModal()
                      
                      tryCatch({
+                       
                        uid <- dossier_to_delete()$uid
+                       
+                       clearCache(uid)
                        
                        dbExecute(conn,
                                  "DELETE FROM patients WHERE uid=$1", params = c(uid))
+                       
+                       
                        
                        session$userData$dossiers_trigger(session$userData$dossiers_trigger() + 1)
                        

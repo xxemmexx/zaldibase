@@ -446,3 +446,12 @@ fetchFiles <- function(aZaldibaseDir,
   }
 }
 
+clearCache <- function(aPatientUuid) {
+  
+  targetDir <- paste0('data/', aPatientUuid)
+  
+  if(file.exists(targetDir)) {
+    unlink(targetDir, recursive = TRUE)
+  }
+}
+
