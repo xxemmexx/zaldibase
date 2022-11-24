@@ -92,7 +92,20 @@ buildUnorderedList <- function(aList, aTitle) {
 
 buildParagraph <- function(aParagraph, aTitle) {
   
-  paste0('<h5 style = "padding-right: 150px;"><b>', aTitle,'</b><br><br>', aParagraph, '</h5>')
+  if(aTitle == 'Histoire') {
+    openTag = '<h4 '
+    endTag = '</h4>'
+  } else {
+    openTag = '<h5 '
+    endTag = '</h5>'
+  }
+  
+  paste0(openTag, 
+         'style = "padding-right: 150px;"><b>', 
+         aTitle,
+         '</b><br><br>', 
+         aParagraph, 
+         endTag)
 }
 
 
