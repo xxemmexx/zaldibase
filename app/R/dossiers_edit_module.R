@@ -66,17 +66,19 @@ dossiersEditModuleServer <- function(id,
                                                       textInput(ns("nom"),
                                                                 'Nom',
                                                                 value = ifelse(is.null(hold), "", hold$nom)),
+                                                      textInput(ns("prenom"),
+                                                                'Prénom',
+                                                                value = ifelse(is.null(hold), "", hold$prenom))
+                                                      ), #close column
+                                               column(width = 6,
                                                       dateInput(ns("date_naissance"),
                                                                 'Date de naissance (YYYY-MM-JJ)',
                                                                 value = ifelse(is.null(hold), "", hold$date_naissance),
-                                                                language = "fr")),
-                                               column(width = 6,
-                                                      textInput(ns("prenom"),
-                                                                'Prénom',
-                                                                value = ifelse(is.null(hold), "", hold$prenom)),
+                                                                language = "fr"),
                                                       textInput(ns("phone_number_patient"),
                                                                 'Numéro de téléphone du patient',
-                                                                value = ifelse(is.null(hold), "", hold$phone_number_patient)))
+                                                                value = ifelse(is.null(hold), "", hold$phone_number_patient))
+                                                      ) # close column
                                                ), # Close fluidRow
                                       fluidRow(column(width = 12,
                                                       selectInput(ns('pathologie_1'),
