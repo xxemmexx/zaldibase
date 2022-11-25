@@ -33,7 +33,10 @@ dossiersEditModuleServer <- function(id,
                      showModal(
                        modalDialog(
                          div(style = "padding: 30px;",
-                             fluidRow(HTML("<h4>Données du centre hospitalier d'origine</h4>"),
+                             fluidRow(style = "background-color:#DBDFE3;",
+                               
+                               
+                               HTML("<h4 style=text-align:center;>Données du centre hospitalier d'origine</h4>"),
                                       column(width = 6,
                                              textInput(ns('contact_person'),
                                                        "Personne de contact",
@@ -47,6 +50,7 @@ dossiersEditModuleServer <- function(id,
                                                                         'Hôpital/Clinique',
                                                                         placeholder = "Ecrivez le nom de l'hôpital..."),
                                                               ns = ns)
+                                             
                                       ),
                                       column(width = 6,
                                              textInput(ns('contact_phone'),
@@ -55,8 +59,9 @@ dossiersEditModuleServer <- function(id,
                                              textInput(ns('contact_email'),
                                                        "Email",
                                                        value = ifelse(is.null(hold), "", hold$contact_email)))
-                                      ),
-                                      fluidRow(HTML("<h4>Données du patient</em></h4>"),
+                                      ), #Close fluidRow
+                                      
+                                      fluidRow(HTML("<h4 style=text-align:center;>Données du patient</em></h4>"),
                                                fluidRow(column(width = 6,
                                                       textInput(ns("nom"),
                                                                 'Nom',
