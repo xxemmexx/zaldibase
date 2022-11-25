@@ -270,7 +270,12 @@ function(input, output, session) {
       filename_split <- list.files(pathToPatientImages, pattern = '.tiff') %>%
         str_split('_')
       
-      filename_count <- filename_split[[1]][[2]] %>% strtoi()
+      
+      if(length(filename_split) == 0) {
+        filename_count <- 0
+      } else {
+        filename_count <- filename_split[[1]][[2]] %>% strtoi()
+      }
     }
     
     return(filename_count)
