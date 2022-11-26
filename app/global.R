@@ -73,6 +73,16 @@ pathologies <- c(" ", "Trauma crânien",
                  "Complications / Infections post-op",
                  "Autre...")
 
+medications <- c(" ", "Aspirine",
+                 "Plavix",
+                 "Eliquis",
+                 "Xarelto",
+                 "Coumadine",
+                 "HBPM",
+                 "Autres",
+                 "Thrombocytopenie",
+                 "Troubles Coagulations")
+
 hopitaux <- c(" ", "CHU - Urgences et Services", 
               "CHU - Dechoc",
               "Voiron",

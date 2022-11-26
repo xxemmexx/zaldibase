@@ -80,6 +80,32 @@ dossiersEditModuleServer <- function(id,
                                                                 value = ifelse(is.null(hold), "", hold$phone_number_patient))
                                                       ) # close column
                                                ), # Close fluidRow
+                                      fluidRow(
+                                        checkboxInput(ns('add_coagulation'),
+                                                      'Fluidifiants/Trouble coagulation',
+                                                      value = ifelse(is.null(hold), FALSE, hold$has_coagulation))
+                                        
+                                      ), #close fluidRow
+                                      conditionalPanel("input.add_coagulation",
+                                                       fluidRow(
+                                                         column(width = 4,
+                                                                selectInput(ns('traitement_1'),
+                                                                            'Médicament 1',
+                                                                            choices = medications,
+                                                                            selected = ifelse(is.null(hold), "", hold$treat_coagulant_1))),
+                                                         column(width = 4,
+                                                                selectInput(ns('traitement_2'),
+                                                                            'Médicament 2',
+                                                                            choices = medications,
+                                                                            selected = ifelse(is.null(hold), "", hold$treat_coagulant_2))),
+                                                         column(width = 4,
+                                                                selectInput(ns('traitement_3'),
+                                                                            'Médicament 3',
+                                                                            choices = medications,
+                                                                            selected = ifelse(is.null(hold), "", hold$treat_coagulant_3)))
+                                                       ), #close fluidRow
+                                                       ns = ns),
+                                      
                                       fluidRow(column(width = 12,
                                                       selectInput(ns('pathologie_1'),
                                                                   'Pathologie',
@@ -331,6 +357,10 @@ dossiersEditModuleServer <- function(id,
                                            "contact_phone" = input$contact_phone,
                                            "contact_email" = input$contact_email,
                                            "hopital" = deliverStandardOrCustom(input$hopital, input$hopital_autre),
+                                           "has_coagulation" = input$add_coagulation,
+                                           "treat_coagulant_1" = input$traitement_1,
+                                           "treat_coagulant_2" = input$traitement_2,
+                                           "treat_coagulant_3" = input$traitement_3,
                                            "created_at" = deliverCreationTime(hold, time_now),
                                            "created_by" = deliverCreator(hold, session$userData$username()),
                                            "modified_at" = time_now,
@@ -412,6 +442,10 @@ dossiersEditModuleServer <- function(id,
                                              dat$data$contact_phone,
                                              dat$data$contact_email,
                                              dat$data$hopital,
+                                             dat$data$has_coagulation %>% as.integer(),
+                                             dat$data$treat_coagulant_1,
+                                             dat$data$treat_coagulant_2,
+                                             dat$data$treat_coagulant_3,
                                              dat$data$created_at, 
                                              dat$data$created_by, 
                                              dat$data$modified_at, 

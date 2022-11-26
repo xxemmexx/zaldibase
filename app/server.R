@@ -401,6 +401,32 @@ function(input, output, session) {
     
   })
   
+  output$coagulation <- renderUI({
+    req(patient_data()$treat_coagulant_1)
+    
+    x <- buildUnorderedList(list(patient_data()$treat_coagulant_1,
+                                 patient_data()$treat_coagulant_2,
+                                 patient_data()$treat_coagulant_3),
+                            "Traitement")
+    
+    
+    HTML(x)
+    
+  })
+  
+  output$info_icons <- renderUI({
+    req(patient_data())
+  
+    x <- ''
+    if(patient_data()$has_coagulation) {
+      x <- paste0(x, '<img src="blood.jpeg" alt="drop" width="17" height="20"/>')
+    } 
+    
+    HTML(x)
+    
+  })
+  
+
   output$description_histoire <-renderUI({
     req(patient_data()$description_histoire)
     
@@ -515,6 +541,10 @@ function(input, output, session) {
                 contact_phone,
                 contact_email,
                 hopital,
+                has_coagulation,
+                treat_coagulant_1,
+                treat_coagulant_2,
+                treat_coagulant_3,
                 created_at,
                 created_by,
                 modified_at,
@@ -559,6 +589,10 @@ function(input, output, session) {
                              'Numéro (contact)',
                              'Email (contact)',
                              'Hôpital/Clinique',
+                             'Troubles coagulation',
+                             'Médicament 1',
+                             'Médicament 2',
+                             'Médicament 3',
                              'Enregistré(e) le',
                              'Enregistré(e) par',
                              'Dernière modification',
@@ -611,7 +645,7 @@ function(input, output, session) {
   })
   
   
-  # Patient data from archive -------------------------------------------------
+  # Patient data from archive UI -----------------------------------------------
   
   output$archive_patient_display_name <- renderText({
     
@@ -649,6 +683,31 @@ function(input, output, session) {
                                  archive_patient_data()$pathologie_3),
                             "Pathologie(s)")
     
+    
+    HTML(x)
+    
+  })
+  
+  output$archive_coagulation <-renderUI({
+    req(archive_patient_data()$treat_coagulant_1)
+    
+    x <- buildUnorderedList(list(archive_patient_data()$treat_coagulant_1,
+                                 archive_patient_data()$treat_coagulant_2,
+                                 archive_patient_data()$treat_coagulant_3),
+                            "Traitement")
+    
+    
+    HTML(x)
+    
+  })
+  
+  output$archive_info_icons <- renderUI({
+    req(archive_patient_data())
+    
+    x <- ''
+    if(archive_patient_data()$has_coagulation) {
+      x <- paste0(x, '<img src="blood.jpeg" alt="drop" width="17" height="20"/>')
+    } 
     
     HTML(x)
     
@@ -827,4 +886,6 @@ function(input, output, session) {
  
   # set suspendWhenHidden to FALSE so it renders even without output
   outputOptions(output, 'role', suspendWhenHidden = FALSE) 
+  # outputOptions(output, 'has_coagulation', suspendWhenHidden = FALSE) 
+  # outputOptions(output, 'archive_has_coagulation', suspendWhenHidden = FALSE) 
 }
