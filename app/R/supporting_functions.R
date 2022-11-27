@@ -375,8 +375,8 @@ fetchPhotos <- function(aZaldibaseDir,
     dir.create(targetDir)
   }
   
-  if(!aLocalDB) {
-    if(length(aListOfFilenames) > 0) {
+  if(length(aListOfFilenames) > 0) {
+    if(!aLocalDB) {
       zalDir <- ifelse(aMode == 'test', 'zalditest', 'zaldibase')
       
       for (filename in aListOfFilenames) {
@@ -477,9 +477,9 @@ fetchFilesFromLocalDirectory <- function(aZaldibaseDir) {
   
   filenames <- list.files(aDestination)
   
-  if (identical(filenames, character(0))) {
-    return(NA)
-  } 
+  # if (identical(filenames, character(0))) {
+  #   return(list)
+  # } 
   
   filenames
                          
