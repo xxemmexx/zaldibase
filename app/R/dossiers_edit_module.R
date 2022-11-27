@@ -415,14 +415,24 @@ dossiersEditModuleServer <- function(id,
                            thisFile <- input$photos[[i, "datapath"]]
                            ext <- tools::file_ext(thisFile)
                            
-                           transferFile(thisFile,
-                                        uid,
-                                        dbInfo[[1]][[2]],
-                                        i,
-                                        ext,
-                                        deviceInfo[[1]][[1]],
-                                        deviceInfo[[1]][[2]],
-                                        TRUE)
+                           if(localDB) {
+                             
+                             print("Saving image to local directory")
+                             
+                             saveFile(thisFile, uid, i, ext)
+                             
+                           } else {
+                             
+                             print("Transfering image to server")
+                             transferFile(thisFile,
+                                          uid,
+                                          dbInfo[[1]][[2]],
+                                          i,
+                                          ext,
+                                          deviceInfo[[1]][[1]],
+                                          deviceInfo[[1]][[2]],
+                                          TRUE)
+                           }
                          }
                        }
                      }

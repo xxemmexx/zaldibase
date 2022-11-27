@@ -334,6 +334,28 @@ transferFile <- function(aPathToFile,
                    ftp.create.missing.dirs = TRUE)
 }
 
+saveFile <- function(aPathToFile, 
+                     aUID, 
+                     index, 
+                     extension) {
+  
+  aTimestamp <- makeTimestampNow()
+  
+  aFileName <- paste0("Fichier_", index, "_", aTimestamp, ".", extension)
+  
+  targetDir <- paste0("data/imgs/", aUID)
+  
+  if(!file.exists(targetDir)) {
+    dir.create(targetDir)
+  }
+  
+  targetLocation <- paste0(targetDir, "/", aFileName)
+  
+  aPathToFile %>%
+  image_read() %>%
+  image_write(path = targetLocation, format = extension)
+}
+
 isFile <- function(aString) {
   ifelse(aString == ".." | aString == "." | aString == "", FALSE, TRUE)
 }
@@ -344,79 +366,81 @@ fetchPhotos <- function(aZaldibaseDir,
                         aDevice,
                         anAccessCode,
                         aListOfFilenames,
-                        aMode = 'test') {
+                        aMode,
+                        aLocalDB) {
   
-  targetDir <- paste0('data/', aZaldibaseDir)
+  targetDir <- paste0('data/tiff/', aZaldibaseDir)
   
   if(!file.exists(targetDir)) {
     dir.create(targetDir)
   }
   
-  if(length(aListOfFilenames) > 0) {
-    zalDir <- ifelse(aMode == 'test', 'zalditest', 'zaldibase')
-    
-    for (filename in aListOfFilenames) {
+  if(!aLocalDB) {
+    if(length(aListOfFilenames) > 0) {
+      zalDir <- ifelse(aMode == 'test', 'zalditest', 'zaldibase')
       
-      anOrigin <- paste0(url = "sftp://", 
-                         aHostAddress,
-                         ":", 
-                         aPort,
-                         "/home/tospiti/prog/R-projects/zaldibase/imgs/",
-                         zalDir,
-                         "/",
-                         aZaldibaseDir, 
-                         "/",
-                         filename)
-      
-      aDestination <- paste0("data/tmp/", filename)
-      
-      
-      #print(noquote(paste0("Opening connection to: ", aDestination)))
-      con = file(aDestination, "wb")
-      
-      #print(noquote(paste0("Fetching from destination: ", anOrigin)))
-      RCurl::getBinaryURL(url = anOrigin,
-                          userpwd=paste(aDevice, anAccessCode, sep = ":"),
-                          verbose = FALSE,
-                          ssl.verifyhost = FALSE) %>%
-        writeBin(con)
-      
-      #print(noquote(paste0("Closing connection to: ", aDestination)))
-      close(con)
+      for (filename in aListOfFilenames) {
+        
+        anOrigin <- paste0(url = "sftp://", 
+                           aHostAddress,
+                           ":", 
+                           aPort,
+                           "/home/tospiti/prog/R-projects/zaldibase/imgs/",
+                           zalDir,
+                           "/",
+                           aZaldibaseDir, 
+                           "/",
+                           filename)
+        
+        aDestination <- paste0("data/tmp/", filename)
+        
+        
+        #print(noquote(paste0("Opening connection to: ", aDestination)))
+        con = file(aDestination, "wb")
+        
+        #print(noquote(paste0("Fetching from destination: ", anOrigin)))
+        RCurl::getBinaryURL(url = anOrigin,
+                            userpwd=paste(aDevice, anAccessCode, sep = ":"),
+                            verbose = FALSE,
+                            ssl.verifyhost = FALSE) %>%
+          writeBin(con)
+        
+        #print(noquote(paste0("Closing connection to: ", aDestination)))
+        close(con)
+      }
     }
-    
+      
+  
     frames <- NULL
     
     for (filename in aListOfFilenames) {
       
       print(noquote(paste0("Reading ", filename)))
-      img <- image_read(paste0("data/tmp/", filename))
+      img <- image_read(getImageLocation(aLocalDB, aZaldibaseDir, filename))
       frames <- c(frames, img)
     }
     
-    #print(noquote(paste0(class(frames), " of length ", length(frames))))
     
     frames %>%
       image_join() %>%
-      image_write(path = paste0(targetDir, '/', 
-                                aZaldibaseDir, '_', 
-                                length(aListOfFilenames), 
-                                '_.tiff'), 
+      image_write(path = generateTiffFilename(targetDir, aZaldibaseDir, length(aListOfFilenames)), 
                   format = "tiff")
   } else {
     
-    pathToTiff <- paste0(targetDir, '/', 
-                         aZaldibaseDir, '_', 
-                         length(aListOfFilenames), 
-                         '_.tiff')
+    pathToTiff <- generateTiffFilename(targetDir, aZaldibaseDir, length(aListOfFilenames))
     print(pathToTiff)
     image_read('www/grenoble.jpeg') %>%
       image_write(path = pathToTiff, 
                   format = "tiff")
   }
   
-  
+}
 
+generateTiffFilename <- function(aTargetDir, aPatientUuid, anInteger) {
+  paste0(aTargetDir, '/', 
+         aPatientUuid, '_', 
+         anInteger, 
+         '_.tiff')
 }
 
 fetchFiles <- function(aZaldibaseDir, 
@@ -424,7 +448,52 @@ fetchFiles <- function(aZaldibaseDir,
                        aPort, 
                        aDevice,
                        anAccessCode,
-                       aMode = 'test') {
+                       aMode = 'test',
+                       aLocalDB = FALSE) {
+  
+  if(aLocalDB) {
+    
+    fetchFilesFromLocalDirectory(aZaldibaseDir)
+    
+  } else {
+    
+    fetchFilesFromRemoteLocation(aZaldibaseDir, 
+                                 aHostAddress, 
+                                 aPort, 
+                                 aDevice,
+                                 anAccessCode,
+                                 aMode)
+  }
+  
+}
+
+fetchFilesFromLocalDirectory <- function(aZaldibaseDir) {
+  
+  print("Fetching filenames from local dir...")
+  
+  aDestination <- paste0("data/imgs/",
+                         aZaldibaseDir,
+                         "/")
+  
+  filenames <- list.files(aDestination)
+  
+  if (identical(filenames, character(0))) {
+    return(NA)
+  } 
+  
+  filenames
+                         
+}
+
+
+fetchFilesFromRemoteLocation <- function(aZaldibaseDir, 
+                                         aHostAddress, 
+                                         aPort, 
+                                         aDevice,
+                                         anAccessCode,
+                                         aMode) {
+  
+  print("Fetching filenames from server...")
   
   filenames <- NA
   
@@ -471,10 +540,21 @@ fetchFiles <- function(aZaldibaseDir,
 
 clearCache <- function(aPatientUuid) {
   
-  targetDir <- paste0('data/', aPatientUuid)
+  targetDir <- paste0('data/tiff/', aPatientUuid)
   
   if(file.exists(targetDir)) {
     unlink(targetDir, recursive = TRUE)
   }
 }
 
+getImageLocation <- function(aLocalDB, aPatientUuid, aFilename) {
+
+  if(aLocalDB) {
+    targetDir <- paste0("data/imgs/", aPatientUuid, "/", aFilename)
+  } else {
+    targetDir <- paste0("data/tmp/", aFilename)
+  }
+  
+  targetDir
+
+}

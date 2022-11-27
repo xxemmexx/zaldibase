@@ -166,12 +166,10 @@ function(input, output, session) {
        dossiers_patient_filenames_count() < 1) {
       shinyjs::hide("decrease_index")
       shinyjs::hide("increase_index")
-      shinyjs::hide("refresh_images")
       shinyjs::hide("expand_image")
     } else {
       shinyjs::show("decrease_index")
       shinyjs::show("increase_index")
-      shinyjs::show("refresh_images")
       shinyjs::show("expand_image")
     }    
   })
@@ -232,9 +230,7 @@ function(input, output, session) {
   observeEvent(input$refresh_images, {
     req(patientUID())
     
-    pathToPatientImages <- paste0('data/', patientUID())
-    
-    unlink(pathToPatientImages, recursive = TRUE)
+    clearCache(patientUID())
     
     session$userData$emptyCache(session$userData$emptyCache() + 1)
     
@@ -245,15 +241,19 @@ function(input, output, session) {
     
     session$userData$emptyCache()
     
-    pathToPatientImages <- paste0('data/', patientUID())
+    pathToPatientImages <- paste0('data/tiff/', patientUID())
     
     if(!file.exists(pathToPatientImages)) {
+      
+      thisMode = 'test'
       
       filenames <- fetchFiles(patientUID(), 
                               dbInfo[[1]][[2]], 
                               '22', 
                               deviceInfo[[1]][[1]], 
-                              deviceInfo[[1]][[2]])
+                              deviceInfo[[1]][[2]],
+                              thisMode,
+                              aLocalDB = localDB)
       
       filename_count <- filenames %>%
         length()
@@ -264,7 +264,9 @@ function(input, output, session) {
                   '22',
                   deviceInfo[[1]][[1]],
                   deviceInfo[[1]][[2]],
-                  filenames)
+                  filenames,
+                  thisMode,
+                  localDB)
     } else {
       
       filename_split <- list.files(pathToPatientImages, pattern = '.tiff') %>%
@@ -321,10 +323,10 @@ function(input, output, session) {
   patientPhotos <- reactive({
     req(dossiers_patient_filenames_count())
     
-    targetDir <- paste0('data/', patientUID())
+    targetDir <- paste0('data/tiff/', patientUID())
                         
     imageFile <- list.files(path = targetDir, pattern = '.tiff')
-    #pathToImage <- paste0('data/', patientUID(), '/test.tiff')
+    
     image_read(paste0(targetDir, '/', imageFile))
     
   })
@@ -345,7 +347,7 @@ function(input, output, session) {
       # Generate the PNG
       #png(outfile, width = 400, height = 300)
       patientPhotos()[imgIdx] %>%
-        image_scale(geometry = "x375") %>%
+        image_scale(geometry = "x380") %>%
         image_write(path = outfile, format = "png")
       #dev.off()
       
