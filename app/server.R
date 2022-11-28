@@ -241,7 +241,7 @@ function(input, output, session) {
     
     session$userData$emptyCache()
     
-    pathToPatientImages <- paste0('data/tiff/', patientUID())
+    pathToPatientImages <- paste0(tiffDir, patientUID())
     
     if(!file.exists(pathToPatientImages)) {
       
@@ -323,7 +323,7 @@ function(input, output, session) {
   patientPhotos <- reactive({
     req(dossiers_patient_filenames_count())
     
-    targetDir <- paste0('data/tiff/', patientUID())
+    targetDir <- paste0(tiffDir, patientUID())
                         
     imageFile <- list.files(path = targetDir, pattern = '.tiff')
     

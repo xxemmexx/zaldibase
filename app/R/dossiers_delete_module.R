@@ -27,7 +27,7 @@ dossiersDeleteModuleServer <- function(id,
                      showModal(modalDialog(
                        div(style = "padding: 30px;", class = "text-center",
                            h2(style = "line-height: 1.75;",
-                              paste0('Etes-vous sûr de vouloir effacer le profil de M./Mme. ',
+                              paste0('Etes-vous sûr de vouloir effacer le dossier de M./Mme. ',
                                      dossier_to_delete()$nom,
                                      '?'))),
                        title = modal_title,

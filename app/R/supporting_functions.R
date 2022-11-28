@@ -343,7 +343,7 @@ saveFile <- function(aPathToFile,
   
   aFileName <- paste0("Fichier_", index, "_", aTimestamp, ".", extension)
   
-  targetDir <- paste0("data/imgs/", aUID)
+  targetDir <- paste0(imgsDir, aUID)
   
   if(!file.exists(targetDir)) {
     dir.create(targetDir)
@@ -369,7 +369,7 @@ fetchPhotos <- function(aZaldibaseDir,
                         aMode,
                         aLocalDB) {
   
-  targetDir <- paste0('data/tiff/', aZaldibaseDir)
+  targetDir <- paste0(tiffDir, aZaldibaseDir)
   
   if(!file.exists(targetDir)) {
     dir.create(targetDir)
@@ -392,7 +392,7 @@ fetchPhotos <- function(aZaldibaseDir,
                            "/",
                            filename)
         
-        aDestination <- paste0("data/tmp/", filename)
+        aDestination <- paste0(tmpDir, filename)
         
         
         #print(noquote(paste0("Opening connection to: ", aDestination)))
@@ -471,9 +471,7 @@ fetchFilesFromLocalDirectory <- function(aZaldibaseDir) {
   
   print("Fetching filenames from local dir...")
   
-  aDestination <- paste0("data/imgs/",
-                         aZaldibaseDir,
-                         "/")
+  aDestination <- paste0(imgsDir, aZaldibaseDir, "/")
   
   filenames <- list.files(aDestination)
   
@@ -540,7 +538,7 @@ fetchFilesFromRemoteLocation <- function(aZaldibaseDir,
 
 clearCache <- function(aPatientUuid) {
   
-  targetDir <- paste0('data/tiff/', aPatientUuid)
+  targetDir <- paste0(tiffDir, aPatientUuid)
   
   if(file.exists(targetDir)) {
     unlink(targetDir, recursive = TRUE)
@@ -550,9 +548,9 @@ clearCache <- function(aPatientUuid) {
 getImageLocation <- function(aLocalDB, aPatientUuid, aFilename) {
 
   if(aLocalDB) {
-    targetDir <- paste0("data/imgs/", aPatientUuid, "/", aFilename)
+    targetDir <- paste0(imgsDir, aPatientUuid, "/", aFilename)
   } else {
-    targetDir <- paste0("data/tmp/", aFilename)
+    targetDir <- paste0(tmpDir, aFilename)
   }
   
   targetDir

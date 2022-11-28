@@ -46,6 +46,10 @@ if(localDB) {
                          password = dbInfo[[1]][[5]])
 }
 
+tmpDir <- 'data/tmp/'
+tiffDir <- 'data/tiff/'
+imgsDir <- 'data/imgs/'
+
 user_base <- readRDS("data/user_base_encryp.rds")
 
 decisions <- c(" ", "A opérer",
