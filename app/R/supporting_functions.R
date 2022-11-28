@@ -61,20 +61,38 @@ buildContactCard <- function(aPatientPhone, aContactPerson, aContactPhone,
          </div>')
 }
 
+hasAnyValues <- function(aList) {
+  
+  trimmedList <- lapply(aList, str_trim)
+  
+  isEmptyList <- TRUE
+  
+  for(i in trimmedList) {
+    if(!(i == '')) {
+      isEmptyList <- FALSE
+      break
+    }
+  }
+  
+  return(!isEmptyList)
+}
+
 buildUnorderedList <- function(aList, aTitle) {
   
-  if(is.null(aList)) {
+  if(is.null(aList) || !hasAnyValues(aList)) {
     
     htmlList <- '<div></div>'
     
   } else {
+    
+    print(aList)
     
     n <- length(aList)
     
     items <- paste0('<li>', aList[[1]], '</li>')
     
     for(i in 2:n) {
-      if(!(aList[[i]] == '')) {
+      if(!(str_trim(aList[[i]]) == '')) {
         items <- paste0(items, '<li>', aList[[i]], '</li>')
       }
     }
