@@ -379,6 +379,8 @@ fetchPhotos <- function(aZaldibaseDir,
     if(!aLocalDB) {
       zalDir <- ifelse(aMode == 'test', 'zalditest', 'zaldibase')
       
+      clearTmp()
+      
       for (filename in aListOfFilenames) {
         
         anOrigin <- paste0(url = "sftp://", 
@@ -395,17 +397,16 @@ fetchPhotos <- function(aZaldibaseDir,
         aDestination <- paste0(tmpDir, filename)
         
         
-        #print(noquote(paste0("Opening connection to: ", aDestination)))
+        # Open connection to aDestination
         con = file(aDestination, "wb")
         
-        #print(noquote(paste0("Fetching from destination: ", anOrigin)))
         RCurl::getBinaryURL(url = anOrigin,
                             userpwd=paste(aDevice, anAccessCode, sep = ":"),
                             verbose = FALSE,
                             ssl.verifyhost = FALSE) %>%
           writeBin(con)
         
-        #print(noquote(paste0("Closing connection to: ", aDestination)))
+        # Close connection to aDestination
         close(con)
       }
     }
@@ -543,6 +544,12 @@ clearCache <- function(aPatientUuid) {
   if(file.exists(targetDir)) {
     unlink(targetDir, recursive = TRUE)
   }
+}
+
+clearTmp <- function() {
+  
+  do.call(file.remove, list(list.files(tmpDir, full.names = TRUE)))
+  
 }
 
 getImageLocation <- function(aLocalDB, aPatientUuid, aFilename) {

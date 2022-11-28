@@ -17,7 +17,7 @@ require(sodium)
 require(RCurl)
 require(magick)
 
-localDB = TRUE
+localDB = FALSE
 
 if(localDB) {
   
