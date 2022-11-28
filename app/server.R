@@ -287,11 +287,14 @@ function(input, output, session) {
   output$photos_title <-renderUI({
     req(dossiers_patient_filenames_count())
     
-    if(dossiers_patient_filenames_count() > 0) {
+    if(dossiers_patient_filenames_count() == 0) {
+      x <- paste0("<h4> Aucune image n'a été trouvée </h4>")
+    } else if (dossiers_patient_filenames_count() == 1) {
+      x <- paste0("<h4> 1 image trouvée </h4>")
+    } else {
       x <- paste0('<h4> ', dossiers_patient_filenames_count(),
                   ' images trouvées </h4>')
-    } else {
-      x <- paste0("<h4> Aucune image n'a été trouvée </h4>")
+      
     }
     
     HTML(x)
