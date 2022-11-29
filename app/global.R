@@ -16,6 +16,8 @@ require(bslib)
 require(sodium)
 require(RCurl)
 require(magick)
+require(blastula)
+require(quarto)
 
 localDB = TRUE
 

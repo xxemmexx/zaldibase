@@ -462,6 +462,8 @@ dossiersEditModuleServer <- function(id,
                                              dat$data$modified_by, 
                                              aStatement = statement)
                      
+                     print(paste0('Trying to execute ', statement, ' query...'))
+                     print(paste0('Trying following query: \n', thisQuery))
                      dbExecute(conn, thisQuery)
                      
                      session$userData$dossiers_trigger(session$userData$dossiers_trigger() + 1)
