@@ -16,17 +16,35 @@
 #' @return None
 #'
 dossiersEditModuleServer <- function(id, 
-                                     modal_title, dossier_to_edit, modal_trigger) {
+                                     modal_title, 
+                                     dossier_to_edit, 
+                                     modal_trigger,
+                                     permissions) {
     
   moduleServer(id, 
                function(input, output, session) {
                  
                  ns <- session$ns
                  
+                 output$privilege <- renderText({
+                   
+                   permissions()
+                   
+                 })
+                 
+                 
+                 
                    ############# MODAL TRIGGER #################################
                    observeEvent(modal_trigger(), {
                      
                      hold <- dossier_to_edit()
+                     
+                     output$privilege <- renderText({
+                       
+                       permissions()
+                       
+                     })
+                     
                      
                      #------------FILL-IN FORM----------------------------------
                      
@@ -142,7 +160,7 @@ dossiersEditModuleServer <- function(id,
                                                                                                                        'Description',
                                                                                                                        placeholder = "Decrivez..."),
                                                                                                          ns = ns),
-                                                                       ns = ns),
+                                                                                        ns = ns),
                                                                        ns = ns)
                                                       ) # Close column
                                                ), # Close fluidRow
@@ -153,11 +171,9 @@ dossiersEditModuleServer <- function(id,
                                                                     value = ifelse(is.null(hold), "", hold$description_histoire),
                                                                     width = '740'))
                                                ), # Close fluidRow
+                                      
                                       fluidRow(column(width = 12,
-                                                      selectInput(ns('pre_decision'),
-                                                                  "Décision préliminaire",
-                                                                  choices = decisions,
-                                                                  selected = ifelse(is.null(hold), "", hold$pre_decision)),
+                                                  
                                                       textAreaInput(ns('explanation'),
                                                                     'Explication',
                                                                     placeholder = "Expliquez cette décision..."),
@@ -166,8 +182,28 @@ dossiersEditModuleServer <- function(id,
                                                                 multiple = TRUE,
                                                                 accept = 'image/*',
                                                                 buttonLabel = "Parcourir...",
-                                                                placeholder = "...ou placez fichier ici"))
-                                               ) # Close fluidRow
+                                                                placeholder = "...ou placez fichier ici")
+                                                      
+                                                      
+                                                      ) # close column
+                                               ), # Close fluidRow
+                                      fluidRow(column(width = 12, align="center",
+                                                      conditionalPanel("output.privilege == 'user'",
+                                                                       selectInput(ns('pre_decision'),
+                                                                                   "Décision préliminaire",
+                                                                                   choices = decisions,
+                                                                                   selected = ifelse(is.null(hold), "", hold$pre_decision)),
+                                                                       ns = ns
+                                                      ),
+                                                      conditionalPanel("output.privilege == 'admin'",
+                                                                       selectInput(ns('def_decision'),
+                                                                                   "Décision définitive",
+                                                                                   choices = decisions,
+                                                                                   selected = ifelse(is.null(hold), "", hold$def_decision)),
+                                                                       ns = ns)
+                                      ) # Close column
+                                        
+                                      )# Close fluidRow
                                       ) # Close fluidrow
                              ), # Close div
                          title = modal_title,
@@ -180,6 +216,8 @@ dossiersEditModuleServer <- function(id,
                        ) # Close showModal
                      
                      #------------END FILL-IN FORM------------------------------
+                     
+                     
                      
                      #------------FIELD VALIDATION - FEEDBACK-------------------
                      
@@ -328,6 +366,18 @@ dossiersEditModuleServer <- function(id,
                        }
                      })
                      
+                     observeEvent(input$def_decision, {
+                       if (input$def_decision == "Rendez-vous à la consultation du chef" ||
+                           input$def_decision == "Rendez-vous à la consultation des internes") {
+                         shinyFeedback::showFeedbackDanger("def_decision",
+                                                           text = "Rappel: cette option génère un courrier automatique",
+                                                           icon = NULL)
+                         
+                       } else {
+                         shinyFeedback::hideFeedback("def_decision")
+                       }
+                     })
+                     
                      #------------END FIELD VALIDATION - FEEDBACK---------------
                      
                    }) # Close modal trigger
@@ -424,6 +474,8 @@ dossiersEditModuleServer <- function(id,
                            } else {
                              
                              print("Transfering image to server")
+                             
+                             
                              transferFile(thisFile,
                                           uid,
                                           dbInfo[[1]][[2]],
@@ -463,7 +515,7 @@ dossiersEditModuleServer <- function(id,
                                              aStatement = statement)
                      
                      print(paste0('Trying to execute ', statement, ' query...'))
-                     print(paste0('Trying following query: \n', thisQuery))
+                     #print(paste0('Trying following query: \n', thisQuery))
                      dbExecute(conn, thisQuery)
                      
                      session$userData$dossiers_trigger(session$userData$dossiers_trigger() + 1)
@@ -487,6 +539,9 @@ dossiersEditModuleServer <- function(id,
                    })
                  
                  ############# END TALK TO DB ##################################
+                 
+                 # set suspendWhenHidden to FALSE so it renders even without output
+                 outputOptions(output, 'privilege', suspendWhenHidden = FALSE) 
                  
                  }) # Close module server
   

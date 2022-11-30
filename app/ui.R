@@ -136,7 +136,7 @@ tagList(
                                                   DTOutput('garde_table'))
                                            ), # Close Fluid row
                                   fluidRow(column(width = 2,
-                                                  actionButton("toggle.main.button", "Toggle Main"),
+                                                  actionButton("toggleButton", "Toggle Main"),
                                                   div(id = "main",
                                                       mainPanel(
                                                         p("This paragraph is in main."),

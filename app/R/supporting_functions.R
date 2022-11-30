@@ -321,6 +321,7 @@ transferFile <- function(aPathToFile,
                          anAccessCode,
                          test = FALSE) {
   
+  
   if(test) {
     zaldir <- "zalditest"
   } else {

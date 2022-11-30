@@ -29,6 +29,15 @@ function(input, output, session) {
     username
     })
   
+  session$userData$permissions <- reactive({
+    if(is.null(credentials()$user_auth)) {
+      privilege <- 'user'
+    } else {
+      privilege <- credentials()$info[['permissions']]
+    }
+    privilege
+  })
+  
   output$role <- renderText({
     req(credentials()$user_auth)
     # use is.null(session$user) so it still works when testing locally
@@ -457,7 +466,8 @@ function(input, output, session) {
   dossiersEditModuleServer("add_dossier",
                            modal_title = "Registrer un nouveau dossier",
                            dossier_to_edit = function() NULL,
-                           modal_trigger = reactive({input$add_dossier}))
+                           modal_trigger = reactive({input$add_dossier}),
+                           permissions = session$userData$permissions)
   
   
   dossier_to_edit <- eventReactive(input$dossier_id_to_edit, {
@@ -470,7 +480,8 @@ function(input, output, session) {
   dossiersEditModuleServer("edit_dossier",
                            modal_title = "Modification du profil",
                            dossier_to_edit = dossier_to_edit,
-                           modal_trigger = reactive({input$dossier_id_to_edit}))
+                           modal_trigger = reactive({input$dossier_id_to_edit}),
+                           permissions = session$userData$permissions)
   
   
   dossier_to_delete <- eventReactive(input$dossier_id_to_delete, {
@@ -883,7 +894,7 @@ function(input, output, session) {
     "Show me!"
   })
   
-  observeEvent(input$toggle.main.button, {
+  observeEvent(input$toggleButton, {
     shinyjs::toggle("main")
   })
   
@@ -891,6 +902,5 @@ function(input, output, session) {
  
   # set suspendWhenHidden to FALSE so it renders even without output
   outputOptions(output, 'role', suspendWhenHidden = FALSE) 
-  # outputOptions(output, 'has_coagulation', suspendWhenHidden = FALSE) 
-  # outputOptions(output, 'archive_has_coagulation', suspendWhenHidden = FALSE) 
+  
 }
