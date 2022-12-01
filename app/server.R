@@ -94,7 +94,7 @@ function(input, output, session) {
     ids <- out$uid
     
     
-    if(credentials()$info[['permissions']] == 'admin' || credentials()$info[['permissions']] == 'chef') {
+    if(credentials()$info[['permissions']] == 'admin') {
       actions <- purrr::map_chr(ids, function(id_) {
         paste0('<div class="btn-group" style="width: 75px;" role="group" aria-label="Basic example">
                      <button class="btn btn-primary btn-sm edit_btn" data-toggle="tooltip" data-placement="top" title="Modifier" id = ', id_, ' style="margin: 0"><i class="fa fa-pencil-square-o"></i></button>
