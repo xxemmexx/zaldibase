@@ -535,7 +535,9 @@ dossiersEditModuleServer <- function(id,
                                              dat$data$created_at, 
                                              dat$data$created_by, 
                                              dat$data$modified_at, 
-                                             dat$data$modified_by, 
+                                             dat$data$modified_by,
+                                             0,
+                                             0,
                                              aStatement = statement)
                      
                      print(paste0('Trying to execute ', statement, ' query...'))
