@@ -21,18 +21,32 @@ require(quarto)
 
 localDB = TRUE
 
+tmpDir <- 'data/tmp/'
+tiffDir <- 'data/tiff/'
+imgsDir <- 'data/imgs/'
+logoPath <- 'www/chu_logo.jpeg'
+localDBPath <- 'data/zaldibase.sqlite3'
+configPath <- 'data/config.rds'
+keyPath <- 'data/key.rds'
+usersPath <- 'data/user_base_encryp.rds'
+credentialsPath <- 'data/outlook_credentials'
+
+user_base <- readRDS(usersPath)
+db_config <- readRDS(configPath)
+my_key <- readRDS(keyPath)
+
+config_df <- db_config %>%
+  data_decrypt(my_key) %>%
+  unserialize() 
+
+secretariat <- config_df[['mailSecretariat']] %>% as.character()
+zaldibase <- config_df[['mailZaldibase']] %>% as.character()
+
 if(localDB) {
   
-  conn <- dbConnect(RSQLite::SQLite(), dbname = 'data/zaldibase.sqlite3')
+  conn <- dbConnect(RSQLite::SQLite(), dbname = localDBPath)
   
 } else {
-  
-  db_config <- readRDS("data/config_encryp.rds")
-  my_key <- readRDS("data/key.rds")
-  
-  config_df <- db_config %>%
-    data_decrypt(my_key) %>%
-    unserialize() 
   
   dbInfo <- config_df[['db']] %>%
     str_split(":")
@@ -47,12 +61,6 @@ if(localDB) {
                          user = dbInfo[[1]][[4]], 
                          password = dbInfo[[1]][[5]])
 }
-
-tmpDir <- 'data/tmp/'
-tiffDir <- 'data/tiff/'
-imgsDir <- 'data/imgs/'
-
-user_base <- readRDS("data/user_base_encryp.rds")
 
 decisions <- c(" ", "A opérer",
                "Abstention",

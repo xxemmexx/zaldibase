@@ -611,3 +611,28 @@ getImageLocation <- function(aLocalDB, aPatientUuid, aFilename) {
   targetDir
 
 }
+
+generateEmailToSecretariat <- function(aChefDeGarde, aPatient, anExplanation) {
+  
+  img_string <- add_image(file = logoPath, width = 90, align = 'center')
+  
+  thisBody <- paste0("Bonjour,
+
+Vous recevez cette notification automatique parce que Dr. ", aChefDeGarde, " voudrait bien qu'un patient 
+prenne un rendez-vous chez le Centre Hospitalier de Grenoble.<br><br>
+
+<b>Nouveau rendez-vous pour: </b><br>", aPatient, "<br><br>
+<b>Note supplémentaire</b><br>
+<em>", anExplanation,"</em><br><br>
+
+Merci d'avance!<br><br><br>
+
+Cordialement, <br><br>
+L'équipe du Neurochirurgical")
+  
+  
+  compose_email(
+    body = md(glue::glue(thisBody)),
+    footer = md(glue::glue("Ceci est mon corps donné pour vous, faites ceci en souvenir de moi"))
+  )
+}

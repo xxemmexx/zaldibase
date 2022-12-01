@@ -441,7 +441,7 @@ dossiersEditModuleServer <- function(id,
                  ############# END CAPTURE DATA ################################
                  
                  
-                 ############# VALIDATE DATA ###################################
+                 ############# SUBMIT ACTION: VALIDATE DATA ####################
                  
                  validate_edit <- eventReactive(input$submit, {
                    dat <- edit_dossier_dat()
@@ -541,8 +541,29 @@ dossiersEditModuleServer <- function(id,
                                              aStatement = statement)
                      
                      print(paste0('Trying to execute ', statement, ' query...'))
-                     #print(paste0('Trying following query: \n', thisQuery))
+                     print(thisQuery)
+                     
                      dbExecute(conn, thisQuery)
+                     
+                     
+                     if(input$def_decision == "Rendez-vous à la consultation du chef" ||
+                        input$def_decision == "Rendez-vous à la consultation des internes") {
+                       
+                       print('Trying to send email to secretariat')
+                       
+                       nomCompletDocteur <- convertUsernameToDisplayname(session$userData$username(), user_base)
+                       nomCompletPatient <- paste0(input$prenom, " ", str_to_upper(input$nom))
+                       
+                       generateEmailToSecretariat(nomCompletDocteur, 
+                                                  nomCompletPatient,
+                                                  input$explication) %>%
+                         smtp_send(
+                           to = secretariat,
+                           from = zaldibase,
+                           subject = "Nouvelle requête de rendez-vous",
+                           credentials = creds_file(credentialsPath)
+                         )
+                     }
                      
                      session$userData$dossiers_trigger(session$userData$dossiers_trigger() + 1)
                      
@@ -564,7 +585,7 @@ dossiersEditModuleServer <- function(id,
                      ) # Close try-catch
                    })
                  
-                 ############# END TALK TO DB ##################################
+                 ############# END TALK TO DB, SUBMIT ACTION ###################
                  
                  # set suspendWhenHidden to FALSE so it renders even without output
                  outputOptions(output, 'privilege', suspendWhenHidden = FALSE) 
