@@ -94,12 +94,23 @@ function(input, output, session) {
     
     ids <- out$uid
     
-    actions <- purrr::map_chr(ids, function(id_) {
-      paste0('<div class="btn-group" style="width: 75px;" role="group" aria-label="Basic example">
+    
+    if(credentials()$info[['permissions']] == 'admin' || credentials()$info[['permissions']] == 'chef') {
+      actions <- purrr::map_chr(ids, function(id_) {
+        paste0('<div class="btn-group" style="width: 75px;" role="group" aria-label="Basic example">
                      <button class="btn btn-primary btn-sm edit_btn" data-toggle="tooltip" data-placement="top" title="Modifier" id = ', id_, ' style="margin: 0"><i class="fa fa-pencil-square-o"></i></button>
                      <button class="btn btn-danger btn-sm delete_btn" data-toggle="tooltip" data-placement="top" title="Effacer" id = ', id_, ' style="margin: 0"><i class="fa fa-times-circle"></i></button>
                             </div>')
-    })
+      })
+      } else {
+        actions <- purrr::map_chr(ids, function(id_) {
+          paste0('<div class="btn-group" style="width: 75px;" role="group" aria-label="Basic example">
+                     <button class="btn btn-primary btn-sm edit_btn" data-toggle="tooltip" data-placement="top" title="Modifier" id = ', id_, ' style="margin: 0"><i class="fa fa-pencil-square-o"></i></button>
+                            </div>')
+        })
+    }
+    
+    
     
     # Select relevant columns for the user
     out <- out %>%

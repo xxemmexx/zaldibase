@@ -196,14 +196,14 @@ dossiersEditModuleServer <- function(id,
                                                       ) # close column
                                                ), # Close fluidRow
                                       fluidRow(column(width = 12, align="center",
-                                                      conditionalPanel("output.privilege == 'user'",
+                                                      conditionalPanel("output.privilege == 'resident'",
                                                                        selectInput(ns('pre_decision'),
                                                                                    "Décision préliminaire",
                                                                                    choices = decisions,
                                                                                    selected = ifelse(is.null(hold), "", hold$pre_decision)),
                                                                        ns = ns
                                                       ),
-                                                      conditionalPanel("output.privilege == 'admin'",
+                                                      conditionalPanel("output.privilege == 'admin' || output.privilege == 'chef'",
                                                                        selectInput(ns('def_decision'),
                                                                                    "Décision définitive",
                                                                                    choices = decisions,

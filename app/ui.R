@@ -25,7 +25,7 @@ tagList(
         error_message = "Identifiant ou mot de passe invalides!"
       ),
       
-      conditionalPanel(condition = "output.role == 'admin'",
+      conditionalPanel(condition = "output.role == 'admin' || output.role == 'chef' || output.role == 'resident'",
                        tabsetPanel(
                          tabPanel("Mes dossiers", icon = icon("list-ul"), value = "dossiers",
                                   fluidRow(column(width = 4,

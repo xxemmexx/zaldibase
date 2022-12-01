@@ -23,16 +23,22 @@ deliverAge <- function(aDateNaissance) {
 }
 
 buildDecisionBanner <- function(aPreDecision, aDefDecision) {
-  if(aPreDecision == '' || is.null(aPreDecision)) {
-    preDecision = '--'
+  if(str_trim(aPreDecision) == '' || is.null(aPreDecision)) {
+    preDecision = '-'
   } else {
     preDecision = aPreDecision
+  }
+  
+  if(str_trim(aDefDecision) == '' || is.null(aDefDecision)) {
+    defDecision = '-'
+  } else {
+    defDecision = aDefDecision
   }
   
   if(aDefDecision == '') {
     paste0('<div class="pull-right"><b>Décision préliminaire: ', preDecision, '</b></div>')
   } else {
-    paste0('<div class="pull-right""><b>Décision définitive: ', aDefDecision, '</b></div><br>',
+    paste0('<div class="pull-right""><b>Décision définitive: ', defDecision, '</b></div><br>',
            '<div class="pull-right", style="color:#A9A9A9;"><b>Décision préliminaire: ', preDecision, '</b></div>'
            )
   }
