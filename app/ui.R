@@ -27,7 +27,7 @@ tagList(
       
       conditionalPanel(condition = "output.role == 'admin' || output.role == 'chef' || output.role == 'resident'",
                        tabsetPanel(
-                         tabPanel("Mes dossiers", icon = icon("list-ul"), value = "dossiers",
+                         tabPanel("Dossiers en cours", icon = icon("list-ul"), value = "dossiers",
                                   fluidRow(column(width = 4,
                                                   tags$br(),
                                                   tags$br(),
@@ -135,18 +135,17 @@ tagList(
                                                   tags$br(),
                                                   DTOutput('garde_table'))
                                            ), # Close Fluid row
-                                  fluidRow(column(width = 2,
-                                                  actionButton("toggleButton", "Toggle Main"),
-                                                  div(id = "main",
-                                                      mainPanel(
-                                                        p("This paragraph is in main."),
-                                                        p("This one too!")
-                                                      )
-                                                  ) %>% shinyjs::hidden()   
-                                                    
-                                                  
-                                    
-                                  ) # Close column
+                                  fluidRow(
+                                  #   column(width = 2,
+                                  #                 actionButton("toggleButton", "Toggle Main"),
+                                  #                 div(id = "main",
+                                  #                     mainPanel(
+                                  #                       p("This paragraph is in main."),
+                                  #                       p("This one too!")
+                                  #                     )
+                                  #                 ) %>% shinyjs::hidden() 
+                                  #   
+                                  # ) # Close column
                                     
                                   ) # Close Fluid row
                                   ) # Close tabpanel Garde
