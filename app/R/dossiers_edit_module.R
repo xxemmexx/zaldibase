@@ -385,7 +385,7 @@ dossiersEditModuleServer <- function(id,
                          shinyFeedback::showFeedbackDanger("def_decision",
                                                            text = "Rappel: cette décision génère un courrier automatique adressé au sécretariat",
                                                            icon = NULL,
-                                                           color = "#800000")
+                                                           color = "#D26901")
                          
                        } else {
                          shinyFeedback::hideFeedback("def_decision")
