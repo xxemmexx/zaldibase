@@ -11,7 +11,7 @@ tagList(
     
     
     tabPanel(
-      "Home",
+      "Acceuil",
       
       # add logout button UI
       div(class = "pull-right", shinyauthr::logoutUI(id = "logout")),

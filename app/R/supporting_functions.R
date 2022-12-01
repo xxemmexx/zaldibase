@@ -23,11 +23,17 @@ deliverAge <- function(aDateNaissance) {
 }
 
 buildDecisionBanner <- function(aPreDecision, aDefDecision) {
+  if(aPreDecision == '' || is.null(aPreDecision)) {
+    preDecision = '--'
+  } else {
+    preDecision = aPreDecision
+  }
+  
   if(aDefDecision == '') {
-    paste0('<div class="pull-right"><b>Décision préliminaire: ', aPreDecision, '</b></div>')
+    paste0('<div class="pull-right"><b>Décision préliminaire: ', preDecision, '</b></div>')
   } else {
     paste0('<div class="pull-right""><b>Décision définitive: ', aDefDecision, '</b></div><br>',
-           '<div class="pull-right", style="color:#A9A9A9;"><b>Décision préliminaire: ', aPreDecision, '</b></div>'
+           '<div class="pull-right", style="color:#A9A9A9;"><b>Décision préliminaire: ', preDecision, '</b></div>'
            )
   }
 }
@@ -245,6 +251,8 @@ writeQuery <- function(aUID,
                        aPathologie3,
                        aHistory,
                        aPreDecision, 
+                       aDefDecision,
+                       anExplanation,
                        aContactPerson,
                        aContactPhone,
                        aContactEmail,
@@ -264,13 +272,14 @@ writeQuery <- function(aUID,
                      "insert" = paste0("INSERT INTO patients (uid, nom, prenom, 
                      date_naissance, phone_number_patient, pathologie_1, 
                      pathologie_2, pathologie_3, description_histoire, pre_decision, def_decision, 
-                     contact_person, contact_phone, contact_email, hopital, 
+                     explication, contact_person, contact_phone, contact_email, hopital, 
                      has_definitive_decision, is_reported, has_coagulation,
                      treat_coagulant_1, treat_coagulant_2, treat_coagulant_3, created_at,
                      created_by, modified_at, modified_by) VALUES ('",
                      aUID, "', '", aNom, "', '", aPrenom, "', '", aDateNaissance, "', '",
                      aPhoneNumber, "', '", aPathologie1, "', '", aPathologie2, "', '",
-                     aPathologie3, "', '", aHistory, "', '", aPreDecision, "', '', '",
+                     aPathologie3, "', '", aHistory, "', '", aPreDecision, "', '", aDefDecision, "', '",
+                     anExplanation, "', '",
                      aContactPerson, "', '", aContactPhone, "', '", aContactEmail, "', '",
                      aHospital, "', 0, 0, ", hasCoagulation, ", '",
                      aCoagulant1, "', '", aCoagulant2, "', '", aCoagulant3, "', '",
@@ -286,6 +295,8 @@ writeQuery <- function(aUID,
                                        "', pathologie_3='", aPathologie3, 
                                        "', description_histoire='", aHistory,
                                        "', pre_decision='", aPreDecision,
+                                       "', def_decision='", aDefDecision,
+                                       "', explication='", anExplanation,
                                        "', contact_person='", aContactPerson,
                                        "', contact_phone='", aContactPhone,
                                        "', contact_email='", aContactEmail,

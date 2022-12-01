@@ -173,10 +173,6 @@ dossiersEditModuleServer <- function(id,
                                                ), # Close fluidRow
                                       
                                       fluidRow(column(width = 12,
-                                                  
-                                                      textAreaInput(ns('explanation'),
-                                                                    'Explication',
-                                                                    placeholder = "Expliquez cette décision..."),
                                                       fileInput(ns('photos'),
                                                                 "Ajouter des images",
                                                                 multiple = TRUE,
@@ -200,6 +196,11 @@ dossiersEditModuleServer <- function(id,
                                                                                    "Décision définitive",
                                                                                    choices = decisions,
                                                                                    selected = ifelse(is.null(hold), "", hold$def_decision)),
+                                                                       textAreaInput(ns('explication'),
+                                                                                     'Explication',
+                                                                                     placeholder = "Expliquez cette décision...",
+                                                                                     value = ifelse(is.null(hold), "", hold$explication),
+                                                                                     width = '100%'),
                                                                        ns = ns)
                                       ) # Close column
                                         
@@ -370,8 +371,9 @@ dossiersEditModuleServer <- function(id,
                        if (input$def_decision == "Rendez-vous à la consultation du chef" ||
                            input$def_decision == "Rendez-vous à la consultation des internes") {
                          shinyFeedback::showFeedbackDanger("def_decision",
-                                                           text = "Rappel: cette option génère un courrier automatique",
-                                                           icon = NULL)
+                                                           text = "Rappel: cette décision génère un courrier automatique adressé au sécretariat",
+                                                           icon = NULL,
+                                                           color = "#800000")
                          
                        } else {
                          shinyFeedback::hideFeedback("def_decision")
@@ -403,6 +405,8 @@ dossiersEditModuleServer <- function(id,
                                            "pathologie_3" = deliverStandardOrCustom(input$pathologie_3, input$description_pathologie_3, input$add_pathologie_3),
                                            "description_histoire" = input$description_histoire,
                                            "pre_decision" = input$pre_decision,
+                                           "def_decision" = input$def_decision,
+                                           "explication" = input$explication,
                                            "contact_person" = input$contact_person,
                                            "contact_phone" = input$contact_phone,
                                            "contact_email" = input$contact_email,
@@ -499,7 +503,9 @@ dossiersEditModuleServer <- function(id,
                                              dat$data$pathologie_2,
                                              dat$data$pathologie_3,
                                              dat$data$description_histoire,
-                                             dat$data$pre_decision, 
+                                             dat$data$pre_decision,
+                                             dat$data$def_decision,
+                                             dat$data$explication,
                                              dat$data$contact_person,
                                              dat$data$contact_phone,
                                              dat$data$contact_email,
