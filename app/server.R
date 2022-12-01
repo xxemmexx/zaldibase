@@ -68,7 +68,7 @@ function(input, output, session) {
                modified_at = as.POSIXct(modified_at, tz = "UTC")) %>%
         arrange(desc(modified_at)) %>%
         filter(modified_by == credentials()$info[['user']],
-               has_definitive_decision == 0)
+               is_closed == 0)
       
     }, 
     error = function(err) {
@@ -880,7 +880,7 @@ function(input, output, session) {
         mutate(created_at = as.POSIXct(created_at, tz = "UTC"),
                modified_at = as.POSIXct(modified_at, tz = "UTC")) %>%
         arrange(desc(modified_at)) %>%
-        filter(has_definitive_decision == 0)
+        filter(is_closed == 0)
 
     },
     error = function(err) {
