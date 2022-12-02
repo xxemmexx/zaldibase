@@ -30,6 +30,8 @@ configPath <- 'data/config.rds'
 keyPath <- 'data/key.rds'
 usersPath <- 'data/user_base_encryp.rds'
 credentialsPath <- 'data/outlook_credentials'
+sd <- stamp_date("26/09/2018")
+sdISO <- stamp_date("2018-09-26")
 
 user_base <- readRDS(usersPath)
 db_config <- readRDS(configPath)

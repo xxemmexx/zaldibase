@@ -18,9 +18,10 @@ printButtonLabel <- function(aModalTitle) {
           "C'est bon!")
 }
 
-deliverAge <- function(aDateNaissance) {
-  interval(ymd(aDateNaissance), today()) %/% years(1)
+deliverAge <- function(aDateNaissance, aCreatedAtDate) {
+  interval(ymd(aDateNaissance), sdISO(ymd_hms(aCreatedAtDate))) %/% years(1)
 }
+
 
 buildDecisionBanner <- function(aPreDecision, aDefDecision) {
   if(str_trim(aPreDecision) == '' || is.null(aPreDecision)) {
@@ -50,8 +51,6 @@ convertUsernameToDisplayname <- function(aUsername, aUserTibble) {
     filter(user == aUsername) %>%
     select(name)
 }
-
-sd <- stamp_date("26/09/2018")
 
 buildContactCard <- function(aPatientPhone, aContactPerson, aContactPhone, 
                              aContactEmail, aHospital, aCreatedAt, 

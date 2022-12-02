@@ -392,7 +392,8 @@ function(input, output, session) {
   
   output$patient_age <-renderText({
     
-    paste0("âgé(e) de ", deliverAge(patient_data()$date_naissance), " ans")
+    paste0("âgé(e) de ", deliverAge(patient_data()$date_naissance,
+                                    patient_data()$created_at), " ans")
     
   })
   
@@ -681,7 +682,8 @@ function(input, output, session) {
   
   output$archive_patient_age <-renderText({
     
-    paste0("âgé(e) de ", deliverAge(archive_patient_data()$date_naissance), " ans")
+    paste0("âgé(e) de ", deliverAge(archive_patient_data()$date_naissance,
+                                    archive_patient_data()$created_at), " ans")
     
   })
   
