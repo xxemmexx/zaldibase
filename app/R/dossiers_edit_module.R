@@ -556,6 +556,8 @@ dossiersEditModuleServer <- function(id,
                        
                        generateEmailToSecretariat(nomCompletDocteur, 
                                                   nomCompletPatient,
+                                                  input$date_naissance,
+                                                  input$def_decision,
                                                   input$explication) %>%
                          smtp_send(
                            to = secretariat,

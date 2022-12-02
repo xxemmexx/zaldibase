@@ -204,6 +204,32 @@ writeISODate <- function(aDateString) {
     format('%Y-%m-%d')
 }
 
+
+translateDate <- function(aDateString) {
+  date <- aDateString %>% 
+    writeISODate() 
+  
+  paste0(day(date), " de ", deliverMonthName(month(date)), ", ", year(date))
+}
+
+deliverMonthName <- function(anInteger) {
+  
+  switch(anInteger,
+         'Janvier',
+         'Février',
+         'Mars',
+         'Avril',
+         'Mai',
+         'Juin',
+         'Juillet',
+         'Août',
+         'Septembre',
+         'Octobre',
+         'Novembre',
+         'Décembre')
+  
+}
+
 computeDateGarde <- function(aTimestamp) {
   
   timestampNowParts <- str_split(aTimestamp, " ")
@@ -611,7 +637,11 @@ getImageLocation <- function(aLocalDB, aPatientUuid, aFilename) {
 
 }
 
-generateEmailToSecretariat <- function(aChefDeGarde, aPatient, anExplanation) {
+generateEmailToSecretariat <- function(aChefDeGarde, 
+                                       aPatient, 
+                                       aDateDeNaissance, 
+                                       aDefDecision,
+                                       anExplanation) {
   
   img_string <- add_image(file = logoPath, width = 90, align = 'center')
   
@@ -620,7 +650,10 @@ generateEmailToSecretariat <- function(aChefDeGarde, aPatient, anExplanation) {
 Vous recevez cette notification automatique parce que Dr. ", aChefDeGarde, " voudrait bien qu'un patient 
 prenne un rendez-vous chez le Centre Hospitalier de Grenoble.<br><br>
 
-<b>Nouveau rendez-vous pour: </b><br>", aPatient, "<br><br>
+<b>Patient: </b><br>", 
+aPatient, ", né(e) le ", translateDate(aDateDeNaissance), "<br><br>
+<b>Décision: </b><br>",
+aDefDecision, "<br><br>
 <b>Note supplémentaire</b><br>
 <em>", anExplanation,"</em><br><br>
 
