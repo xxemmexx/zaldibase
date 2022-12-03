@@ -150,8 +150,19 @@ tagList(
                                   ) # Close Fluid row
                                   ) # Close tabpanel Garde
                        ) # Close tabset panel
-      ) # Close conditional panel admin
-      
+      ), # Close conditional panel admin
+      conditionalPanel(condition = "output.role == 'secretariat'",
+        tabsetPanel(
+          tabPanel("Rendez-vous à prendre",
+                   tags$br(),
+                   tags$br(),
+                   fluidRow(column(width = 12,
+                                   title = "Rendez-vous à prendre",
+                                   DTOutput('rendezvous_table') %>% withSpinner())
+                   )),
+          tabPanel("Rendez-vous accordés")
+        )
+      )
     )
   )
 )

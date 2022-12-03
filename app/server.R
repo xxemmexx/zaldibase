@@ -911,6 +911,112 @@ function(input, output, session) {
   })
   
   output$example_1 <- renderText({example_text()})
+  
+  # Rendez-vous table ------------------------------------------------------------
+  
+  # trigger to reload data from the "rendez-vous" table
+  session$userData$rendezvous_trigger <- reactiveVal(0)
+  
+  
+  # Read in Rendez-vous table from the database
+  rendezvous <- reactive({
+    req(credentials()$user_auth)
+    
+    session$userData$rendezvous_trigger()
+    
+    out <- NULL
+    tryCatch({
+      out <- conn %>%
+        tbl('patients') %>%
+        collect() %>%
+        mutate(created_at = as.POSIXct(created_at, tz = "UTC"),
+               modified_at = as.POSIXct(modified_at, tz = "UTC")) %>%
+        arrange(desc(modified_at)) %>%
+        filter(needs_rendezvous == 1)
+      
+    }, 
+    error = function(err) {
+      msg <- "Could not find what you are looking for!"
+      # print `msg` so that we can find it in the logs
+      print(msg)
+      # print the actual error to log it
+      print(error)
+      # show error `msg` to user.  User can then tell us about error and we can
+      # quickly identify where it cam from based on the value in `msg`
+      showToast("error", msg)
+    })
+    
+    out 
+    
+  })
+  
+  rendezvous_table_prep <- reactiveVal(NULL)
+  
+  observeEvent(rendezvous(), {
+    
+    out <- rendezvous()
+    
+    ids <- out$uid
+    
+    
+    actions <- purrr::map_chr(ids, function(id_) {
+      paste0('<div class="btn-group" style="width: 75px;" role="group" aria-label="Basic example">
+                     <button class="btn btn-primary btn-sm edit_btn" data-toggle="tooltip" data-placement="top" title="Planifier" id = ', id_, ' style="margin: 0; background:teal"><i class="fa fa-calendar"></i></button>
+                            </div>')
+    })
+    
+    
+    
+    # Select relevant columns for the user
+    out <- out %>%
+      transmute(nom, prenom, date_naissance, displayStatusName(status))
+    
+    # Set the Action Buttons row to the first column of the `dossiers` table
+    out <- cbind(tibble(" " = actions),
+                 out)
+    
+    if (is.null(rendezvous_table_prep())) {
+      # loading data into the table for the first time, so we render the entire table
+      # rather than using a DT proxy
+      rendezvous_table_prep(out)
+      
+    } else {
+      # table has already rendered, so use DT proxy to update the data in the
+      # table without reendering the entire table
+      replaceData(rendezvous_table_proxy,
+                  out,
+                  resetPaging = FALSE,
+                  rownames = FALSE)
+    }
+  })
+  
+  output$rendezvous_table <- renderDT({
+    req(credentials()$user_auth, rendezvous_table_prep())
+    
+    out <- rendezvous_table_prep() 
+    
+    out %>%
+      datatable(rownames = FALSE,
+                colnames = c('Nom', 'Prénom', 'Date de naissance', 
+                             'Status'),
+                selection = "single",
+                class = "compact stripe row-border nowrap",
+                escape = -1,  # Escape the HTML in all except 1st column (which has the buttons)
+                options = list(scrollX = TRUE,
+                               dom = 'tp',
+                               columnDefs = list(list(targets = 0, orderable = FALSE)),
+                               pageLength = 10,
+                               language = list(emptyTable = "Aucun rendez-vous à prendre",
+                                               paginate = list(`next` = 'Suivant',
+                                                               previous = 'Précédant')),
+                               drawCallback = JS("function(settings) {
+                                              // removes any lingering tooltips
+                                              $('.tooltip').remove()}"))
+      ) 
+    
+  })
+  
+  rendezvous_table_proxy <- DT::dataTableProxy('rendezvous_table')
  
   # set suspendWhenHidden to FALSE so it renders even without output
   outputOptions(output, 'role', suspendWhenHidden = FALSE) 
