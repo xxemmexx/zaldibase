@@ -536,8 +536,6 @@ dossiersEditModuleServer <- function(id,
                                              dat$data$created_by, 
                                              dat$data$modified_at, 
                                              dat$data$modified_by,
-                                             0,
-                                             0,
                                              aStatement = statement)
                      
                      print(paste0('Trying to execute ', statement, ' query...'))
@@ -549,7 +547,13 @@ dossiersEditModuleServer <- function(id,
                      if(input$def_decision == "Rendez-vous à la consultation du chef" ||
                         input$def_decision == "Rendez-vous à la consultation des internes") {
                        
-                       print('Trying to send email to secretariat')
+                       print('Trying to update status...')
+                       
+                       rendezVousUpdateQuery <- writeRendezVousQuery(uid, 'needsRendezvous')
+                       
+                       dbExecute(conn, rendezVousUpdateQuery)
+                       
+                       print('Trying to send email to secretariat...')
                        
                        nomCompletDocteur <- convertUsernameToDisplayname(session$userData$username(), user_base)
                        nomCompletPatient <- paste0(input$prenom, " ", str_to_upper(input$nom))

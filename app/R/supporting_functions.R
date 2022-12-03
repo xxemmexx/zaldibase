@@ -299,8 +299,11 @@ writeQuery <- function(aUID,
                        aCreatedBy, 
                        aModifiedAt, 
                        aModifiedBy,
-                       isClosed,
-                       isViewed,
+                       needsRendezVous = 0,
+                       hasRendezVous = 0,
+                       isClosed = 0,
+                       isViewed = 0,
+                       status = 1,
                        aStatement = c("insert", "update")) {
   
   thisQuery = switch(aStatement,
@@ -312,7 +315,8 @@ writeQuery <- function(aUID,
                      has_coagulation,
                      treat_coagulant_1, date_derniere_prise_1, treat_coagulant_2, 
                      date_derniere_prise_2, treat_coagulant_3, date_derniere_prise_3,
-                     created_at, created_by, modified_at, modified_by, is_closed, is_viewed) VALUES ('",
+                     created_at, created_by, modified_at, modified_by, needs_rendezvous,
+                     has_rendezvous, is_closed, is_viewed, status) VALUES ('",
                      aUID, "', '", aNom, "', '", aPrenom, "', '", aDateNaissance, "', '",
                      aPhoneNumber, "', '", aPathologie1, "', '", aPathologie2, "', '",
                      aPathologie3, "', '", aHistory, "', '", aPreDecision, "', '", aDefDecision, "', '",
@@ -322,7 +326,8 @@ writeQuery <- function(aUID,
                      aCoagulant1, "', '", aDernierePrise1, "', '", aCoagulant2, "', '", 
                      aDernierePrise2, "', '", aCoagulant3, "', '", aDernierePrise3, "', '",
                      aCreatedAt, "', '", aCreatedBy, "', '", 
-                     aModifiedAt, "', '", aModifiedBy, "', ", isClosed, ", ", isViewed, ");"),
+                     aModifiedAt, "', '", aModifiedBy, "', ", needsRendezVous, ", ",
+                     hasRendezVous, ", ", isClosed, ", ", isViewed, ", ", status, ");"),
                      
                      "update" = paste0("UPDATE patients SET nom='", aNom, 
                                        "', prenom='", aPrenom, 
@@ -350,8 +355,11 @@ writeQuery <- function(aUID,
                                        "', created_by='", aCreatedBy, 
                                        "', modified_at='", aModifiedAt, 
                                        "', modified_by='", aModifiedBy,
-                                       "', is_closed=", isClosed,
+                                       "', needs_rendezvous=", needsRendezVous,
+                                       ", has_rendezvous=", hasRendezVous,
+                                       ", is_closed=", isClosed,
                                        ", is_viewed=", isViewed,
+                                       ", status=", status,
                                        " WHERE uid='", aUID, "';")
                      )
   thisQuery
@@ -365,6 +373,28 @@ makeTimestampNow <- function() {
     str_replace_all("-", "") %>%
     str_replace_all(" ", "")
 }
+
+writeRendezVousQuery <- function(aPatientUid, aMode) {
+  if(aMode == 'needsRendezvous') {
+    query <- paste0("UPDATE patients SET 
+                    needs_rendezvous = 1, 
+                    status = 3
+                    WHERE uid = '", aPatientUid, "';")
+  }
+  
+  query
+  
+}
+
+displayStatusName <- function(aStatus) {
+  case_when(
+    aStatus == 1 ~ 'En cours...',
+    aStatus == 2 ~  "En attente d'info supplémentaire",
+    aStatus == 3 ~ "Attend sécretariat pour un rendez-vous",
+    aStatus == 4 ~ "Rendez-vous accordé"
+  )
+}
+
 
 transferFile <- function(aPathToFile, 
                          aUID, 
