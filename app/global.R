@@ -1,5 +1,6 @@
 # Library in packages used in this application
 require(shiny)
+require(shinyTime)
 require(DT)
 require(DBI)
 require(RSQLite)

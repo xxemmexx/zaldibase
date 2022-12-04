@@ -157,9 +157,11 @@ tagList(
                    tags$br(),
                    tags$br(),
                    fluidRow(column(width = 12,
-                                   title = "Rendez-vous à prendre",
+                                   title = "Planification",
                                    DTOutput('rendezvous_table') %>% withSpinner())
-                   )),
+                   ), # Close fluid row
+                   tags$script(src = "rendezvous_table_module.js"),
+                   tags$script(paste0("rendezvous_table_module_js('')"))),
           tabPanel("Rendez-vous accordés")
         )
       )

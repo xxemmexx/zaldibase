@@ -1017,6 +1017,19 @@ function(input, output, session) {
   })
   
   rendezvous_table_proxy <- DT::dataTableProxy('rendezvous_table')
+  
+  rendezvous_patient <- eventReactive(input$rendezvous_patient_id, {
+    
+    rendezvous() %>%
+      filter(uid == input$rendezvous_patient_id)
+    
+    
+  })
+  
+  rendezvousEditModuleServer("add_rendezvous",
+                           modal_title = "Planification de rendez-vous",
+                           rendezvous_patient = rendezvous_patient,
+                           modal_trigger = reactive({input$rendezvous_patient_id}))
  
   # set suspendWhenHidden to FALSE so it renders even without output
   outputOptions(output, 'role', suspendWhenHidden = FALSE) 

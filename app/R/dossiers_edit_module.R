@@ -27,9 +27,9 @@ dossiersEditModuleServer <- function(id,
                  ns <- session$ns
                  
                  output$privilege <- renderText({
-                   
+
                    permissions()
-                   
+
                  })
                  
                  
@@ -38,13 +38,7 @@ dossiersEditModuleServer <- function(id,
                    observeEvent(modal_trigger(), {
                      
                      hold <- dossier_to_edit()
-                     
-                     output$privilege <- renderText({
-                       
-                       permissions()
-                       
-                     })
-                     
+
                      
                      #------------FILL-IN FORM----------------------------------
                      
