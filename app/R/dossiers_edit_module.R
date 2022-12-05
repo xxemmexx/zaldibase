@@ -48,7 +48,7 @@ dossiersEditModuleServer <- function(id,
                              fluidRow(style = "background-color:#DBDFE3;",
                                
                                
-                               HTML("<h4 style=text-align:center;>Données du centre hospitalier d'origine</h4>"),
+                               HTML("<h4 style=text-align:center;><b>Origine de l'appel</b></h4>"),
                                       column(width = 6,
                                              textInput(ns('contact_person'),
                                                        "Personne de contact",
@@ -73,7 +73,7 @@ dossiersEditModuleServer <- function(id,
                                                        value = ifelse(is.null(hold), "", hold$contact_email)))
                                       ), #Close fluidRow
                                       
-                                      fluidRow(HTML("<h4 style=text-align:center;>Données du patient</em></h4>"),
+                                      fluidRow(HTML("<h4 style=text-align:center;><b>Données du patient</b></h4>"),
                                                fluidRow(column(width = 6,
                                                       textInput(ns("nom"),
                                                                 'Nom',

@@ -65,17 +65,10 @@ if(localDB) {
                          password = dbInfo[[1]][[5]])
 }
 
-decisions <- c(" ", "A opérer",
-               "Abstention",
-               "Avis à autre discipline",
-               "Rendez-vous à la consultation du chef",
-               "Rendez-vous à la consultation des internes",
-               "Examen complémentaire",
-               "Opérés",
-               "Surveillance",
-               "Traitement conservateur",
-               "Autre"
-               )
+decisions <- c(" ", "A hospitaliser / A rappatrier",
+               "Rendez-vous / Suivi",
+               "Prise en charge externe ou non-chirurgicale",
+               "Complément d`examen à faire")
 
 pathologies <- c(" ", "Trauma crânien",
                  "Trauma rachidien",
