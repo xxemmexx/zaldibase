@@ -388,10 +388,12 @@ writeRendezVousQuery <- function(aPatientUid, aMode) {
 
 displayStatusName <- function(aStatus) {
   case_when(
-    aStatus == 1 ~ 'En cours...',
-    aStatus == 2 ~  "En attente d'info supplémentaire",
+    aStatus == 0 ~ "En cours...",
+    aStatus == 1 ~  "À opérer",
+    aStatus == 2 ~  "Opéré(e)",
     aStatus == 3 ~ "Attend sécretariat pour un rendez-vous",
-    aStatus == 4 ~ "Rendez-vous accordé"
+    aStatus == 4 ~ "Rendez-vous accordé",
+    aStatus == 5 ~  "En attente d'info supplémentaire",
   )
 }
 
