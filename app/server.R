@@ -902,15 +902,16 @@ function(input, output, session) {
   
   #names_patients_staff <- composeNameAndAge(patient_data_staff())
   
-  example_text <- eventReactive(input$staff_meeting, {
-    "Show me!"
+  observeEvent(input$staff_meeting, {
+    shinyjs::toggle("staff_ui")
   })
   
-  observeEvent(input$toggleButton, {
-    shinyjs::toggle("main")
+  output$patients_staff <- renderTable({
+    
+    patient_data_staff() %>%
+      transmute(nomComplet = paste0(prenom, " ", nom))
+    
   })
-  
-  output$example_1 <- renderText({example_text()})
   
   # Rendez-vous table ------------------------------------------------------------
   
