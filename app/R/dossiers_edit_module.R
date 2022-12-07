@@ -373,18 +373,6 @@ dossiersEditModuleServer <- function(id,
                        }
                      })
                      
-                     observeEvent(input$def_decision, {
-                       if (input$def_decision == "Rendez-vous à la consultation du chef" ||
-                           input$def_decision == "Rendez-vous à la consultation des internes") {
-                         shinyFeedback::showFeedbackDanger("def_decision",
-                                                           text = "Rappel: cette décision génère un courrier automatique adressé au sécretariat",
-                                                           icon = NULL,
-                                                           color = "#D26901")
-                         
-                       } else {
-                         shinyFeedback::hideFeedback("def_decision")
-                       }
-                     })
                      
                      #------------END FIELD VALIDATION - FEEDBACK---------------
                      
@@ -537,7 +525,7 @@ dossiersEditModuleServer <- function(id,
                      
                      dbExecute(conn, thisQuery)
                      
-                     
+                     # Use this block for staff meeting
                      if(input$def_decision == "Rendez-vous à la consultation du chef" ||
                         input$def_decision == "Rendez-vous à la consultation des internes") {
                        

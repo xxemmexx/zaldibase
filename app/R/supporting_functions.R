@@ -96,7 +96,7 @@ buildUnorderedList <- function(aList, aTitle) {
     
   } else {
     
-    print(aList)
+    #print(aList)
     
     n <- length(aList)
     
