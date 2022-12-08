@@ -28,6 +28,22 @@ tagList(
       conditionalPanel(condition = "output.role == 'admin' || output.role == 'chef' || output.role == 'resident'",
                        tabsetPanel(
                          tabPanel("Dossiers en cours", icon = icon("list-ul"), value = "dossiers",
+                                  
+                                  fluidRow(
+                                    tags$br(),
+                                    tags$br(),
+                                    column(width = 4),
+                                    column(width = 4,
+                                           
+                                           tags$span(actionButton("take_garde", 
+                                                        "Je prends la garde",
+                                                        icon("share"),
+                                                        style="color: #FFF0F5; background-color: #3E3F3A")),
+                                           style = "position:absolute;right:2em;"),
+                                    column(width = 4,
+                                           DTOutput('garde_table')),
+                                    column(width = 4)
+                                  ),
                                   fluidRow(column(width = 4,
                                                   tags$br(),
                                                   tags$br(),
@@ -117,43 +133,35 @@ tagList(
                                                   tags$br(),
                                                   DTOutput('archive_table') %>% withSpinner()))
                                            ),
-                         tabPanel("Garde", icon = icon("user-nurse"), value = "garde",
-                                  fluidRow(column(width = 8,
-                                                  tags$br(),
-                                                  tags$br(),
-                                                  tags$span(actionButton("staff_meeting", 
-                                                                         "Staff meeting",
-                                                                         icon("users"), 
-                                                                         style="color: #FFF0F5; background-color: #008000"),
-                                                            actionButton("take_garde", 
-                                                                         "Je prends la garde",
-                                                                         icon("share"),
-                                                                         style="color: #FFF0F5; background-color: #3E3F3A"),
-                                                            style = "position:absolute;left:2em;")),
-                                           column(width = 4,
-                                                  tags$br(),
-                                                  tags$br(),
-                                                  DTOutput('garde_table'))
-                                           ), # Close Fluid row
-                                  tags$br(),
-                                  tags$br(),
-                                  tags$br(),
-                                  fluidRow(div(id = "staff_ui",
-                                               column(width = 3,
-                                                      selectInput("relevant_patients",
-                                                                  "Patients",
-                                                                  choices = c("Anna", "Rob", "Filomeno"))
-                                                      ),
-                                               column(width = 9,
-                                                      wellPanel(
-                                                        h3("My message")
-                                                      )
-                                                 
-                                               )
-                                               ) %>% shinyjs::hidden()
-                                           ) # Close Fluid row
-                                  ) # Close tabpanel Garde
-                       ) # Close tabset panel
+                         tabPanel("Staff", icon = icon("user-nurse"), value = "staff",
+                                 fluidRow(column(width = 8,
+                                                 tags$br(),
+                                                 tags$br(),
+                                                 tags$span(actionButton("staff_meeting", 
+                                                                        "Lancer le staff meeting",
+                                                                        icon("users"), 
+                                                                        style="color: #FFF0F5; background-color: #000080"),
+                                                           style = "position:absolute;left:2em;"))
+                                          ), # Close Fluid row
+                                 tags$br(),
+                                 tags$br(),
+                                 tags$br(),
+                                 fluidRow(div(id = "staff_ui",
+                                              column(width = 3,
+                                                     selectInput("relevant_patients",
+                                                                 "Patients",
+                                                                 choices = c("Anna", "Rob", "Filomeno"))
+                                                     ),
+                                              column(width = 9,
+                                                     wellPanel(
+                                                       h3("My message")
+                                                       )
+                                                     )
+                                              ) %>% shinyjs::hidden()
+                                          ) # Close Fluid row
+                                 ) # Close tabpanel Garde
+                                          
+                         ) # Close tabset panel
       ), # Close conditional panel admin
       conditionalPanel(condition = "output.role == 'secretariat'",
         tabsetPanel(
