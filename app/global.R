@@ -125,10 +125,25 @@ options(spinner.type = 1)
 
 # HTML
 
-printAbout <- '<h2 style="font-family: Garamond">Zal<b>di|b</b>ase</h2> <br>
-                                 <p>Un projet pour et par pendejos qui veulent une
-                                 administration simple pour les chefs de garde du CHU.<br><br>
-                                 Avez-vous des questions? Gardez-les pour vous.</p>'
+printAbout <- '
+                                 <p><h4><b>Exploitation</b><br><br>
+Ce formulaire a été créé dans le but d’améliorer la traçabilité des avis de Neurochirurgie de l’Hôpital de Grenoble ainsi que pour optimiser la communication de ces avis aux hôpitaux et cliniques partenaires.
+La base de données le soutenant permet, également, de mener des statistiques internes sur ces avis afin d’ajuster le fonctionnement du service en fonction des nécessités de la population du bassin Grenoblois.<br><br>
+
+En déplaçant la responsabilité de la documentation des avis aux médecins demandeurs, le formulaire garantit l’intégrité des informations transmise et minimise les risques de perte d’information liés à une communication téléphonique à distance. En contrepartie, les avis rendus sont transmis par écrit afin de permette une référence fiable de l’avis donné par la garde de Neurochirurgie.<br><br> 
+
+Les centres partenaires disposent d’un accès sécurisé pour visualiser les avis précédents avec une possibilité de rétrospection de 1 mois.<br><br>
+
+Les données contenues dans la base de données sont soumises au secret médical et leur visualisation nécessite l’autorisation préalable du Chef de Services de Neurochirurgie et des accès professionnels CHUGA.<br><br>
+<br>
+<b>Recherche</b><br><br>
+L’utilisation des données à des fins de statistique, de recherche et de publications est possible si les démarches éthiques nécessaires pour leur exploitation auprès des instances hospitalières responsables sont effectuées.
+Un accès spécial recherche est nécessaire et délivré après approbation pour accéder aux données dans un but de recherche.
+Merci de contacter Accueil-Recherche@chu-grenoble.fr<br><br>
+
+Toute publication contenant des données tirées de cette base de données devra contenir des contributions (authorship) soulignant le travail de conception et de mise en place de la base de données.
+Le concepteur de la base de données devra figurer en dernier auteur si >50% du contenu de la publication est tirée de la base de données et en avant-dernier auteur si <50% des données proviennent de la base de données. Le reste des auteurs et leur ordre sera décidé selon les protocoles éthiques de publication habituelles.
+Pour vérifier la compliance votre article avec ces conditions d’utilisation, merci de contacter julienzaldivar@gmail.com.</h4></p>'
 
 printLogo <- '<p style="font-family: Garamond">Zal<b>di|b</b>ase</p>'
 

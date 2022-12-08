@@ -169,7 +169,11 @@ tagList(
           tabPanel("Rendez-vous accordés")
         )
       )
-    )
+    ), # Close Accueil
+    tabPanel("About",
+             div(style = "padding:30px;background-color:#696969;color:#FFFAFA;",
+                 HTML(printAbout))
+             )
   )
 )
 
