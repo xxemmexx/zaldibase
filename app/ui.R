@@ -146,15 +146,25 @@ tagList(
                                  tags$br(),
                                  tags$br(),
                                  tags$br(),
+                                 tags$br(),
+                                 fluidRow(div(id = "staff_ui_controllers",
+                                              style = "padding:10px 5px 10px 50px;background-color:#3E3F3A;",
+                                              actionButton("decrease_patient_index", 
+                                                           "",
+                                                           icon("arrow-left"),
+                                                           style="color: #DAA520; background-color: #3E3F3A"),
+                                              actionButton("increase_patient_index", 
+                                                           "",
+                                                           icon("arrow-right"),
+                                                           style="color: #DAA520; background-color: #3E3F3A")
+                                              ) %>% shinyjs::hidden()
+                                   
+                                 ),
                                  fluidRow(div(id = "staff_ui",
-                                              column(width = 3,
-                                                     selectInput("relevant_patients",
-                                                                 "Patients",
-                                                                 choices = c("Anna", "Rob", "Filomeno"))
-                                                     ),
-                                              column(width = 9,
+                                              column(width = 12,
                                                      wellPanel(
-                                                       h3("My message")
+                                                       h3(textOutput('staff_patient_display_name')),
+                                                       h4(textOutput('staff_patient_age'))
                                                        )
                                                      )
                                               ) %>% shinyjs::hidden()
@@ -179,7 +189,7 @@ tagList(
       )
     ), # Close Accueil
     tabPanel("About",
-             div(style = "padding:30px;background-color:#696969;color:#FFFAFA;",
+             div(style = "padding:30px;background-color:#3E3F3A;color:#FFFAFA;",
                  HTML(printAbout))
              )
   )

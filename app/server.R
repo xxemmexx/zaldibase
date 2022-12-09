@@ -881,7 +881,7 @@ function(input, output, session) {
         mutate(created_at = as.POSIXct(created_at, tz = "UTC"),
                modified_at = as.POSIXct(modified_at, tz = "UTC")) %>%
         arrange(desc(modified_at)) %>%
-        filter(is_closed == 0)
+        filter(is_closed == 0 || is_viewed == 0)
 
     },
     error = function(err) {
@@ -898,12 +898,51 @@ function(input, output, session) {
     out
   })
   
-  #patient_data_staff()
+  patient_data_staff_count <- reactive({
+    
+    nrow(patient_data_staff())
+    
+  })
   
-  #names_patients_staff <- composeNameAndAge(patient_data_staff())
+  patientIdx <- 1
+  makeReactiveBinding('patientIdx')
+  
+  observeEvent(input$increase_patient_index, {
+    
+    if(patientIdx == patient_data_staff_count()) {
+      patientIdx <<- 1
+    } else {
+      patientIdx <<- patientIdx + 1
+    }
+  })
+  
+  observeEvent(input$decrease_patient_index, {
+    
+    if(patientIdx == 1) {
+      patientIdx <<- patient_data_staff_count()
+    } else {
+      patientIdx <<- patientIdx - 1
+    }
+  })
+  
+  output$staff_patient_display_name <- renderText({
+    
+    paste0(patient_data_staff()$prenom[[patientIdx]], 
+           ' ', 
+           str_to_upper(patient_data_staff()$nom[[patientIdx]], locale = 'fr'))
+    
+  })
+  
+  output$staff_patient_age <-renderText({
+    
+    paste0("âgé(e) de ", deliverAge(patient_data_staff()$date_naissance[[patientIdx]],
+                                    patient_data_staff()$created_at[[patientIdx]]), " ans")
+    
+  })
   
   observeEvent(input$staff_meeting, {
     shinyjs::toggle("staff_ui")
+    shinyjs::toggle("staff_ui_controllers")
   })
   
   output$patients_staff <- renderTable({
