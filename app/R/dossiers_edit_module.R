@@ -415,7 +415,10 @@ dossiersEditModuleServer <- function(id,
                                            "created_at" = deliverCreationTime(hold, time_now),
                                            "created_by" = deliverCreator(hold, session$userData$username()),
                                            "modified_at" = time_now,
-                                           "modified_by" = session$userData$username()))
+                                           "modified_by" = session$userData$username(),
+                                           "status" = hold$status
+                                           )
+                               )
               
                    out
                    })
@@ -518,6 +521,7 @@ dossiersEditModuleServer <- function(id,
                                              dat$data$created_by, 
                                              dat$data$modified_at, 
                                              dat$data$modified_by,
+                                             status = dat$data$status,
                                              aStatement = statement)
                      
                      print(paste0('Trying to execute ', statement, ' query...'))
@@ -526,8 +530,8 @@ dossiersEditModuleServer <- function(id,
                      dbExecute(conn, thisQuery)
                      
                      # Use this block for staff meeting
-                     if(input$def_decision == "Rendez-vous à la consultation du chef" ||
-                        input$def_decision == "Rendez-vous à la consultation des internes") {
+                     if(input$def_decision == "Rendez-vous / Suivi" ||
+                        input$def_decision == "Rendez-vous / Suivi") {
                        
                        print('Trying to update status...')
                        

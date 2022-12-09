@@ -303,7 +303,7 @@ writeQuery <- function(aUID,
                        hasRendezVous = 0,
                        isClosed = 0,
                        isViewed = 0,
-                       status = 1,
+                       status,
                        aStatement = c("insert", "update")) {
   
   thisQuery = switch(aStatement,
@@ -397,6 +397,16 @@ displayStatusName <- function(aStatus) {
   )
 }
 
+displayStatusCode <- function(aStatus) {
+  case_when(
+    aStatus == "En cours..." ~ 0,
+    aStatus == "À opérer" ~ 1,
+    aStatus == "Opéré(e)" ~ 2,
+    aStatus == "Attend sécretariat pour un rendez-vous" ~ 3,
+    aStatus == "Rendez-vous accordé" ~ 4,
+    aStatus == "En attente d'info supplémentaire" ~ 5,
+  )
+}
 
 transferFile <- function(aPathToFile, 
                          aUID, 

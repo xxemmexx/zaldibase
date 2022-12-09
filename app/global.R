@@ -125,8 +125,7 @@ options(spinner.type = 1)
 
 # HTML
 
-printAbout <- '
-                                 <p><h4><b>Exploitation</b><br><br>
+printAbout <- '<p><h4><b>Exploitation</b><br><br>
 Ce formulaire a été créé dans le but d’améliorer la traçabilité des avis de Neurochirurgie de l’Hôpital de Grenoble ainsi que pour optimiser la communication de ces avis aux hôpitaux et cliniques partenaires.
 La base de données le soutenant permet, également, de mener des statistiques internes sur ces avis afin d’ajuster le fonctionnement du service en fonction des nécessités de la population du bassin Grenoblois.<br><br>
 
