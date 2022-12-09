@@ -19,6 +19,7 @@ require(RCurl)
 require(magick)
 require(blastula)
 require(quarto)
+require(purrr)
 
 localDB = TRUE
 

@@ -156,17 +156,30 @@ tagList(
                                               actionButton("increase_patient_index", 
                                                            "",
                                                            icon("arrow-right"),
-                                                           style="color: #DAA520; background-color: #3E3F3A")
+                                                           style="color: #DAA520; background-color: #3E3F3A"),
+                                              actionButton("cloturer_staff_meeting", 
+                                                           "Clôturer le staff meeting",
+                                                           icon("users"),
+                                                           style="color: #FFF0F5;background-color:#d9534f;position:absolute;right:2em;")
                                               ) %>% shinyjs::hidden()
                                    
                                  ),
+                                 
                                  fluidRow(div(id = "staff_ui",
-                                              column(width = 12,
-                                                     wellPanel(
-                                                       h3(textOutput('staff_patient_display_name')),
-                                                       h4(textOutput('staff_patient_age'))
-                                                       )
-                                                     )
+                                              fluidRow(
+                                                column(width = 3),
+                                                column(width = 6,
+                                                       tags$br(),
+                                                       uiOutput("staff_decisions")),
+                                                column(width = 3)
+                                                ),
+                                              fluidRow(column(width = 12,
+                                                              wellPanel(
+                                                                h3(textOutput('staff_patient_display_name')),
+                                                                h4(textOutput('staff_patient_age'))
+                                                              )
+                                              )
+                                              )
                                               ) %>% shinyjs::hidden()
                                           ) # Close Fluid row
                                  ) # Close tabpanel Garde

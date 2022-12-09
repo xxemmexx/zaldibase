@@ -9,6 +9,7 @@ printToastMessage <- function(aModalTitle) {
   
 }
 
+
 printButtonLabel <- function(aModalTitle) {
   switch (aModalTitle,
           "Modification du profil" = "Modifier",

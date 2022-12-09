@@ -925,6 +925,18 @@ function(input, output, session) {
     }
   })
   
+  staff_decision_names <- reactive(paste0("staff_decision_", seq_len(patient_data_staff_count())))
+  
+  #decision_input_controllers <- reactive()
+  
+  output$staff_decisions <- renderUI({
+    decision_input_controllers <- map(staff_decision_names(), ~ selectInput(.x, 
+                                              "Décision du staff",
+                                              selected = isolate(input[[.x]]),
+                                              choices = decisions))
+      decision_input_controllers[[patientIdx]]
+  })
+  
   output$staff_patient_display_name <- renderText({
     
     paste0(patient_data_staff()$prenom[[patientIdx]], 
@@ -943,6 +955,7 @@ function(input, output, session) {
   observeEvent(input$staff_meeting, {
     shinyjs::toggle("staff_ui")
     shinyjs::toggle("staff_ui_controllers")
+    
   })
   
   output$patients_staff <- renderTable({
