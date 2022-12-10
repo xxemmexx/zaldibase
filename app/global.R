@@ -71,6 +71,8 @@ decisions <- c(" ", "A hospitaliser / A rappatrier",
                "Prise en charge externe ou non-chirurgicale",
                "Complément d`examen à faire")
 
+decisions_dev <- c(" ", "Rendez-vous / Suivi")
+
 pathologies <- c(" ", "Trauma crânien",
                  "Trauma rachidien",
                  "Pathologie vasculaire (Intracranienne et rachidienne)",
@@ -147,6 +149,7 @@ Pour vérifier la compliance votre article avec ces conditions d’utilisation, 
 
 printLogo <- '<p style="font-family: Garamond">Zal<b>di|b</b>ase</p>'
 
+printWarningIncompleteStaffMeeting <- '<h1 style="color:#FF4500">&#9888;</h1> <br> <h4 style = "line-height: 1.75;">Il est indispensable que tous les dossiers aient une décision de staff pour pouvoir clôturer le staff meeting</h4>'
 
 jsHeader <- JS("function(settings, json) {",
 "$(this.api().table().header()).css({'background-color': '#3E3F3A', 'color': '#FFF0F5'});",

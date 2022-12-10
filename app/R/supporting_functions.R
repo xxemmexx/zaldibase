@@ -283,6 +283,14 @@ generateIdentifier <- function(aFirstName, aSurname) {
   
 }
 
+makeTimestampNow <- function() {
+  
+  Sys.time() %>%
+    str_replace_all(":", "") %>%
+    str_replace_all("-", "") %>%
+    str_replace_all(" ", "")
+}
+
 writeGardeQuery <- function(aUsername, aTimestamp) {
   
   paste0("INSERT INTO garde (modified_at, modified_by) VALUES ('",
@@ -328,7 +336,8 @@ writeQuery <- function(aUID,
                      
                      "insert" = paste0("INSERT INTO patients (uid, nom, prenom, 
                      date_naissance, phone_number_patient, pathologie_1, 
-                     pathologie_2, pathologie_3, description_histoire, pre_decision, def_decision, 
+                     pathologie_2, pathologie_3, description_histoire, pre_decision, 
+                     def_decision, 
                      explication, contact_person, contact_phone, contact_email, hopital, 
                      has_coagulation,
                      treat_coagulant_1, date_derniere_prise_1, treat_coagulant_2, 
@@ -345,7 +354,7 @@ writeQuery <- function(aUID,
                      aDernierePrise2, "', '", aCoagulant3, "', '", aDernierePrise3, "', '",
                      aCreatedAt, "', '", aCreatedBy, "', '", 
                      aModifiedAt, "', '", aModifiedBy, "', ", needsRendezVous, ", ",
-                     hasRendezVous, ", ", isClosed, ", ", isViewed, ", ", status, ");"),
+                     hasRendezVous, ", ", isClosed, ", ", isViewed, ", 0);"),
                      
                      "update" = paste0("UPDATE patients SET nom='", aNom, 
                                        "', prenom='", aPrenom, 
@@ -384,20 +393,31 @@ writeQuery <- function(aUID,
   
 }
 
-makeTimestampNow <- function() {
-  
-  Sys.time() %>%
-    str_replace_all(":", "") %>%
-    str_replace_all("-", "") %>%
-    str_replace_all(" ", "")
-}
-
 writeRendezVousQuery <- function(aPatientUid, aMode) {
   if(aMode == 'needsRendezvous') {
     query <- paste0("UPDATE patients SET 
                     needs_rendezvous = 1, 
                     status = 3
                     WHERE uid = '", aPatientUid, "';")
+  }
+  
+  query
+  
+}
+
+writeStaffDecisionQuery <- function(aStaffDecision, aPatientUid) {
+  
+  updateStaffDecision <- paste0("UPDATE patients SET staff_decision = '",
+                                aStaffDecision, "'")
+  
+  updateStatus <- ", is_closed = 1, is_viewed = 1, needs_rendezvous = 1"
+  
+  whereClause <- paste0(" WHERE uid = '", aPatientUid, "';")
+  
+  if(aStaffDecision == "Rendez-vous / Suivi") {
+    query <- paste0(updateStaffDecision, updateStatus, whereClause)
+  } else {
+    query <- paste0(updateStaffDecision, whereClause)
   }
   
   query

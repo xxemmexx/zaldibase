@@ -58,6 +58,7 @@ function(input, output, session) {
     req(credentials()$user_auth)
     
     session$userData$dossiers_trigger()
+    session$userData$staff_trigger()
     
     out <- NULL
     tryCatch({
@@ -870,8 +871,15 @@ function(input, output, session) {
     ) # Close try-catch
   })
 
+  # Staff meeting ------------------------------------------------------------
+  
+  session$userData$staff_trigger <- reactiveVal(0)
+  
   patient_data_staff <- eventReactive(input$staff_meeting, {
 
+    session$userData$staff_trigger()
+    session$userData$dossiers_trigger()
+    
     out <- NULL
 
     tryCatch({
@@ -881,7 +889,7 @@ function(input, output, session) {
         mutate(created_at = as.POSIXct(created_at, tz = "UTC"),
                modified_at = as.POSIXct(modified_at, tz = "UTC")) %>%
         arrange(desc(modified_at)) %>%
-        filter(is_closed == 0 || is_viewed == 0)
+        filter(is_closed == 0 | is_viewed == 0)
 
     },
     error = function(err) {
@@ -902,6 +910,14 @@ function(input, output, session) {
     
     nrow(patient_data_staff())
     
+  })
+  
+  observe({
+    if(nrow(dossiers()) == 0 || patient_data_staff_count() == 0) {
+      shinyjs::hide("staff_meeting")
+    } else {
+      shinyjs::show("staff_meeting")
+    }    
   })
   
   patientIdx <- 1
@@ -930,14 +946,17 @@ function(input, output, session) {
   #decision_input_controllers <- reactive()
   
   output$staff_decisions <- renderUI({
+    req(patient_data_staff())
+    
     decision_input_controllers <- map(staff_decision_names(), ~ selectInput(.x, 
                                               "Décision du staff",
                                               selected = isolate(input[[.x]]),
-                                              choices = decisions))
+                                              choices = decisions_dev))
       decision_input_controllers[[patientIdx]]
   })
   
   output$staff_patient_display_name <- renderText({
+    req(patient_data_staff())
     
     paste0(patient_data_staff()$prenom[[patientIdx]], 
            ' ', 
@@ -946,6 +965,7 @@ function(input, output, session) {
   })
   
   output$staff_patient_age <-renderText({
+    req(patient_data_staff())
     
     paste0("âgé(e) de ", deliverAge(patient_data_staff()$date_naissance[[patientIdx]],
                                     patient_data_staff()$created_at[[patientIdx]]), " ans")
@@ -960,18 +980,35 @@ function(input, output, session) {
   
   observeEvent(input$cloturer_staff_meeting, {
 
-    if(hasAnyEmptyValues(map(staff_decision_names(), ~ input[[.x]]))) {
+    listOfDecisions <- map(staff_decision_names(), ~ input[[.x]])
+    
+    if(hasAnyEmptyValues(listOfDecisions)) {
       
       showModal(modalDialog(
+        div(style = "padding: 30px;", class = "text-center",
+               HTML(printWarningIncompleteStaffMeeting)),
         title = "Dossier(s) incomplet(s)",
-        "Tous les profils doivent avoir une décision de staff avant de clôturer",
         easyClose = TRUE,
         footer = modalButton("Fermer")
       ))
       
     } else {
       
-      print(patient_data_staff_count())
+      uids <- patient_data_staff()$uid
+      
+      for(i in 1:patient_data_staff_count()) {
+        
+        thisQuery <- writeStaffDecisionQuery(input[[staff_decision_names()[[i]]]], uids[[i]])
+        
+        dbExecute(conn, thisQuery)
+        
+      }
+      
+      session$userData$staff_trigger(session$userData$staff_trigger() + 1)
+      
+      shinyjs::toggle("staff_ui")
+      shinyjs::toggle("staff_ui_controllers")
+      shinyjs::hide("staff_meeting")
       
     }
 
