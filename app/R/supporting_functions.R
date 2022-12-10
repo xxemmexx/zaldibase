@@ -89,6 +89,23 @@ hasAnyValues <- function(aList) {
   return(!isEmptyList)
 }
 
+
+hasAnyEmptyValues <- function(aList) {
+  
+  trimmedList <- lapply(aList, str_trim)
+  
+  hasEmptyValues <- FALSE
+  
+  for(i in trimmedList) {
+    if(i == '') {
+      hasEmptyValues <- TRUE
+      break
+    }
+  }
+  
+  return(hasEmptyValues)
+}
+
 buildUnorderedList <- function(aList, aTitle) {
   
   if(is.null(aList) || !hasAnyValues(aList)) {

@@ -958,11 +958,23 @@ function(input, output, session) {
     
   })
   
-  output$patients_staff <- renderTable({
-    
-    patient_data_staff() %>%
-      transmute(nomComplet = paste0(prenom, " ", nom))
-    
+  observeEvent(input$cloturer_staff_meeting, {
+
+    if(hasAnyEmptyValues(map(staff_decision_names(), ~ input[[.x]]))) {
+      
+      showModal(modalDialog(
+        title = "Dossier(s) incomplet(s)",
+        "Tous les profils doivent avoir une décision de staff avant de clôturer",
+        easyClose = TRUE,
+        footer = modalButton("Fermer")
+      ))
+      
+    } else {
+      
+      print(patient_data_staff_count())
+      
+    }
+
   })
   
   # Rendez-vous table ------------------------------------------------------------
