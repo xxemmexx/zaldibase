@@ -398,6 +398,19 @@ function(input, output, session) {
     
   })
   
+  
+  output$info_icons <- renderUI({
+    req(patient_data())
+    
+    x <- ''
+    if(patient_data()$has_coagulation) {
+      x <- paste0(x, '<img src="blood.jpeg" alt="drop" width="17" height="20"/>')
+    } 
+    
+    HTML(x)
+    
+  })
+  
   observeEvent(input$show_contact_details, {
     showModal(modalDialog(
       title = paste0(patient_data()$prenom, ' ', str_to_upper(patient_data()$nom, locale = 'fr')),
@@ -440,19 +453,6 @@ function(input, output, session) {
     
   })
   
-  output$info_icons <- renderUI({
-    req(patient_data())
-  
-    x <- ''
-    if(patient_data()$has_coagulation) {
-      x <- paste0(x, '<img src="blood.jpeg" alt="drop" width="17" height="20"/>')
-    } 
-    
-    HTML(x)
-    
-  })
-  
-
   output$description_histoire <-renderUI({
     req(patient_data()$description_histoire)
     

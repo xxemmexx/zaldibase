@@ -736,9 +736,8 @@ aPatient, ", né(e) le ", translateDate(aDateDeNaissance), "<br><br>
 <b>Décision </b><br>",
 aStaffDecision, "<br><br>
 <b>Note supplémentaire</b><br>
-<em>", anExplanation,"</em><br><br>
+<em>", anExplanation,"</em><br><br><br>
 
-Merci d'avance!<br><br><br>
 
 Cordialement, <br><br>
 L'équipe du Neurochirurgical")

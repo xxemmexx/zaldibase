@@ -84,7 +84,7 @@ dossiersEditModuleServer <- function(id,
                                                       ), #close column
                                                column(width = 6,
                                                       dateInput(ns("date_naissance"),
-                                                                'Date de naissance (YYYY-MM-JJ)',
+                                                                'Date de naissance (AAAA-MM-JJ)',
                                                                 value = ifelse(is.null(hold), "", hold$date_naissance),
                                                                 language = "fr"),
                                                       textInput(ns("phone_number_patient"),
