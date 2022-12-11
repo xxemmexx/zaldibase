@@ -410,7 +410,7 @@ writeStaffDecisionQuery <- function(aStaffDecision, aPatientUid) {
   updateStaffDecision <- paste0("UPDATE patients SET staff_decision = '",
                                 aStaffDecision, "'")
   
-  updateStatus <- ", is_closed = 1, is_viewed = 1, needs_rendezvous = 1"
+  updateStatus <- ", is_closed = 1, is_viewed = 1, needs_rendezvous = 1, status = 4"
   
   whereClause <- paste0(" WHERE uid = '", aPatientUid, "';")
   
@@ -429,9 +429,9 @@ displayStatusName <- function(aStatus) {
     aStatus == 0 ~ "En cours...",
     aStatus == 1 ~  "À opérer",
     aStatus == 2 ~  "Opéré(e)",
-    aStatus == 3 ~ "Attend sécretariat pour un rendez-vous",
-    aStatus == 4 ~ "Rendez-vous accordé",
-    aStatus == 5 ~  "En attente d'info supplémentaire",
+    aStatus == 3 ~  "En attente d'info supplémentaire",
+    aStatus == 4 ~ "Attend sécretariat pour un rendez-vous",
+    aStatus == 5 ~ "Rendez-vous accordé"
   )
 }
 
@@ -440,9 +440,9 @@ displayStatusCode <- function(aStatus) {
     aStatus == "En cours..." ~ 0,
     aStatus == "À opérer" ~ 1,
     aStatus == "Opéré(e)" ~ 2,
-    aStatus == "Attend sécretariat pour un rendez-vous" ~ 3,
-    aStatus == "Rendez-vous accordé" ~ 4,
-    aStatus == "En attente d'info supplémentaire" ~ 5,
+    aStatus == "En attente d'info supplémentaire" ~ 3,
+    aStatus == "Attend sécretariat pour un rendez-vous" ~ 4,
+    aStatus == "Rendez-vous accordé" ~ 5
   )
 }
 
@@ -724,14 +724,16 @@ generateReportEmail <- function(aPatient,
   
   img_string <- add_image(file = logoPath, width = 90, align = 'center')
   
-  thisBody <- paste0("Bonjour,
+  thisBody <- paste0(" {img_string} <br>
+  
+  Bonjour,
 
 Vous recevez cette notification automatique parce que l'équipe du Neurochirurgical du Centre Hospitalier de Grenoble a récemment
 pris une décision par rapport à un dossier que vous avez soumis.<br><br>
 
-<b>Patient: </b><br>", 
+<b>Patient </b><br>", 
 aPatient, ", né(e) le ", translateDate(aDateDeNaissance), "<br><br>
-<b>Décision: </b><br>",
+<b>Décision </b><br>",
 aStaffDecision, "<br><br>
 <b>Note supplémentaire</b><br>
 <em>", anExplanation,"</em><br><br>
