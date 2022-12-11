@@ -994,23 +994,61 @@ function(input, output, session) {
       
     } else {
       
-      uids <- patient_data_staff()$uid
-      
-      for(i in 1:patient_data_staff_count()) {
+      tryCatch({
         
-        thisQuery <- writeStaffDecisionQuery(input[[staff_decision_names()[[i]]]], uids[[i]])
+        uids <- patient_data_staff()$uid
+        prenoms <- patient_data_staff()$prenom
+        noms <- patient_data_staff()$nom
+        dates_naissance <- patient_data_staff()$date_naissance
+        emails_retour <- patient_data_staff()$contact_email
         
-        dbExecute(conn, thisQuery)
+        for(i in 1:patient_data_staff_count()) {
+          
+          thisQuery <- writeStaffDecisionQuery(input[[staff_decision_names()[[i]]]], uids[[i]])
+          
+          dbExecute(conn, thisQuery)
+          
+          nomCompletPatient <- paste0(prenoms[[i]], " ", str_to_upper(noms[[i]]))
+          
+          print('Trying to send notification email...')
+          
+          generateReportEmail(nomCompletPatient,
+                              dates_naissance[[i]],
+                              input[[staff_decision_names()[[i]]]],
+                              "Une explication quelconque") %>%
+            smtp_send(
+              to = emails_retour[[i]],
+              from = zaldibase,
+              subject = "Nouvelle notification CHU - équipue du neurochirurgical",
+              credentials = creds_file(credentialsPath)
+            )
+          
+        }
         
-      }
+        session$userData$staff_trigger(session$userData$staff_trigger() + 1)
+        
+        shinyjs::toggle("staff_ui")
+        shinyjs::toggle("staff_ui_controllers")
+        shinyjs::hide("staff_meeting")
+        #update_tabset(session, "main_tab_collection", "Dossiers en cours")
+        
+        showToast("success", message = "Staff meeting terminée correctement")}, 
+        
+        error = function(error) {
+          
+          msg <- paste0("Erreur - contactez votre admin")
+          # print `msg` so that we can find it in the logs
+          print(msg)
+          # print the actual error to log it
+          print(error)
+          # show error `msg` to user.  User can then tell us about error and we can
+          # quickly identify where it cam from based on the value in `msg`
+          showToast("error", msg)
+        }
+      ) # Close try-catch
       
-      session$userData$staff_trigger(session$userData$staff_trigger() + 1)
       
-      shinyjs::toggle("staff_ui")
-      shinyjs::toggle("staff_ui_controllers")
-      shinyjs::hide("staff_meeting")
-      
-    }
+    } # Close else block executing actions
 
   })
   

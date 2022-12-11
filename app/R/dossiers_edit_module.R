@@ -539,22 +539,7 @@ dossiersEditModuleServer <- function(id,
                        
                        dbExecute(conn, rendezVousUpdateQuery)
                        
-                       print('Trying to send email to secretariat...')
                        
-                       nomCompletDocteur <- convertUsernameToDisplayname(session$userData$username(), user_base)
-                       nomCompletPatient <- paste0(input$prenom, " ", str_to_upper(input$nom))
-                       
-                       generateEmailToSecretariat(nomCompletDocteur, 
-                                                  nomCompletPatient,
-                                                  input$date_naissance,
-                                                  input$def_decision,
-                                                  input$explication) %>%
-                         smtp_send(
-                           to = secretariat,
-                           from = zaldibase,
-                           subject = "Nouvelle requête de rendez-vous",
-                           credentials = creds_file(credentialsPath)
-                         )
                      }
                      
                      session$userData$dossiers_trigger(session$userData$dossiers_trigger() + 1)

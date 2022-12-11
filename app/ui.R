@@ -26,7 +26,7 @@ tagList(
       ),
       
       conditionalPanel(condition = "output.role == 'admin' || output.role == 'chef' || output.role == 'resident'",
-                       tabsetPanel(
+                       tabsetPanel(id = "main_tab_collection",
                          tabPanel("Dossiers en cours", icon = icon("list-ul"), value = "dossiers",
                                   
                                   fluidRow(

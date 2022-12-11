@@ -717,23 +717,22 @@ getImageLocation <- function(aLocalDB, aPatientUuid, aFilename) {
 
 }
 
-generateEmailToSecretariat <- function(aChefDeGarde, 
-                                       aPatient, 
-                                       aDateDeNaissance, 
-                                       aDefDecision,
-                                       anExplanation) {
+generateReportEmail <- function(aPatient,
+                                aDateDeNaissance, 
+                                aStaffDecision,
+                                anExplanation) {
   
   img_string <- add_image(file = logoPath, width = 90, align = 'center')
   
   thisBody <- paste0("Bonjour,
 
-Vous recevez cette notification automatique parce que Dr. ", aChefDeGarde, " voudrait bien qu'un patient 
-prenne un rendez-vous chez le Centre Hospitalier de Grenoble.<br><br>
+Vous recevez cette notification automatique parce que l'équipe du Neurochirurgical du Centre Hospitalier de Grenoble a récemment
+pris une décision par rapport à un dossier que vous avez soumis.<br><br>
 
 <b>Patient: </b><br>", 
 aPatient, ", né(e) le ", translateDate(aDateDeNaissance), "<br><br>
 <b>Décision: </b><br>",
-aDefDecision, "<br><br>
+aStaffDecision, "<br><br>
 <b>Note supplémentaire</b><br>
 <em>", anExplanation,"</em><br><br>
 
