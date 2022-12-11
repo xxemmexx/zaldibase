@@ -46,6 +46,32 @@ buildDecisionBanner <- function(aPreDecision, aDefDecision) {
   }
 }
 
+buildTreatmentBanner <- function (aMedicine1, aDerniereDate1,
+                                  aMedicine2, aDerniereDate2,
+                                  aMedicine3, aDerniereDate3) {
+  
+  banner <- ''
+  
+  if(!(str_trim(aMedicine1) == '')) {
+    banner <- paste0(aMedicine1, ' arrêté le ', sd(ymd(aDerniereDate1)))
+  }
+  
+  if(!(str_trim(aMedicine2) == '')) {
+    banner <- paste0(banner, ' - ', aMedicine2, ' arrêté le ', sd(ymd(aDerniereDate2)))
+  }
+  
+  if(!(str_trim(aMedicine3) == '')) {
+    banner <- paste0(banner, ' - ', aMedicine3, ' arrêté le ', sd(ymd(aDerniereDate3)))
+  }
+  
+  if(banner != '') {
+    banner <- paste0('<h4><b>', banner, '</b></h4>') 
+  } 
+  
+  banner
+  
+}
+
 convertUsernameToDisplayname <- function(aUsername, aUserTibble) {
   
   aUserTibble %>%

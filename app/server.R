@@ -402,10 +402,42 @@ function(input, output, session) {
   output$info_icons <- renderUI({
     req(patient_data())
     
-    x <- ''
+    iconCoagulation <- ''
+    textCoagulation <- ''
+    iconPediatrician <- ''
+    textPediatrician <- ''
+    
     if(patient_data()$has_coagulation) {
-      x <- paste0(x, '<img src="blood.jpeg" alt="drop" width="17" height="20"/>')
+      iconCoagulation <- '<img src="blood.jpeg" alt="drop" width="27" height="31.5"/>'
+      textCoagulation <- buildTreatmentBanner(patient_data()$treat_coagulant_1,
+                                              patient_data()$date_derniere_prise_1,
+                                              patient_data()$treat_coagulant_2,
+                                              patient_data()$date_derniere_prise_2,
+                                              patient_data()$treat_coagulant_3,
+                                              patient_data()$date_derniere_prise_3)
+                  
     } 
+    
+    if(deliverAge(patient_data()$date_naissance, patient_data()$created_at) < 18) {
+      iconPediatrician <- '<img src="child_icon.jpeg" alt="child" height="30"/>'
+      textPediatrician <- "<h4><b>Pédiatrie</b></h4>"
+      
+    }
+    
+    x <- paste0('<table style="width:100%">
+      <tr>
+      <th></th>
+      <th style="width:95%;"></th>
+      </tr>
+      <tr>
+      <td style="text-align:center;">', iconCoagulation, '</td>
+      <td style="text-align:left;">', textCoagulation, '</td>
+      </tr>
+      <tr>
+      <td style="text-align:center;">', iconPediatrician, '</td>
+      <td style="text-align:left;">', textPediatrician, '</td>
+      </tr>
+      </table> ')
     
     HTML(x)
     
@@ -440,18 +472,6 @@ function(input, output, session) {
     
   })
   
-  output$coagulation <- renderUI({
-    req(patient_data()$treat_coagulant_1)
-    
-    x <- buildUnorderedList(list(patient_data()$treat_coagulant_1,
-                                 patient_data()$treat_coagulant_2,
-                                 patient_data()$treat_coagulant_3),
-                            "Traitement")
-    
-    
-    HTML(x)
-    
-  })
   
   output$description_histoire <-renderUI({
     req(patient_data()$description_histoire)
@@ -717,18 +737,6 @@ function(input, output, session) {
     
   })
   
-  output$archive_coagulation <-renderUI({
-    req(archive_patient_data()$treat_coagulant_1)
-    
-    x <- buildUnorderedList(list(archive_patient_data()$treat_coagulant_1,
-                                 archive_patient_data()$treat_coagulant_2,
-                                 archive_patient_data()$treat_coagulant_3),
-                            "Traitement")
-    
-    
-    HTML(x)
-    
-  })
   
   output$archive_info_icons <- renderUI({
     req(archive_patient_data())
