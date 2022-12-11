@@ -148,11 +148,11 @@ tagList(
                                               actionButton("decrease_patient_index", 
                                                            "",
                                                            icon("arrow-left"),
-                                                           style="color: #DAA520; background-color: #3E3F3A"),
+                                                           style="color: #DAA520; background-color:#3E3F3A"),
                                               actionButton("increase_patient_index", 
                                                            "",
                                                            icon("arrow-right"),
-                                                           style="color: #DAA520; background-color: #3E3F3A"),
+                                                           style="color: #DAA520; background-color:#3E3F3A"),
                                               actionButton("cloturer_staff_meeting", 
                                                            "Clôturer le staff meeting",
                                                            icon("users"),
@@ -172,7 +172,8 @@ tagList(
                                               fluidRow(column(width = 12,
                                                               wellPanel(
                                                                 h3(textOutput('staff_patient_display_name')),
-                                                                h4(textOutput('staff_patient_age'))
+                                                                h4(textOutput('staff_patient_age')),
+                                                                uiOutput('staff_info_icons')
                                                               )
                                               )
                                               )

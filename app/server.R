@@ -741,10 +741,42 @@ function(input, output, session) {
   output$archive_info_icons <- renderUI({
     req(archive_patient_data())
     
-    x <- ''
+    iconCoagulation <- ''
+    textCoagulation <- ''
+    iconPediatrician <- ''
+    textPediatrician <- ''
+    
     if(archive_patient_data()$has_coagulation) {
-      x <- paste0(x, '<img src="blood.jpeg" alt="drop" width="17" height="20"/>')
+      iconCoagulation <- '<img src="blood.jpeg" alt="drop" width="27" height="31.5"/>'
+      textCoagulation <- buildTreatmentBanner(archive_patient_data()$treat_coagulant_1,
+                                              archive_patient_data()$date_derniere_prise_1,
+                                              archive_patient_data()$treat_coagulant_2,
+                                              archive_patient_data()$date_derniere_prise_2,
+                                              archive_patient_data()$treat_coagulant_3,
+                                              archive_patient_data()$date_derniere_prise_3)
+      
     } 
+    
+    if(deliverAge(archive_patient_data()$date_naissance, archive_patient_data()$created_at) < 18) {
+      iconPediatrician <- '<img src="child_icon.jpeg" alt="child" height="30"/>'
+      textPediatrician <- "<h4><b>Pédiatrie</b></h4>"
+      
+    }
+    
+    x <- paste0('<table style="width:100%">
+      <tr>
+      <th></th>
+      <th style="width:95%;"></th>
+      </tr>
+      <tr>
+      <td style="text-align:center;">', iconCoagulation, '</td>
+      <td style="text-align:left;">', textCoagulation, '</td>
+      </tr>
+      <tr>
+      <td style="text-align:center;">', iconPediatrician, '</td>
+      <td style="text-align:left;">', textPediatrician, '</td>
+      </tr>
+      </table> ')
     
     HTML(x)
     
@@ -977,6 +1009,51 @@ function(input, output, session) {
     
     paste0("âgé(e) de ", deliverAge(patient_data_staff()$date_naissance[[patientIdx]],
                                     patient_data_staff()$created_at[[patientIdx]]), " ans")
+    
+  })
+  
+  output$staff_info_icons <- renderUI({
+    req(patient_data_staff())
+    
+    iconCoagulation <- ''
+    textCoagulation <- ''
+    iconPediatrician <- ''
+    textPediatrician <- ''
+    
+    if(patient_data_staff()$has_coagulation[[patientIdx]]) {
+      iconCoagulation <- '<img src="blood.jpeg" alt="drop" width="27" height="31.5"/>'
+      textCoagulation <- buildTreatmentBanner(patient_data_staff()$treat_coagulant_1[[patientIdx]],
+                                              patient_data_staff()$date_derniere_prise_1[[patientIdx]],
+                                              patient_data_staff()$treat_coagulant_2[[patientIdx]],
+                                              patient_data_staff()$date_derniere_prise_2[[patientIdx]],
+                                              patient_data_staff()$treat_coagulant_3[[patientIdx]],
+                                              patient_data_staff()$date_derniere_prise_3[[patientIdx]])
+      
+    } 
+    
+    if(deliverAge(patient_data_staff()$date_naissance[[patientIdx]], 
+                  patient_data_staff()$created_at[[patientIdx]]) < 18) {
+      iconPediatrician <- '<img src="child_icon.jpeg" alt="child" height="30"/>'
+      textPediatrician <- "<h4><b>Pédiatrie</b></h4>"
+      
+    }
+    
+    x <- paste0('<table style="width:100%">
+      <tr>
+      <th></th>
+      <th style="width:95%;"></th>
+      </tr>
+      <tr>
+      <td style="text-align:center;">', iconCoagulation, '</td>
+      <td style="text-align:left;">', textCoagulation, '</td>
+      </tr>
+      <tr>
+      <td style="text-align:center;">', iconPediatrician, '</td>
+      <td style="text-align:left;">', textPediatrician, '</td>
+      </tr>
+      </table> ')
+    
+    HTML(x)
     
   })
   
