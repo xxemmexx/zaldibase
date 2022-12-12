@@ -162,21 +162,28 @@ tagList(
                                  ),
                                  
                                  fluidRow(div(id = "staff_ui",
-                                              fluidRow(
-                                                column(width = 3),
-                                                column(width = 6,
-                                                       tags$br(),
-                                                       uiOutput("staff_decisions")),
-                                                column(width = 3)
-                                                ),
-                                              fluidRow(column(width = 12,
-                                                              wellPanel(
-                                                                h3(textOutput('staff_patient_display_name')),
-                                                                h4(textOutput('staff_patient_age')),
-                                                                uiOutput('staff_info_icons')
-                                                              )
-                                              )
-                                              )
+                                              wellPanel(
+                                                fluidRow(
+                                                  column(width = 12,
+                                                         h3(textOutput('staff_patient_display_name')),
+                                                         h4(textOutput('staff_patient_age')),
+                                                         uiOutput('staff_info_icons'),
+                                                         uiOutput('staff_pre_def_decisions'),
+                                                         tags$br(),
+                                                         tags$br(),
+                                                         uiOutput('staff_pathologies')
+                                                         )
+                                                  ) # Close fluid row
+                                              ), # Close well panel
+                                              wellPanel(
+                                                fluidRow(
+                                                  column(width = 3),
+                                                  column(width = 6,
+                                                         tags$br(),
+                                                         uiOutput("staff_decisions")),
+                                                  column(width = 3)
+                                                  ) # Close fluid row
+                                                ) # Close well panel
                                               ) %>% shinyjs::hidden()
                                           ) # Close Fluid row
                                  ) # Close tabpanel Garde

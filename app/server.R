@@ -1057,6 +1057,27 @@ function(input, output, session) {
     
   })
   
+  output$staff_pre_def_decisions <-renderUI({
+    
+    x <- buildDecisionBanner(patient_data_staff()$pre_decision[[patientIdx]], patient_data_staff()$def_decision[[patientIdx]])
+    
+    HTML(x)
+    
+  })
+  
+  output$staff_pathologies <-renderUI({
+    req(patient_data_staff()$pathologie_1)
+    
+    x <- buildUnorderedList(list(patient_data_staff()$pathologie_1[[patientIdx]],
+                                 patient_data_staff()$pathologie_2[[patientIdx]],
+                                 patient_data_staff()$pathologie_3[[patientIdx]]),
+                            "Pathologie(s)")
+    
+    
+    HTML(x)
+    
+  })
+  
   observeEvent(input$staff_meeting, {
     shinyjs::toggle("staff_ui")
     shinyjs::toggle("staff_ui_controllers")
