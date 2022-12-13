@@ -199,6 +199,7 @@ function(input, output, session) {
       archive_table_proxy %>% selectRows(NULL)
       shinyjs::show("photo_container")
       shinyjs::hide("archive_photo_container")
+      shinyjs::show("refresh_images")
     }     
   })
   
