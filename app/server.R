@@ -377,17 +377,23 @@ function(input, output, session) {
     }, 
     deleteFile = TRUE)
   
+  
   observeEvent(input$expand_image, {
     
-    clearTmpImg()
+    clearTmpImgs()
+    
+    timeSuffix <- Sys.time() %>% 
+      gsub("^[^\\s]+\\s", "", .) %>%
+      str_replace_all(":", "")
     
     patientPhotos()[imgIdx] %>%
       image_scale(geometry = "x780") %>%
-      image_write(path = tmpImg, format = "png")
+      image_write(path = paste0(tmpImg, timeSuffix), format = "png")
+    
   
     showModal(
       modalDialog(
-        HTML(paste0('<img src="tmpimg">')),
+        HTML(paste0('<img src="tmpimg', timeSuffix, '">')),
         size = "xl",
         easyClose = TRUE,
         footer = NULL

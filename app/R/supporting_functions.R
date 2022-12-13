@@ -725,10 +725,15 @@ clearCache <- function(aPatientUuid) {
   }
 }
 
-clearTmpImg <- function() {
+clearTmpImgs <- function() {
   
-  if(file.exists(tmpImg)) {
-    file.remove(tmpImg)
+  pathToImgs <- 'www/'
+  tmpImgs <- list.files(path = pathToImgs, pattern="^tmpimg*")
+  
+  #print(list.files('www/'))
+  
+  for(img in tmpImgs) {
+    file.remove(paste0(pathToImgs, img))
   }
 }
 
