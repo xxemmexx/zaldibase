@@ -10,6 +10,7 @@ tagList(
     theme = shinytheme("sandstone"),
     
     
+    
     tabPanel(
       "Accueil",
       
@@ -94,37 +95,42 @@ tagList(
                                                     
                                                   ),
                                                   wellPanel(
+                                                    tags$style(type = 'text/css',
+                                                               '.modal-dialog { width: fit-content !important; }'),
                                                     uiOutput('photos_title') %>% withSpinner(),
                                                     tags$br(),
-                                                    tags$span(actionButton("refresh_images", 
-                                                                           "",
-                                                                           icon("refresh"),
-                                                                           style="color: #FFF0F5; background-color: #3E3F3A;"),
-                                                              style = "position:absolute;right:2em;"),
-                                                    tags$span(imageOutput("tiffImage"),
-                                                    tags$span(actionButton("decrease_index", 
-                                                                           "",
-                                                                           icon("arrow-left"),
-                                                                           style="color: #FFF0F5; background-color: #3E3F3A"),
-                                                              actionButton("expand_image", 
-                                                                           "",
-                                                                           icon("arrows-alt"),
-                                                                           style="color: #FFF0F5; background-color: #3E3F3A"),
-                                                              actionButton("increase_index", 
-                                                                           "",
-                                                                           icon("arrow-right"),
-                                                                           style="color: #FFF0F5; background-color: #3E3F3A"),
-                                                              
-                                                              style = "position:absolute;left:250px;")
-                                                    )
-                                                           
-                                                  )),
+                                                    tags$span(
+                                                      actionButton("refresh_images", 
+                                                                   "",
+                                                                   icon("refresh"),
+                                                                   style="color: #FFF0F5; background-color: #3E3F3A;"),
+                                                      style = "position:absolute;right:2em;"),
+                                                    tags$div(id = "photo_container",
+                                                             style = "text-align: center;",
+                                                             imageOutput("tiffImage")),
+                                                    tags$div(id = "arrows_container",
+                                                             style = "text-align: center;",
+                                                             actionButton("decrease_index", 
+                                                                          "",
+                                                                          icon("arrow-left"),
+                                                                          style="color: #FFF0F5; background-color: #3E3F3A"),
+                                                             actionButton("expand_image", 
+                                                                          "",
+                                                                          icon("arrows-alt"),
+                                                                          style="color: #FFF0F5; background-color: #3E3F3A"),
+                                                             actionButton("increase_index", 
+                                                                          "",
+                                                                          icon("arrow-right"),
+                                                                          style="color: #FFF0F5; background-color: #3E3F3A")
+                                                             ) # Close div
+                                                    ) # Close well panel
+                                                  ),
                                            column(width = 1)
                                   ) # Close fluid row
                          ),
                          tabPanel("Archive", icon = icon("box-open"), value = "archive",
                                   fluidRow(column(width = 12,
-                                                  title = "Mes dossiers",
+                                                  title = "Archive",
                                                   tags$br(),
                                                   tags$br(),
                                                   DTOutput('archive_table') %>% withSpinner()))

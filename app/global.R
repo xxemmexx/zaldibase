@@ -26,6 +26,7 @@ localDB = TRUE
 tmpDir <- 'data/tmp/'
 tiffDir <- 'data/tiff/'
 imgsDir <- 'data/imgs/'
+tmpImg <- 'www/tmpimg'
 logoPath <- 'www/chu_logo.jpeg'
 childPath <- 'www/child_icon.jpeg'
 localDBPath <- 'data/zaldibase.sqlite3'
@@ -155,4 +156,6 @@ printWarningIncompleteStaffMeeting <- '<h1 style="color:#FF4500">&#9888;</h1> <b
 jsHeader <- JS("function(settings, json) {",
 "$(this.api().table().header()).css({'background-color': '#3E3F3A', 'color': '#FFF0F5'});",
 "}")
+
+
 

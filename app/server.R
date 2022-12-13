@@ -16,10 +16,6 @@ function(input, output, session) {
 
   # shinyauthr ----------------------------------------------------------------
   
-  # output$user_table <- renderTable({
-  #   credentials()$info
-  # })
-  
   session$userData$username <- reactive({
     if(is.null(credentials()$user_auth)) {
       username <- 'amas'
@@ -355,7 +351,6 @@ function(input, output, session) {
   })
   
   
-  
   output$tiffImage <- renderImage(
     {
       req(dossiers_patient_filenames_count())
@@ -381,6 +376,24 @@ function(input, output, session) {
     
     }, 
     deleteFile = TRUE)
+  
+  observeEvent(input$expand_image, {
+    
+    clearTmpImg()
+    
+    patientPhotos()[imgIdx] %>%
+      image_scale(geometry = "x780") %>%
+      image_write(path = tmpImg, format = "png")
+  
+    showModal(
+      modalDialog(
+        HTML(paste0('<img src="tmpimg">')),
+        size = "xl",
+        easyClose = TRUE,
+        footer = NULL
+      )
+    )
+  })
   
   
   # Patient data from dossiers -------------------------------------------------

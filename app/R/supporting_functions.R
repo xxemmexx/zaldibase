@@ -725,6 +725,13 @@ clearCache <- function(aPatientUuid) {
   }
 }
 
+clearTmpImg <- function() {
+  
+  if(file.exists(tmpImg)) {
+    file.remove(tmpImg)
+  }
+}
+
 clearTmp <- function() {
   
   do.call(file.remove, list(list.files(tmpDir, full.names = TRUE)))
