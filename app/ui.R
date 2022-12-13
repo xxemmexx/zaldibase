@@ -35,16 +35,18 @@ tagList(
                                     tags$br(),
                                     column(width = 4),
                                     column(width = 4,
-                                           
-                                           tags$span(actionButton("take_garde", 
-                                                        "Je prends la garde",
-                                                        icon("share"),
-                                                        style="color: #FFF0F5; background-color: #3E3F3A")),
-                                           style = "position:absolute;right:2em;"),
-                                    column(width = 4,
-                                           DTOutput('garde_table')),
+                                           DTOutput('garde_table'),
+                                           tags$br(),
+                                           tags$div(style="text-align:center;",
+                                                    actionButton("take_garde",
+                                                                 "Je prends la garde",
+                                                                 icon("share"),
+                                                                 style="color:#FFF0F5;background-color:#3E3F3A;text-align:center;"))
+                                           ),
                                     column(width = 4)
+                                    
                                   ),
+                                  tags$hr(),
                                   fluidRow(column(width = 4,
                                                   tags$br(),
                                                   tags$br(),
@@ -83,6 +85,7 @@ tagList(
                                                     h4(textOutput('archive_patient_age')),
                                                     uiOutput('info_icons'),
                                                     uiOutput('archive_info_icons'),
+                                                    tags$br(),
                                                     uiOutput('decisions'),
                                                     uiOutput('archive_decisions'),
                                                     tags$br(),
@@ -98,6 +101,7 @@ tagList(
                                                     tags$style(type = 'text/css',
                                                                '.modal-dialog { width: fit-content !important; }'),
                                                     uiOutput('photos_title') %>% withSpinner(),
+                                                    uiOutput('archive_photos_title') %>% withSpinner(),
                                                     tags$br(),
                                                     tags$span(
                                                       actionButton("refresh_images", 
@@ -108,6 +112,9 @@ tagList(
                                                     tags$div(id = "photo_container",
                                                              style = "text-align: center;",
                                                              imageOutput("tiffImage")),
+                                                    tags$div(id = "archive_photo_container",
+                                                             style = "text-align: center;",
+                                                             imageOutput("archive_tiffImage")),
                                                     tags$div(id = "arrows_container",
                                                              style = "text-align: center;",
                                                              actionButton("decrease_index", 
@@ -142,7 +149,7 @@ tagList(
                                                  tags$span(actionButton("staff_meeting", 
                                                                         "Lancer le staff meeting",
                                                                         icon("users"), 
-                                                                        style="color: #FFF0F5; background-color: #000080"),
+                                                                        style="color: #FFF0F5; background-color: #325d88"),
                                                            style = "position:absolute;left:2em;"))
                                           ), # Close Fluid row
                                  tags$br(),

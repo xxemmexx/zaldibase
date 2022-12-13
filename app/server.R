@@ -183,10 +183,12 @@ function(input, output, session) {
       shinyjs::hide("decrease_index")
       shinyjs::hide("increase_index")
       shinyjs::hide("expand_image")
+      shinyjs::hide("refresh_images")
     } else {
       shinyjs::show("decrease_index")
       shinyjs::show("increase_index")
       shinyjs::show("expand_image")
+      shinyjs::show("refresh_images")
     }    
   })
   
@@ -195,6 +197,8 @@ function(input, output, session) {
       
     } else {
       archive_table_proxy %>% selectRows(NULL)
+      shinyjs::show("photo_container")
+      shinyjs::hide("archive_photo_container")
     }     
   })
   
@@ -203,10 +207,12 @@ function(input, output, session) {
       
     } else {
       dossiers_table_proxy %>% selectRows(NULL)
+      shinyjs::hide("photo_container")
+      shinyjs::show("archive_photo_container")
     }     
   })
   
-  
+
   patientUID <- reactive({
     
     dossiers()[input$dossiers_table_rows_selected,][[1]]
@@ -682,9 +688,13 @@ function(input, output, session) {
   
   # Patient data from archive--------------------------------------------------
   
-  archive_patient_data <- eventReactive(input$archive_table_rows_selected, {
+  archivePatientUID <- reactive({
     
-    patientUID <- archive_records()[input$archive_table_rows_selected,][[1]]
+    archive_records()[input$archive_table_rows_selected,][[1]]
+    
+  })
+  
+  archive_patient_data <- eventReactive(input$archive_table_rows_selected, {
     
     patientRow <- NULL
     tryCatch({
@@ -694,7 +704,7 @@ function(input, output, session) {
         mutate(created_at = as.POSIXct(created_at, tz = "UTC"),
                modified_at = as.POSIXct(modified_at, tz = "UTC")) %>%
         arrange(desc(modified_at)) %>%
-        filter(uid == patientUID)
+        filter(uid == archivePatientUID())
       
     }, 
     error = function(err) {
@@ -817,6 +827,118 @@ function(input, output, session) {
     HTML(x)
     
   })
+  
+  observeEvent(input$archive_refresh_images, {
+    req(archivePatientUID())
+    
+    clearCache(archivePatientUID())
+    
+    session$userData$emptyCache(session$userData$emptyCache() + 1)
+    
+  })
+  
+  archive_patient_filenames_count <- reactive({
+    req(archivePatientUID())
+    
+    session$userData$emptyCache()
+    
+    pathToPatientImages <- paste0(tiffDir, archivePatientUID())
+    
+    if(!file.exists(pathToPatientImages)) {
+      
+      thisMode = 'test'
+      
+      filenames <- fetchFiles(archivePatientUID(), 
+                              dbInfo[[1]][[2]], 
+                              '22', 
+                              deviceInfo[[1]][[1]], 
+                              deviceInfo[[1]][[2]],
+                              thisMode,
+                              aLocalDB = localDB)
+      
+      filename_count <- filenames %>%
+        length()
+      
+      
+      fetchPhotos(archivePatientUID(),
+                  dbInfo[[1]][[2]],
+                  '22',
+                  deviceInfo[[1]][[1]],
+                  deviceInfo[[1]][[2]],
+                  filenames,
+                  thisMode,
+                  localDB)
+    } else {
+      
+      filename_split <- list.files(pathToPatientImages, pattern = '.tiff') %>%
+        str_split('_')
+      
+      
+      if(length(filename_split) == 0) {
+        filename_count <- 0
+      } else {
+        filename_count <- filename_split[[1]][[2]] %>% strtoi()
+      }
+    }
+    
+    return(filename_count)
+    
+  })
+  
+  archivePatientPhotos <- reactive({
+    req(archive_patient_filenames_count())
+    
+    targetDir <- paste0(tiffDir, archivePatientUID())
+    
+    imageFile <- list.files(path = targetDir, pattern = '.tiff')
+    
+    image_read(paste0(targetDir, '/', imageFile))
+    
+  })
+  
+  output$archive_photos_title <-renderUI({
+    req(archive_patient_filenames_count())
+    
+    if(archive_patient_filenames_count() == 0) {
+      x <- paste0("<h4> Aucune image n'a été trouvée </h4>")
+    } else if (archive_patient_filenames_count() == 1) {
+      x <- paste0("<h4> 1 image trouvée </h4>")
+    } else {
+      x <- paste0('<h4> ', archive_patient_filenames_count(),
+                  ' images trouvées </h4>')
+      
+    }
+    
+    HTML(x)
+    
+  })
+  
+  
+  output$archive_tiffImage <- renderImage(
+    {
+      req(archive_patient_filenames_count())
+      
+      # A temp file to save the output.
+      # This file will be removed later by renderImage
+      outfile <- tempfile(fileext = '.png')
+      
+      #width  <- session$clientData$output_tiffImage_width
+      #height <- session$clientData$output_tiffImage_height
+      
+      # Generate the PNG
+      #png(outfile, width = 400, height = 300)
+      archivePatientPhotos()[imgIdx] %>%
+        image_scale(geometry = "x380") %>%
+        image_write(path = outfile, format = "png")
+      #dev.off()
+      
+      # Return a list containing the filename
+      list(src = outfile,
+           contentType = 'image/png',
+           alt = "This is alternate text")
+      
+    }, 
+    deleteFile = TRUE)
   
   # Garde table ------------------------------------------------------------
   
