@@ -200,6 +200,7 @@ function(input, output, session) {
       shinyjs::show("photo_container")
       shinyjs::hide("archive_photo_container")
       shinyjs::show("refresh_images")
+      shinyjs::show("arrows_container")
     }     
   })
   
@@ -210,6 +211,8 @@ function(input, output, session) {
       dossiers_table_proxy %>% selectRows(NULL)
       shinyjs::hide("photo_container")
       shinyjs::show("archive_photo_container")
+      shinyjs::show("archive_refresh_images")
+      shinyjs::show("archive_arrows_container")
     }     
   })
   
@@ -914,6 +917,27 @@ function(input, output, session) {
     
   })
   
+  archiveImgIdx <- 1
+  makeReactiveBinding('archiveImgIdx')
+  
+  observeEvent(input$increase_archive_index, {
+    
+    if(archiveImgIdx == archive_patient_filenames_count()) {
+      archiveImgIdx <<- 1
+    } else {
+      archiveImgIdx <<- archiveImgIdx + 1
+    }
+  })
+  
+  observeEvent(input$decrease_archive_index, {
+    
+    if(archiveImgIdx == 1) {
+      archiveImgIdx <<- archive_patient_filenames_count()
+    } else {
+      archiveImgIdx <<- archiveImgIdx - 1
+    }
+  })
+  
   
   output$archive_tiffImage <- renderImage(
     {
@@ -923,12 +947,9 @@ function(input, output, session) {
       # This file will be removed later by renderImage
       outfile <- tempfile(fileext = '.png')
       
-      #width  <- session$clientData$output_tiffImage_width
-      #height <- session$clientData$output_tiffImage_height
-      
       # Generate the PNG
       #png(outfile, width = 400, height = 300)
-      archivePatientPhotos()[imgIdx] %>%
+      archivePatientPhotos()[archiveImgIdx] %>%
         image_scale(geometry = "x380") %>%
         image_write(path = outfile, format = "png")
       #dev.off()
@@ -940,6 +961,29 @@ function(input, output, session) {
       
     }, 
     deleteFile = TRUE)
+  
+  observeEvent(input$expand_archive_image, {
+    
+    clearTmpImgs()
+    
+    timeSuffix <- Sys.time() %>% 
+      gsub("^[^\\s]+\\s", "", .) %>%
+      str_replace_all(":", "")
+    
+    archivePatientPhotos()[archiveImgIdx] %>%
+      image_scale(geometry = "x780") %>%
+      image_write(path = paste0(tmpImg, timeSuffix), format = "png")
+    
+    
+    showModal(
+      modalDialog(
+        HTML(paste0('<img src="tmpimg', timeSuffix, '">')),
+        size = "xl",
+        easyClose = TRUE,
+        footer = NULL
+      )
+    )
+  })
   
   # Garde table ------------------------------------------------------------
   

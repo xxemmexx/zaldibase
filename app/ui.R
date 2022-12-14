@@ -108,6 +108,10 @@ tagList(
                                                                    "",
                                                                    icon("refresh"),
                                                                    style="color: #FFF0F5; background-color: #3E3F3A;"),
+                                                      actionButton("archive_refresh_images", 
+                                                                   "",
+                                                                   icon("refresh"),
+                                                                   style="color: #FFF0F5; background-color: #3E3F3A;"),
                                                       style = "position:absolute;right:2em;"),
                                                     tags$div(id = "photo_container",
                                                              style = "text-align: center;",
@@ -129,7 +133,22 @@ tagList(
                                                                           "",
                                                                           icon("arrow-right"),
                                                                           style="color: #FFF0F5; background-color: #3E3F3A")
-                                                             ) # Close div
+                                                             ), # Close div
+                                                    tags$div(id = "archive_arrows_container",
+                                                             style = "text-align: center;",
+                                                             actionButton("decrease_archive_index", 
+                                                                          "",
+                                                                          icon("arrow-left"),
+                                                                          style="color: #FFF0F5; background-color: #3E3F3A"),
+                                                             actionButton("expand_archive_image", 
+                                                                          "",
+                                                                          icon("arrows-alt"),
+                                                                          style="color: #FFF0F5; background-color: #3E3F3A"),
+                                                             actionButton("increase_archive_index", 
+                                                                          "",
+                                                                          icon("arrow-right"),
+                                                                          style="color: #FFF0F5; background-color: #3E3F3A")
+                                                    ) # Close div
                                                     ) # Close well panel
                                                   ),
                                            column(width = 1)
