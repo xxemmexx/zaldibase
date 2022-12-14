@@ -29,36 +29,29 @@ tagList(
       conditionalPanel(condition = "output.role == 'admin' || output.role == 'chef' || output.role == 'resident'",
                        tabsetPanel(id = "main_tab_collection",
                          tabPanel("Dossiers en cours", icon = icon("list-ul"), value = "dossiers",
-                                  
                                   fluidRow(
                                     tags$br(),
                                     tags$br(),
-                                    column(width = 4),
-                                    column(width = 4,
-                                           DTOutput('garde_table'),
-                                           tags$br(),
-                                           tags$div(style="text-align:center;",
+                                    column(width = 3,
+                                           actionButton("add_dossier",
+                                                        "Nouveau dossier",
+                                                        class = "btn-success",
+                                                        style = "color: #FFF0F5; background-color: #008000",
+                                                        icon = icon('plus'),
+                                                        width = '60%')),
+                                    column(width = 3),
+                                    column(width = 3,
+                                           tags$div(style="text-align:right;",
                                                     actionButton("take_garde",
                                                                  "Je prends la garde",
                                                                  icon("share"),
                                                                  style="color:#FFF0F5;background-color:#3E3F3A;text-align:center;"))
                                            ),
-                                    column(width = 4)
+                                    column(width = 3,
+                                           DTOutput('garde_table'))
                                     
                                   ),
                                   tags$hr(),
-                                  fluidRow(column(width = 4,
-                                                  tags$br(),
-                                                  tags$br(),
-                                                  actionButton("add_dossier",
-                                                               "Nouveau dossier",
-                                                               class = "btn-success",
-                                                               style = "color: #FFF0F5; background-color: #008000",
-                                                               icon = icon('plus'),
-                                                               width = '66%'),
-                                                  tags$br(),
-                                                  tags$br())
-                                  ), # Close fluid row
                                   fluidRow(column(width = 12,
                                                   title = "Mes dossiers",
                                                   DTOutput('dossiers_table') %>% withSpinner())
