@@ -1072,29 +1072,40 @@ function(input, output, session) {
   
   observeEvent(input$take_garde, {
     
-    tryCatch({
-      
-      thisQuery <- writeGardeQuery(credentials()$info[['user']],
-                                   ymd_hms(Sys.time()))
-      
-      dbExecute(conn, thisQuery)
-      
-      session$userData$garde_trigger(session$userData$garde_trigger() + 1)
-      
-      showToast("success", message = "Vous avez bien pris la garde")}, 
-      
-      error = function(error) {
+    if(session$userData$permissions() == 'admin') {
+      showModal(modalDialog(
+        div(style = "padding: 30px;", class = "text-center",
+            HTML(printWarningHighPrivileges)),
+        title = "Privilège trop élevé",
+        easyClose = TRUE,
+        footer = modalButton("Fermer")
+      ))
+    } else {
+      tryCatch({
         
-        msg <- paste0("Erreur - contactez votre admin")
-        # print `msg` so that we can find it in the logs
-        print(msg)
-        # print the actual error to log it
-        print(error)
-        # show error `msg` to user.  User can then tell us about error and we can
-        # quickly identify where it cam from based on the value in `msg`
-        showToast("error", msg)
-      }
-    ) # Close try-catch
+        thisQuery <- writeGardeQuery(credentials()$info[['user']],
+                                     ymd_hms(Sys.time()))
+        
+        dbExecute(conn, thisQuery)
+        
+        session$userData$garde_trigger(session$userData$garde_trigger() + 1)
+        
+        showToast("success", message = "Vous avez bien pris la garde")}, 
+        
+        error = function(error) {
+          
+          msg <- paste0("Erreur - contactez votre admin")
+          # print `msg` so that we can find it in the logs
+          print(msg)
+          # print the actual error to log it
+          print(error)
+          # show error `msg` to user.  User can then tell us about error and we can
+          # quickly identify where it cam from based on the value in `msg`
+          showToast("error", msg)
+        }
+      ) # Close try-catch
+    } # Close else
+    
   })
 
   # Staff meeting ------------------------------------------------------------
