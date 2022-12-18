@@ -178,17 +178,19 @@ function(input, output, session) {
   })
   
   observe({
-    if((is.null(input$dossiers_table_rows_selected) && is.null(input$archive_table_rows_selected)) ||
+    if((is.null(input$dossiers_table_rows_selected) & is.null(input$archive_table_rows_selected)) ||
        dossiers_patient_filenames_count() < 1) {
       shinyjs::hide("decrease_index")
       shinyjs::hide("increase_index")
       shinyjs::hide("expand_image")
       shinyjs::hide("refresh_images")
-    } else {
-      shinyjs::show("decrease_index")
-      shinyjs::show("increase_index")
-      shinyjs::show("expand_image")
+      shinyjs::hide("archive_refresh_images")
+    } else if(!is.null(input$dossiers_table_rows_selected)) {
+      shinyjs::show("arrows_container")
       shinyjs::show("refresh_images")
+    } else if(!is.null(input$archive_table_rows_selected)) {
+      shinyjs::show("archive_arrows_container")
+      shinyjs::show("archive_refresh_images")
     }    
   })
   
