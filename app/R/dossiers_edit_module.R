@@ -228,6 +228,15 @@ dossiersEditModuleServer <- function(id,
                      
                      #------------FIELD VALIDATION - FEEDBACK-------------------
                      
+                     formFields <- reactiveValues(contact_person = 0,
+                                                  hopital = 0,
+                                                  contact_phone = 0,
+                                                  contact_email = 0,
+                                                  nom = 0,
+                                                  prenom = 0,
+                                                  date_naissance = 0,
+                                                  phone_number_patient = 0,
+                                                  pathologie_1 = 0)
                      
                      observeEvent(input$contact_person, {
                        if (input$contact_person == "") {
@@ -236,7 +245,7 @@ dossiersEditModuleServer <- function(id,
                          shinyjs::disable('submit')
                        } else {
                          shinyFeedback::hideFeedback("contact_person")
-                         shinyjs::enable('submit')
+                         formFields$contact_person = 1
                        }
                      })
                      
@@ -247,7 +256,7 @@ dossiersEditModuleServer <- function(id,
                          shinyjs::disable('submit')
                        } else {
                          shinyFeedback::hideFeedback("hopital")
-                         shinyjs::enable('submit')
+                         formFields$hopital = 1
                        }
                      })
                      
@@ -275,18 +284,18 @@ dossiersEditModuleServer <- function(id,
                          shinyjs::disable('submit')
                        } else {
                          shinyFeedback::hideFeedback("contact_phone")
-                         shinyjs::enable('submit')
+                         formFields$contact_phone = 1
                        }
                      })
                      
                      observeEvent(input$contact_email, {
-                       if (input$contact_email == "") {
+                       if (str_trim(input$contact_email == "")) {
                          shinyFeedback::showFeedbackDanger("contact_email",
                                                            text = "L'email de la personne de contact est obligatoire!")
                          shinyjs::disable('submit')
                        } else {
                          shinyFeedback::hideFeedback("contact_email")
-                         shinyjs::enable('submit')
+                         formFields$contact_email = 1
                        }
                      })
                      
@@ -297,7 +306,7 @@ dossiersEditModuleServer <- function(id,
                          shinyjs::disable('submit')
                        } else {
                          shinyFeedback::hideFeedback("nom")
-                         shinyjs::enable('submit')
+                         formFields$nom = 1
                        }
                      })
                      
@@ -308,7 +317,7 @@ dossiersEditModuleServer <- function(id,
                          shinyjs::disable('submit')
                        } else {
                          shinyFeedback::hideFeedback("prenom")
-                         shinyjs::enable('submit')
+                         formFields$prenom = 1
                        }
                      })
                      
@@ -319,29 +328,29 @@ dossiersEditModuleServer <- function(id,
                          shinyjs::disable('submit')
                        } else {
                          shinyFeedback::hideFeedback("date_naissance")
-                         shinyjs::enable('submit')
+                         formFields$date_naissance = 1
                        }
                      })
                      
                      observeEvent(input$phone_number_patient, {
-                       if (input$phone_number_patient == "") {
+                       if (str_trim(input$phone_number_patient) == "") {
                          shinyFeedback::showFeedbackDanger("phone_number_patient",
                                                            text = "Le numéro de téléphone est obligatoire!")
                          shinyjs::disable('submit')
                        } else {
                          shinyFeedback::hideFeedback("phone_number_patient")
-                         shinyjs::enable('submit')
+                         formFields$phone_number_patient = 1
                        }
                      })
                      
                      observeEvent(input$pathologie_1, {
-                       if (input$pathologie_1 == " ") {
+                       if (str_trim(input$pathologie_1) == "") {
                          shinyFeedback::showFeedbackDanger("pathologie_1",
                                                            text = "La pathologie est obligatoire!")
                          shinyjs::disable('submit')
                        } else {
                          shinyFeedback::hideFeedback("pathologie_1")
-                         shinyjs::enable('submit')
+                         formFields$pathologie_1 = 1
                        }
                      })
                      
@@ -356,19 +365,34 @@ dossiersEditModuleServer <- function(id,
                              shinyjs::disable('submit')
                            } else {
                              shinyFeedback::hideFeedback("description_pathologie_1")
-                             shinyjs::enable('submit')
+                             
                            }
                          }) # Close description observer
                        } # Close if statement pathologie == 'Autre'
                      }) # Close pathologie observer
                      
-                     observeEvent(input$pre_decision, {
-                       if (input$pre_decision == "") {
-                         shinyFeedback::showFeedbackDanger("pre_decision",
-                                                           text = "La décision préliminaire est obligatoire!")
-                         shinyjs::disable('submit')
-                       } else {
-                         shinyFeedback::hideFeedback("pre_decision")
+                     # observeEvent(input$pre_decision, {
+                     #   if (input$pre_decision == "") {
+                     #     shinyFeedback::showFeedbackDanger("pre_decision",
+                     #                                       text = "La décision préliminaire est obligatoire!")
+                     #     shinyjs::disable('submit')
+                     #   } else {
+                     #     shinyFeedback::hideFeedback("pre_decision")
+                     #     shinyjs::enable('submit')
+                     #   }
+                     # })
+                     
+                     observe({
+                       
+                       if(formFields$contact_person == 1 &
+                          formFields$hopital == 1 &
+                          formFields$contact_phone == 1 &
+                          formFields$contact_email == 1 &
+                          formFields$nom == 1 &
+                          formFields$prenom == 1 &
+                          formFields$date_naissance == 1 &
+                          formFields$phone_number_patient == 1 &
+                          formFields$pathologie_1 == 1) {
                          shinyjs::enable('submit')
                        }
                      })
