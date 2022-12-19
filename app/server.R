@@ -1277,6 +1277,15 @@ function(input, output, session) {
     
   })
   
+  output$staff_description_histoire <-renderUI({
+    req(patient_data_staff()$description_histoire)
+    
+    x <- buildParagraph(patient_data_staff()$description_histoire[[patientIdx]], "Histoire")
+    
+    HTML(x)
+    
+  })
+  
   observeEvent(input$staff_meeting, {
     shinyjs::toggle("staff_ui")
     shinyjs::toggle("staff_ui_controllers")

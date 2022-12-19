@@ -197,7 +197,9 @@ tagList(
                                                          tags$br(),
                                                          tags$br(),
                                                          tags$br(),
-                                                         uiOutput('staff_pathologies')
+                                                         uiOutput('staff_pathologies'),
+                                                         tags$br(),
+                                                         uiOutput('staff_description_histoire')
                                                          )
                                                   ) # Close fluid row
                                               ), # Close well panel

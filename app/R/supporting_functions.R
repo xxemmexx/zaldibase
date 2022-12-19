@@ -40,8 +40,8 @@ buildDecisionBanner <- function(aPreDecision, aDefDecision) {
   if(aDefDecision == '') {
     paste0('<div class="pull-right"><p style="font-size:16px;margin: 0px 0;"><b>Décision préliminaire: ', preDecision, '</b></p></div>')
   } else {
-    paste0('<div class="pull-right"><p style="font-size:16px;margin: 0px 0;"><b>Décision définitive: ', defDecision, '</b></p></div>',
-           '<div class="pull-right" style="color:#A9A9A9"><p style="font-size:16px;margin: 5px 0;"><b>Décision préliminaire: ', preDecision, '</b></p></div>'
+    paste0('<div class="pull-right"><h4 style="font-size:16px;margin: 0px 0;"><b>Décision définitive: ', defDecision, '</b></h4></div><br>',
+           '<div class="pull-right"><h4 style="color:#A9A9A9;font-size:16px;margin: 5px 0;"><b>Décision préliminaire: ', preDecision, '</b></h4></div>'
            )
   }
 }
