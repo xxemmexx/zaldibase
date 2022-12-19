@@ -210,7 +210,11 @@ tagList(
                                                          tags$br(),
                                                          uiOutput("staff_decisions")),
                                                   column(width = 3)
-                                                  ) # Close fluid row
+                                                  ), # Close fluid row
+                                                fluidRow(
+                                                  column(width = 12,
+                                                         uiOutput("staff_decision_explanations"))
+                                                ) # Close fluid row
                                                 ) # Close well panel
                                               ) %>% shinyjs::hidden()
                                           ) # Close Fluid row

@@ -1194,6 +1194,18 @@ function(input, output, session) {
       decision_input_controllers[[patientIdx]]
   })
   
+  staff_explanation_names <- reactive(paste0("staff_explanation_", seq_len(patient_data_staff_count())))
+  
+  output$staff_decision_explanations <- renderUI({
+    req(patient_data_staff())
+    
+    explanation_input_controllers <- map(staff_explanation_names(), ~ textAreaInput(.x, 
+                                                                                    "Explication",
+                                                                                    value = isolate(input[[.x]]),
+                                                                                    width = '100%'))
+    explanation_input_controllers[[patientIdx]]
+  })
+  
   output$staff_patient_display_name <- renderText({
     req(patient_data_staff())
     
