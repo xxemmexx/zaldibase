@@ -82,6 +82,7 @@ tagList(
                                                     uiOutput('archive_decisions'),
                                                     tags$br(),
                                                     tags$br(),
+                                                    tags$br(),
                                                     uiOutput('pathologies'),
                                                     uiOutput('archive_pathologies'),
                                                     tags$br(),
@@ -193,6 +194,7 @@ tagList(
                                                          h4(textOutput('staff_patient_age')),
                                                          uiOutput('staff_info_icons'),
                                                          uiOutput('staff_pre_def_decisions'),
+                                                         tags$br(),
                                                          tags$br(),
                                                          tags$br(),
                                                          uiOutput('staff_pathologies')

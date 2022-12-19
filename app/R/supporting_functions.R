@@ -38,10 +38,10 @@ buildDecisionBanner <- function(aPreDecision, aDefDecision) {
   }
   
   if(aDefDecision == '') {
-    paste0('<div class="pull-right"><b>Décision préliminaire: ', preDecision, '</b></div>')
+    paste0('<div class="pull-right"><p style="font-size:16px;margin: 0px 0;"><b>Décision préliminaire: ', preDecision, '</b></p></div>')
   } else {
-    paste0('<div class="pull-right""><b>Décision définitive: ', defDecision, '</b></div><br>',
-           '<div class="pull-right", style="color:#A9A9A9;"><b>Décision préliminaire: ', preDecision, '</b></div>'
+    paste0('<div class="pull-right"><p style="font-size:16px;margin: 0px 0;"><b>Décision définitive: ', defDecision, '</b></p></div>',
+           '<div class="pull-right" style="color:#A9A9A9"><p style="font-size:16px;margin: 5px 0;"><b>Décision préliminaire: ', preDecision, '</b></p></div>'
            )
   }
 }
