@@ -36,10 +36,9 @@ rendezvousEditModuleServer <- function(id,
                      
                      docs <- user_base %>%
                        filter(permissions %in% c('chef', 'resident')) %>%
-                       select(name)
+                       transmute(`Médecins` = name)
                      
                      docs <- c(" ", docs)
-                     
                      
                      #------------FILL-IN FORM----------------------------------
                      
@@ -52,20 +51,38 @@ rendezvousEditModuleServer <- function(id,
                                            hold$prenom, " ", str_to_upper(hold$nom), "</h4>")),
                                tags$br(),
                                tags$br(),
-                               dateInput(ns("date_rendezvous"),
-                                         'Date (AAAA-MM-DD)',
-                                         value = ifelse(is.null(hold), as.character(today()+7), hold$date_rendezvous),
-                                         language = "fr"),
-                               timeInput(ns("time_rendezvous"), 
-                                         "Heure (écart de 5 mins)", 
-                                         value = Sys.time(), 
-                                         minute.steps = 5,
-                                         seconds = FALSE),
-                               selectInput(ns("rendezvous_avec"),
-                                           "Médecin",
-                                           choices = docs,
-                                           selected = NULL)
-                                      
+                               column(width = 6,
+                                      dateInput(ns("date_rendezvous"),
+                                                'Date (AAAA-MM-DD)',
+                                                value = ifelse((str_trim(hold$date_rendezvous) == ""), 
+                                                               as.character(today()+7), 
+                                                               hold$date_rendezvous),
+                                                language = "fr")),
+                               column(width = 3,
+                                      numericInput(ns("heure_rendezvous"),
+                                                   'Heure',
+                                                   value = 14,
+                                                   min = 0,
+                                                   max = 23,
+                                                   step = 1,
+                                                   width = '100%')),
+                               column(width = 3,
+                                      numericInput(ns("min_rendezvous"),
+                                                   'Minute',
+                                                   value = 15,
+                                                   min = 0,
+                                                   max = 55,
+                                                   step = 5,
+                                                   width = '100%'))
+                               
+                             ), # Close fluidrow
+                             fluidRow(column(width = 2),
+                                      column(width = 8,
+                                             selectInput(ns("rendezvous_avec"),
+                                                         "Médecin",
+                                                         choices = docs,
+                                                         selected = " ")),
+                                      column(width = 2)
                                       ) # Close fluidrow
                              ), # Close div
                          title = modal_title,
@@ -98,8 +115,14 @@ rendezvousEditModuleServer <- function(id,
                    
                    out <- list(uid = deliverUID(hold),
                                data = list("date_rendezvous" = input$date_rendezvous,
-                                           "time_rendezvous" = format(input$time_rendezvous, format = "%H:%M:%S"),
-                                           "rendezvous_avec" = input$rendezvous_avec))
+                                           "time_rendezvous" = deliverTimeString(input$heure_rendezvous, input$min_rendezvous),
+                                           "rendezvous_avec" = input$rendezvous_avec,
+                                           "nom" = hold$nom,
+                                           "prenom" = hold$prenom,
+                                           "date_naissance" = hold$date_naissance,
+                                           "staff_decision" = hold$staff_decision,
+                                           "explication" = hold$explication,
+                                           "contact_email" = hold$contact_email))
               
                    out
                    })
@@ -130,32 +153,35 @@ rendezvousEditModuleServer <- function(id,
                    
                    tryCatch({
                      
-                     query <- paste0("UPDATE patients
-                                      SET date_rendezvous = '", dat$data$date_rendezvous,
-                                     "', time_rendezvous = '", dat$data$time_rendezvous,
-                                     "', rendezvous_avec = '", dat$data$rendezvous_avec,
-                                     "' WHERE uid = '", dat$uid, "';"
-                     )
+                     query <- writeRendezVousDetailsQuery(dat$data$date_rendezvous,
+                                                          dat$data$time_rendezvous,
+                                                          dat$data$rendezvous_avec,
+                                                          dat$uid)
                      
                      print('Trying to execute query...')
                      print(query)
                      
                      dbExecute(conn, query)
                      
-                     # nomCompletPatient <- paste0(prenoms[[i]], " ", str_to_upper(noms[[i]]))
-                     # 
-                     # print('Trying to send notification email...')
-                     # 
-                     # generateReportEmail(nomCompletPatient,
-                     #                     dates_naissance[[i]],
-                     #                     input[[staff_decision_names()[[i]]]],
-                     #                     "Une explication quelconque") %>%
-                     #   smtp_send(
-                     #     to = emails_retour[[i]],
-                     #     from = zaldibase,
-                     #     subject = "Nouvelle notification CHU - équipue du neurochirurgical",
-                     #     credentials = creds_file(credentialsPath)
-                     #   )
+                     nomCompletPatient <- paste0(dat$data$prenom, " ", str_to_upper(dat$data$nom))
+
+                     print('Trying to send notification email...')
+
+                     generateRendezvousEmail(nomCompletPatient,
+                                             dat$data$date_naissance,
+                                             dat$data$staff_decision,
+                                             dat$data$date_rendezvous,
+                                             dat$data$time_rendezvous,
+                                             dat$data$rendezvous_avec,
+                                             dat$data$explication) %>%
+                       smtp_send(
+                         to = dat$data$contact_email,
+                         from = zaldibase,
+                         subject = "Nouvelle notification CHU - équipue du neurochirurgical",
+                         credentials = creds_file(credentialsPath)
+                       )
+                     
+                     session$userData$rendezvous_trigger(session$userData$rendezvous_trigger() + 1)
                      
                      showToast("success", message = "Rendez-vous enregistré")}, 
                      

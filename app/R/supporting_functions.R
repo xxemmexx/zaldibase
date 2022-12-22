@@ -253,7 +253,7 @@ translateDate <- function(aDateString) {
   date <- aDateString %>% 
     writeISODate() 
   
-  paste0(day(date), " de ", deliverMonthName(month(date)), ", ", year(date))
+  paste0(day(date), " ", str_to_lower(deliverMonthName(month(date))), ", ", year(date))
 }
 
 deliverMonthName <- function(anInteger) {
@@ -434,7 +434,7 @@ writeStaffDecisionQuery <- function(aStaffDecision, anExplanation, aPatientUid) 
                                 aStaffDecision, "', explication = '",
                                 anExplanation, "'")
   
-  updateStatus <- ", is_closed = 1, is_viewed = 1, needs_rendezvous = 1, status = 4"
+  updateStatus <- ", is_viewed = 1, needs_rendezvous = 1, status = 4"
   
   whereClause <- paste0(" WHERE uid = '", aPatientUid, "';")
   
@@ -443,6 +443,24 @@ writeStaffDecisionQuery <- function(aStaffDecision, anExplanation, aPatientUid) 
   } else {
     query <- paste0(updateStaffDecision, whereClause)
   }
+  
+  query
+  
+}
+
+writeRendezVousDetailsQuery <- function(aDate, aTime, aDoctor, aPatientUid) {
+  
+  detailsQuery <- paste0("UPDATE patients
+                         SET date_rendezvous = '", 
+                         aDate, "', time_rendezvous = '", 
+                         aTime, "', rendezvous_avec = '", 
+                         aDoctor, "'")
+  
+  updateStatus <- ", is_closed = 1, needs_rendezvous = 0, has_rendezvous = 1, status = 5"
+  
+  whereClause <- paste0(" WHERE uid = '", aPatientUid, "';")
+  
+  query <- paste0(detailsQuery, updateStatus, whereClause)
   
   query
   
@@ -753,9 +771,29 @@ getImageLocation <- function(aLocalDB, aPatientUuid, aFilename) {
 
 }
 
-generateReportEmail <- function(aPatient,
+deliverTimeString <- function(anHour, aMinute) {
+  
+  if(aMinute == 0) {
+    thisMinute <- "00"
+  } else {
+    thisMinute <- as.character(aMinute)
+  }
+  
+  if(anHour == 0) {
+    thisHour <- "00"
+  } else {
+    thisHour <- as.character(anHour)
+  }
+  
+  paste0(thisHour, ":", thisMinute)
+}
+
+generateRendezvousEmail <- function(aPatient,
                                 aDateDeNaissance, 
                                 aStaffDecision,
+                                aRendezvousDate,
+                                aRendezvousTime,
+                                aRendezvousDoctor,
                                 anExplanation) {
   
   img_string <- add_image(file = logoPath, width = 90, align = 'center')
@@ -771,6 +809,8 @@ pris une décision par rapport à un dossier que vous avez soumis.<br><br>
 aPatient, ", né(e) le ", translateDate(aDateDeNaissance), "<br><br>
 <b>Décision </b><br>",
 aStaffDecision, "<br><br>
+<b>Rendez-vous </b><br>",
+"Le ", sd(ymd(aRendezvousDate)), " à ", aRendezvousTime, " hrs. chez ", aRendezvousDoctor, "<br><br>
 <b>Note supplémentaire</b><br>
 <em>", anExplanation,"</em><br><br><br>
 
