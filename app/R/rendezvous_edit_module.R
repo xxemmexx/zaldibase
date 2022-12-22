@@ -96,9 +96,44 @@ rendezvousEditModuleServer <- function(id,
                      
                      #------------END FILL-IN FORM------------------------------
                      
+                     #------------FIELD VALIDATION - FEEDBACK-------------------
                      
+                     formFields <- reactiveValues(date_rendezvous = 0,
+                                                  rendezvous_avec = 0)
                      
+                     observeEvent(input$date_rendezvous, {
+                       if (length(input$date_rendezvous) < 1) {
+                         shinyFeedback::showFeedbackDanger("date_rendezvous",
+                                                           text = "Choisissez une date pour le rendez-vous")
+                         shinyjs::disable('submit')
+                       } else if (ymd(input$date_rendezvous) < today()) {
+                         shinyFeedback::showFeedbackDanger("date_rendezvous",
+                                                           text = "Choisissez une date dans l'avenir")
+                         shinyjs::disable('submit')
+                       } else {
+                         shinyFeedback::hideFeedback("date_rendezvous")
+                         formFields$date_rendezvous = 1
+                       }
+                     })
                      
+                     observeEvent(input$rendezvous_avec, {
+                       if (str_trim(input$rendezvous_avec) == "") {
+                         shinyFeedback::showFeedbackDanger("rendezvous_avec",
+                                                           text = "Choisissez un médecin")
+                         shinyjs::disable('submit')
+                       } else {
+                         shinyFeedback::hideFeedback("rendezvous_avec")
+                         formFields$rendezvous_avec = 1
+                       }
+                     })
+                     
+                     observe({
+                       
+                       if(formFields$date_rendezvous == 1 &
+                          formFields$rendezvous_avec == 1) {
+                         shinyjs::enable('submit')
+                       }
+                     })
                      
                    }) # Close modal trigger
                  

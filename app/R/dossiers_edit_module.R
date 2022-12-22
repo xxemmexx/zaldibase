@@ -366,16 +366,7 @@ dossiersEditModuleServer <- function(id,
                        } # Close if statement pathologie == 'Autre'
                      }) # Close pathologie observer
                      
-                     # observeEvent(input$pre_decision, {
-                     #   if (input$pre_decision == "") {
-                     #     shinyFeedback::showFeedbackDanger("pre_decision",
-                     #                                       text = "La décision préliminaire est obligatoire!")
-                     #     shinyjs::disable('submit')
-                     #   } else {
-                     #     shinyFeedback::hideFeedback("pre_decision")
-                     #     shinyjs::enable('submit')
-                     #   }
-                     # })
+                     
                      
                      observe({
                        
