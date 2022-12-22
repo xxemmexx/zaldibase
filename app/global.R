@@ -152,7 +152,7 @@ Pour vérifier la compliance votre article avec ces conditions d’utilisation, 
 
 printLogo <- '<p style="font-family: Garamond">Zal<b>di|b</b>ase</p>'
 
-printWarningIncompleteStaffMeeting <- '<h1 style="color:#FF4500">&#9888;</h1> <br> <h4 style = "line-height: 1.75;">Il est indispensable que tous les dossiers aient une décision de staff pour pouvoir clôturer le staff meeting</h4>'
+printWarningIncompleteStaffMeeting <- '<p style="color:#FF4500;font-size:60px">&#9888;</p> <br> <h4 style = "line-height: 1.75;">Il est indispensable que tous les dossiers <br> aient une décision de staff et une explication <br> pour pouvoir clôturer le staff meeting</h4>'
 
 printWarningHighPrivileges <- '<p style="color:#FF4500;font-size:60px">&#9888;</p> <br> <h4 style = "line-height: 1.75;">Vous ne pouvez prendre la garde que si vous <br> avez des privilèges de <em>resident</em> ou de <em>chef de garde</em></h4>'
 

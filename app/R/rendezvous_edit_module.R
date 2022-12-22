@@ -142,6 +142,21 @@ rendezvousEditModuleServer <- function(id,
                      
                      dbExecute(conn, query)
                      
+                     # nomCompletPatient <- paste0(prenoms[[i]], " ", str_to_upper(noms[[i]]))
+                     # 
+                     # print('Trying to send notification email...')
+                     # 
+                     # generateReportEmail(nomCompletPatient,
+                     #                     dates_naissance[[i]],
+                     #                     input[[staff_decision_names()[[i]]]],
+                     #                     "Une explication quelconque") %>%
+                     #   smtp_send(
+                     #     to = emails_retour[[i]],
+                     #     from = zaldibase,
+                     #     subject = "Nouvelle notification CHU - équipue du neurochirurgical",
+                     #     credentials = creds_file(credentialsPath)
+                     #   )
+                     
                      showToast("success", message = "Rendez-vous enregistré")}, 
                      
                      error = function(error) {

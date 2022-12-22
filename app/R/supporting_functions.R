@@ -428,10 +428,11 @@ writeRendezVousQuery <- function(aPatientUid, aMode) {
   
 }
 
-writeStaffDecisionQuery <- function(aStaffDecision, aPatientUid) {
+writeStaffDecisionQuery <- function(aStaffDecision, anExplanation, aPatientUid) {
   
   updateStaffDecision <- paste0("UPDATE patients SET staff_decision = '",
-                                aStaffDecision, "'")
+                                aStaffDecision, "', explication = '",
+                                anExplanation, "'")
   
   updateStatus <- ", is_closed = 1, is_viewed = 1, needs_rendezvous = 1, status = 4"
   

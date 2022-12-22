@@ -1307,8 +1307,9 @@ function(input, output, session) {
   observeEvent(input$cloturer_staff_meeting, {
 
     listOfDecisions <- map(staff_decision_names(), ~ input[[.x]])
+    listOfExplanations <- map(staff_explanation_names(), ~ input[[.x]])
     
-    if(hasAnyEmptyValues(listOfDecisions)) {
+    if(hasAnyEmptyValues(listOfDecisions) | hasAnyEmptyValues(listOfExplanations)) {
       
       showModal(modalDialog(
         div(style = "padding: 30px;", class = "text-center",
@@ -1323,32 +1324,18 @@ function(input, output, session) {
       tryCatch({
         
         uids <- patient_data_staff()$uid
-        prenoms <- patient_data_staff()$prenom
-        noms <- patient_data_staff()$nom
-        dates_naissance <- patient_data_staff()$date_naissance
-        emails_retour <- patient_data_staff()$contact_email
+        # prenoms <- patient_data_staff()$prenom
+        # noms <- patient_data_staff()$nom
+        # dates_naissance <- patient_data_staff()$date_naissance
+        # emails_retour <- patient_data_staff()$contact_email
         
         for(i in 1:patient_data_staff_count()) {
           
-          thisQuery <- writeStaffDecisionQuery(input[[staff_decision_names()[[i]]]], uids[[i]])
+          thisQuery <- writeStaffDecisionQuery(input[[staff_decision_names()[[i]]]], 
+                                               input[[staff_explanation_names()[[i]]]],
+                                               uids[[i]])
           
           dbExecute(conn, thisQuery)
-          
-          nomCompletPatient <- paste0(prenoms[[i]], " ", str_to_upper(noms[[i]]))
-          
-          print('Trying to send notification email...')
-          
-          generateReportEmail(nomCompletPatient,
-                              dates_naissance[[i]],
-                              input[[staff_decision_names()[[i]]]],
-                              "Une explication quelconque") %>%
-            smtp_send(
-              to = emails_retour[[i]],
-              from = zaldibase,
-              subject = "Nouvelle notification CHU - équipue du neurochirurgical",
-              credentials = creds_file(credentialsPath)
-            )
-          
         }
         
         session$userData$staff_trigger(session$userData$staff_trigger() + 1)
@@ -1356,7 +1343,6 @@ function(input, output, session) {
         shinyjs::toggle("staff_ui")
         shinyjs::toggle("staff_ui_controllers")
         shinyjs::hide("staff_meeting")
-        #update_tabset(session, "main_tab_collection", "Dossiers en cours")
         
         showToast("success", message = "Staff meeting terminée correctement")}, 
         

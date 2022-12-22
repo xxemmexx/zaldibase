@@ -24,12 +24,11 @@ dossiersDeleteModuleServer <- function(id,
                      # Authorize who is able to access particular buttons (here, modules)
                      #req(session$userData$email == 'notification@subvertising.org')
                      
+                     printWarningEffacerProfil <- paste0('<p style="color:#FF4500;font-size:60px">&#9888;</p> <br> <h4 style = "line-height: 1.75;">Etes-vous sûr de bien vouloir <br> effacer le dossier de M./Mme. ', dossier_to_delete()$nom, '?</h4>')
+                     
                      showModal(modalDialog(
                        div(style = "padding: 30px;", class = "text-center",
-                           h2(style = "line-height: 1.75;",
-                              paste0('Etes-vous sûr de vouloir effacer le dossier de M./Mme. ',
-                                     dossier_to_delete()$nom,
-                                     '?'))),
+                           HTML(printWarningEffacerProfil)),
                        title = modal_title,
                        size = "m",
                        footer = list(modalButton("Annuler"),
