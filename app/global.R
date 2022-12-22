@@ -155,6 +155,14 @@ printWarningIncompleteStaffMeeting <- '<p style="color:#FF4500;font-size:60px">&
 
 printWarningHighPrivileges <- '<p style="color:#FF4500;font-size:60px">&#9888;</p> <br> <h4 style = "line-height: 1.75;">Vous ne pouvez prendre la garde que si vous <br> avez des privilèges de <em>resident</em> ou de <em>chef de garde</em></h4>'
 
+printPatientez <- '<p style="color:#3E3F3A;font-size:60px;">&#9993;</p> <br> <h3 style = "line-height: 1.75;">Patientez...</h3>'
+
+patientezDialog <- modalDialog(
+  div(style = "padding: 30px;", class = "text-center",
+      HTML(printPatientez)),
+    easyClose = TRUE,
+    footer = modalButton("Fermer"))
+
 jsHeader <- JS("function(settings, json) {",
 "$(this.api().table().header()).css({'background-color': '#3E3F3A', 'color': '#FFF0F5'});",
 "}")

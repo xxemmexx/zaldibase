@@ -188,13 +188,14 @@ rendezvousEditModuleServer <- function(id,
                    
                    tryCatch({
                      
+                     showModal(patientezDialog)
+                     
                      query <- writeRendezVousDetailsQuery(dat$data$date_rendezvous,
                                                           dat$data$time_rendezvous,
                                                           dat$data$rendezvous_avec,
                                                           dat$uid)
                      
                      print('Trying to execute query...')
-                     print(query)
                      
                      dbExecute(conn, query)
                      
@@ -217,6 +218,8 @@ rendezvousEditModuleServer <- function(id,
                        )
                      
                      session$userData$rendezvous_trigger(session$userData$rendezvous_trigger() + 1)
+                     
+                     removeModal()
                      
                      showToast("success", message = "Rendez-vous enregistré")}, 
                      
