@@ -233,7 +233,15 @@ tagList(
                    ), # Close fluid row
                    tags$script(src = "rendezvous_table_module.js"),
                    tags$script(paste0("rendezvous_table_module_js('')"))),
-          tabPanel("Rendez-vous accordés")
+          tabPanel("Rendez-vous accordés",
+                   tags$br(),
+                   tags$br(),
+                   fluidRow(column(width = 12,
+                                   title = "Agenda",
+                                   DTOutput('rendezvous_ok_table') %>% withSpinner())
+                   ), # Close fluid row
+                   tags$script(src = "rendezvous_table_module.js"),
+                   tags$script(paste0("rendezvous_table_module_js('')")))
         )
       )
     ), # Close Accueil
