@@ -74,9 +74,14 @@ buildTreatmentBanner <- function (aMedicine1, aDerniereDate1,
 
 convertUsernameToDisplayname <- function(aUsername, aUserTibble) {
   
-  aUserTibble %>%
-    filter(user == aUsername) %>%
-    select(name)
+  row <- aUserTibble %>%
+    filter(user == aUsername) 
+  
+  row$name
+}
+
+convertToDisplayName <- function(aUsername) {
+  getDisplayName[aUsername] %>% unname()
 }
 
 buildContactCard <- function(aPatientPhone, aContactPerson, aContactPhone, 
@@ -97,6 +102,16 @@ buildContactCard <- function(aPatientPhone, aContactPerson, aContactPhone,
          <b>Enregistré(e) depuis le: </b>', thisDate, ' <br>
          <b> Garde: </b>', thisUser[[1]], '
          </div>')
+}
+
+deliverGardeChoices <- function(aPrivilege, aUserTibble) {
+  
+  aPrivilegeFilter <- ifelse(aPrivilege == 'chef', 'resident', 'chef')
+  
+  aUserTibble %>%
+    filter(permissions == aPrivilegeFilter) %>%
+    transmute(Partners = name)
+  
 }
 
 hasAnyValues <- function(aList) {
@@ -824,3 +839,11 @@ L'équipe du Neurochirurgical")
     footer = md(glue::glue("Ceci est mon corps donné pour vous, faites ceci en souvenir de moi"))
   )
 }
+
+# tib <- tribble(
+#   ~modified_at, ~modified_by, ~partner,
+#   "2022-10-21",   'zaldijn001', 'escudro001'
+# )
+# tib %>%
+#   pivot_longer(!modified_at, names_to = "action", values_to = "garde") %>%
+#   transmute(`En garde maintenant:` = garde)

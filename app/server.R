@@ -1006,7 +1006,7 @@ function(input, output, session) {
         collect() %>%
         mutate(modified_at = as.POSIXct(modified_at, tz = "UTC")) %>%
         arrange(desc(modified_at)) %>%
-        slice_head(n = 1)
+        slice_head(n = 1) 
       
     }, 
     error = function(err) {
@@ -1032,8 +1032,8 @@ function(input, output, session) {
     
     # Select relevant columns for the user
     out <- out %>%
-      transmute(`En garde maintenant:` = convertUsernameToDisplayname(modified_by, user_base))
-      
+      pivot_longer(!modified_at, names_to = "action", values_to = "garde") %>%
+      transmute(Engarde = convertToDisplayName(garde))
 
     
     if (is.null(garde_table_prep())) {
@@ -1062,10 +1062,10 @@ function(input, output, session) {
       datatable(rownames = FALSE,
                 colnames = c('En garde maintenant:'),
                 class = "compact stripe nowrap",
-                escape = -1,  # Escape the HTML in all except 1st column (which has the buttons)
                 options = list(scrollX = FALSE,
                                dom = 't',
-                               columnDefs = list(list(className = 'dt-center', targets = 0)),
+                               columnDefs = list(list(className = 'dt-center', targets = 0),
+                                                 list(orderable = FALSE)),
                                initComplete = jsHeader,
                                language = list(emptyTable = "Personne n'a pris la garde"))
       ) 
@@ -1083,31 +1083,55 @@ function(input, output, session) {
         footer = modalButton("Fermer")
       ))
     } else {
-      tryCatch({
-        
-        thisQuery <- writeGardeQuery(credentials()$info[['user']],
-                                     ymd_hms(Sys.time()))
-        
-        dbExecute(conn, thisQuery)
-        
-        session$userData$garde_trigger(session$userData$garde_trigger() + 1)
-        
-        showToast("success", message = "Vous avez bien pris la garde")}, 
-        
-        error = function(error) {
-          
-          msg <- paste0("Erreur - contactez votre admin")
-          # print `msg` so that we can find it in the logs
-          print(msg)
-          # print the actual error to log it
-          print(error)
-          # show error `msg` to user.  User can then tell us about error and we can
-          # quickly identify where it cam from based on the value in `msg`
-          showToast("error", msg)
-        }
-      ) # Close try-catch
+      
+      gardeChoices <- deliverGardeChoices(session$userData$permissions(),
+                                          user_base)
+      
+      showModal(modalDialog(
+        div(style = "padding: 30px;", class = "text-center",
+            HTML(printTakeGarde),
+            selectInput("garde_avec",
+                        "Je prends la garde avec : ",
+                        choices = gardeChoices)),
+        easyClose = FALSE,
+        size = 'l',
+        footer = list(modalButton('Annuler'),
+                      actionButton('submit_garde',
+                                   'Soumettre',
+                                   class = "btn btn-primary mb1 bg-olive"))))
+      
+       # Close try-catch
     } # Close else
     
+  }) # Close observe event
+  
+  observeEvent(input$submit_garde, {
+    
+    removeModal()
+    
+    tryCatch({
+      
+      thisQuery <- writeGardeQuery(credentials()$info[['user']],
+                                   ymd_hms(Sys.time()))
+      
+      dbExecute(conn, thisQuery)
+      
+      session$userData$garde_trigger(session$userData$garde_trigger() + 1)
+      
+      showToast("success", message = "Vous avez bien pris la garde")}, 
+      
+      error = function(error) {
+        
+        msg <- paste0("Erreur - contactez votre admin")
+        # print `msg` so that we can find it in the logs
+        print(msg)
+        # print the actual error to log it
+        print(error)
+        # show error `msg` to user.  User can then tell us about error and we can
+        # quickly identify where it cam from based on the value in `msg`
+        showToast("error", msg)
+      }
+    )
   })
 
   # Staff meeting ------------------------------------------------------------

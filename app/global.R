@@ -20,6 +20,7 @@ require(magick)
 require(blastula)
 require(quarto)
 require(purrr)
+require(tidyr)
 
 localDB = TRUE
 
@@ -40,6 +41,9 @@ sdISO <- stamp_date("2018-09-26")
 user_base <- readRDS(usersPath)
 db_config <- readRDS(configPath)
 my_key <- readRDS(keyPath)
+
+getDisplayName <- user_base$name
+names(getDisplayName) <- user_base$user
 
 config_df <- db_config %>%
   data_decrypt(my_key) %>%
@@ -150,6 +154,8 @@ Le concepteur de la base de données devra figurer en dernier auteur si >50% du 
 Pour vérifier la compliance votre article avec ces conditions d’utilisation, merci de contacter julienzaldivar@gmail.com.</h4></p>'
 
 printLogo <- '<p style="font-family: Garamond">Zal<b>di|b</b>ase</p>'
+
+printTakeGarde <- '<p style="color:#3E3F3A;font-size:60px;">&#9817;</p> <br>'
 
 printWarningIncompleteStaffMeeting <- '<p style="color:#FF4500;font-size:60px">&#9888;</p> <br> <h4 style = "line-height: 1.75;">Il est indispensable que tous les dossiers <br> aient une décision de staff et une explication <br> pour pouvoir clôturer le staff meeting</h4>'
 
