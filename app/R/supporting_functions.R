@@ -332,10 +332,12 @@ makeTimestampNow <- function() {
     str_replace_all(" ", "")
 }
 
-writeGardeQuery <- function(aUsername, aTimestamp) {
+writeGardeQuery <- function(aUsername, aPartner, aTimestamp) {
   
-  paste0("INSERT INTO garde (modified_at, modified_by) VALUES ('",
-         aTimestamp, "', '", aUsername, "');")
+  aPartnerUsername <- getUsername[aPartner] %>% unname()
+  
+  paste0("INSERT INTO garde (modified_at, modified_by, partner) VALUES ('",
+         aTimestamp, "', '", aUsername, "', '", aPartnerUsername, "');")
   
 }
 

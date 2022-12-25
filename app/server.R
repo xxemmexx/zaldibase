@@ -1112,6 +1112,7 @@ function(input, output, session) {
     tryCatch({
       
       thisQuery <- writeGardeQuery(credentials()$info[['user']],
+                                   input$garde_avec,
                                    ymd_hms(Sys.time()))
       
       dbExecute(conn, thisQuery)

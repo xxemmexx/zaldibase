@@ -44,6 +44,8 @@ my_key <- readRDS(keyPath)
 
 getDisplayName <- user_base$name
 names(getDisplayName) <- user_base$user
+getUsername <- user_base$user
+names(getUsername) <- user_base$name
 
 config_df <- db_config %>%
   data_decrypt(my_key) %>%
