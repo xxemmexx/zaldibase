@@ -1087,12 +1087,15 @@ function(input, output, session) {
       gardeChoices <- deliverGardeChoices(session$userData$permissions(),
                                           user_base)
       
+      gardeChoices <- c(" ", gardeChoices)
+      
       showModal(modalDialog(
         div(style = "padding: 30px;", class = "text-center",
             HTML(printTakeGarde),
             selectInput("garde_avec",
                         "Je prends la garde avec : ",
-                        choices = gardeChoices)),
+                        choices = gardeChoices,
+                        selected = " ")),
         easyClose = FALSE,
         size = 'l',
         footer = list(modalButton('Annuler'),
@@ -1104,6 +1107,17 @@ function(input, output, session) {
     } # Close else
     
   }) # Close observe event
+  
+  observeEvent(input$garde_avec, {
+    if (input$garde_avec == " ") {
+      shinyFeedback::showFeedbackDanger("garde_avec",
+                                        text = "Choisissez un collègue!")
+      shinyjs::disable('submit_garde')
+    } else {
+      shinyFeedback::hideFeedback("garde_avec")
+      shinyjs::enable('submit_garde')
+    }
+  })
   
   observeEvent(input$submit_garde, {
     

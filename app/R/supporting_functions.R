@@ -110,7 +110,7 @@ deliverGardeChoices <- function(aPrivilege, aUserTibble) {
   
   aUserTibble %>%
     filter(permissions == aPrivilegeFilter) %>%
-    transmute(Partners = name)
+    transmute(`Collègues` = name)
   
 }
 
