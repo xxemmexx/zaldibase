@@ -136,7 +136,7 @@ options(spinner.type = 1)
 
 # HTML
 
-printAbout <- '<p><h4><b>Exploitation</b><br><br>
+printAbout <- '<p><h5><b>Exploitation</b><br><br>
 Ce formulaire a été créé dans le but d’améliorer la traçabilité des avis de Neurochirurgie de l’Hôpital de Grenoble ainsi que pour optimiser la communication de ces avis aux hôpitaux et cliniques partenaires.
 La base de données le soutenant permet, également, de mener des statistiques internes sur ces avis afin d’ajuster le fonctionnement du service en fonction des nécessités de la population du bassin Grenoblois.<br><br>
 
@@ -153,7 +153,7 @@ Merci de contacter Accueil-Recherche@chu-grenoble.fr<br><br>
 
 Toute publication contenant des données tirées de cette base de données devra contenir des contributions (authorship) soulignant le travail de conception et de mise en place de la base de données.
 Le concepteur de la base de données devra figurer en dernier auteur si >50% du contenu de la publication est tirée de la base de données et en avant-dernier auteur si <50% des données proviennent de la base de données. Le reste des auteurs et leur ordre sera décidé selon les protocoles éthiques de publication habituelles.
-Pour vérifier la compliance votre article avec ces conditions d’utilisation, merci de contacter julienzaldivar@gmail.com.</h4></p>'
+Pour vérifier la compliance votre article avec ces conditions d’utilisation, merci de contacter julienzaldivar@gmail.com.</h5></p>'
 
 printLogo <- '<p style="font-family: Garamond">Zal<b>di|b</b>ase</p>'
 

@@ -72,17 +72,26 @@ dossiersEditModuleServer <- function(id,
                                                        "Email",
                                                        value = ifelse(is.null(hold), "", hold$contact_email)))
                                       ), #Close fluidRow
-                                      
+                                      tags$br(),
                                       fluidRow(HTML("<h4 style=text-align:center;><b>Données du patient</b></h4>"),
                                                fluidRow(column(width = 6,
-                                                      textInput(ns("nom"),
-                                                                'Nom',
-                                                                value = ifelse(is.null(hold), "", hold$nom)),
-                                                      textInput(ns("prenom"),
-                                                                'Prénom',
-                                                                value = ifelse(is.null(hold), "", hold$prenom))
+                                                               checkboxInput(ns('patient_inconnu'),
+                                                                             HTML('<b>Patient inconnu</b>'),
+                                                                             value = ifelse(is.null(hold), FALSE, hold$patient_inconnu)),
+                                                               tags$br(),
+                                                               textInput(ns("nom"),
+                                                                         'Nom',
+                                                                         value = ifelse(is.null(hold), "", hold$nom)),
+                                                               textInput(ns("prenom"),
+                                                                         'Prénom',
+                                                                         value = ifelse(is.null(hold), "", hold$prenom))
                                                       ), #close column
                                                column(width = 6,
+                                                      radioButtons(ns('sex'), 
+                                                                   HTML('<b>Sexe</b>'), 
+                                                                   choices = c("H" = 0, "F" = 1),
+                                                                   inline = TRUE,
+                                                                   selected = ifelse(is.null(hold), "H", hold$sexe)),
                                                       dateInput(ns("date_naissance"),
                                                                 'Date de naissance (AAAA-MM-JJ)',
                                                                 value = ifelse(is.null(hold), "", hold$date_naissance),
@@ -232,6 +241,7 @@ dossiersEditModuleServer <- function(id,
                                                   phone_number_patient = 0,
                                                   pathologie_1 = 0)
                      
+                     
                      observeEvent(input$contact_person, {
                        if (input$contact_person == "") {
                          shinyFeedback::showFeedbackDanger("contact_person",
@@ -293,49 +303,74 @@ dossiersEditModuleServer <- function(id,
                        }
                      })
                      
-                     observeEvent(input$nom, {
-                       if (input$nom == "") {
-                         shinyFeedback::showFeedbackDanger("nom",
-                                                           text = "Le nom du patient est obligatoire!")
-                         shinyjs::disable('submit')
-                       } else {
-                         shinyFeedback::hideFeedback("nom")
-                         formFields$nom = 1
+                     observeEvent(
+                       eventExpr = {
+                         input$nom
+                         input$patient_inconnu
+                       }, 
+                       handlerExpr = {
+                         if (input$nom == "" & !input$patient_inconnu) {
+                           shinyFeedback::showFeedbackDanger("nom",
+                                                             text = "Le nom du patient est obligatoire!")
+                           shinyjs::disable('submit')
+                         } else {
+                           shinyFeedback::hideFeedback("nom")
+                           formFields$nom = 1
+                         }
                        }
-                     })
+                     )
                      
-                     observeEvent(input$prenom, {
-                       if (input$prenom == "") {
-                         shinyFeedback::showFeedbackDanger("prenom",
-                                                           text = "Le prénom du patient est obligatoire!")
-                         shinyjs::disable('submit')
-                       } else {
-                         shinyFeedback::hideFeedback("prenom")
-                         formFields$prenom = 1
+                     observeEvent(
+                       eventExpr = {
+                         input$prenom
+                         input$patient_inconnu
+                       }, 
+                       handlerExpr = {
+                         if (input$prenom == "" & !input$patient_inconnu) {
+                           shinyFeedback::showFeedbackDanger("prenom",
+                                                             text = "Le prénom du patient est obligatoire!")
+                           shinyjs::disable('submit')
+                         } else {
+                           shinyFeedback::hideFeedback("prenom")
+                           formFields$prenom = 1
+                         }
                        }
-                     })
+                     )
                      
-                     observeEvent(input$date_naissance, {
-                       if (length(input$date_naissance) < 1) {
-                         shinyFeedback::showFeedbackDanger("date_naissance",
-                                                           text = "Le date de naissance du patient est obligatoire!")
-                         shinyjs::disable('submit')
-                       } else {
-                         shinyFeedback::hideFeedback("date_naissance")
-                         formFields$date_naissance = 1
+                     observeEvent(
+                       eventExpr = {
+                         input$date_naissance
+                         input$patient_inconnu
+                       }, 
+                       handlerExpr = {
+                         if (length(input$date_naissance) < 1 & !input$patient_inconnu) {
+                           shinyFeedback::showFeedbackDanger("date_naissance",
+                                                             text = "Le date de naissance du patient est obligatoire!")
+                           shinyjs::disable('submit')
+                         } else {
+                           shinyFeedback::hideFeedback("date_naissance")
+                           formFields$date_naissance = 1
+                         }
                        }
-                     })
+                     )
                      
-                     observeEvent(input$phone_number_patient, {
-                       if (str_trim(input$phone_number_patient) == "") {
-                         shinyFeedback::showFeedbackDanger("phone_number_patient",
-                                                           text = "Le numéro de téléphone est obligatoire!")
-                         shinyjs::disable('submit')
-                       } else {
-                         shinyFeedback::hideFeedback("phone_number_patient")
-                         formFields$phone_number_patient = 1
+                     observeEvent(
+                       eventExpr = {
+                         input$phone_number_patient
+                         input$patient_inconnu
+                       }, 
+                       handlerExpr = {
+                         if (str_trim(input$phone_number_patient) == "" & !input$patient_inconnu) {
+                           shinyFeedback::showFeedbackDanger("phone_number_patient",
+                                                             text = "Le numéro de téléphone est obligatoire!")
+                           shinyjs::disable('submit')
+                         } else {
+                           shinyFeedback::hideFeedback("phone_number_patient")
+                           formFields$phone_number_patient = 1
+                         }
                        }
-                     })
+                     )
+                     
                      
                      observeEvent(input$pathologie_1, {
                        if (str_trim(input$pathologie_1) == "") {
@@ -401,6 +436,7 @@ dossiersEditModuleServer <- function(id,
                    out <- list(uid = deliverUID(hold),
                                data = list("nom" = input$nom,
                                            "prenom" = input$prenom,
+                                           "sexe" = input$sexe,
                                            "date_naissance" = writeISODate(input$date_naissance),
                                            "phone_number_patient" = input$phone_number_patient,
                                            "pathologie_1" = deliverStandardOrCustom(input$pathologie_1, input$description_pathologie_1),
@@ -505,6 +541,7 @@ dossiersEditModuleServer <- function(id,
                      thisQuery <- writeQuery(uid, 
                                              dat$data$nom, 
                                              dat$data$prenom,
+                                             dat$data$sexe,
                                              dat$data$date_naissance, 
                                              dat$data$phone_number_patient,
                                              dat$data$pathologie_1,
@@ -545,7 +582,6 @@ dossiersEditModuleServer <- function(id,
                        rendezVousUpdateQuery <- writeRendezVousQuery(uid, 'needsRendezvous')
                        
                        dbExecute(conn, rendezVousUpdateQuery)
-                       
                        
                      }
                      

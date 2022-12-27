@@ -270,7 +270,7 @@ tagList(
       ) # Close conditional panel externe
     ), # Close Accueil
     tabPanel("About",
-             div(style = "padding:30px;background-color:#3E3F3A;color:#FFFAFA;",
+             div(style = "padding:30px;background-color:#C5C5C3;color:#3E3F3A;",
                  HTML(printAbout))
              )
   )
