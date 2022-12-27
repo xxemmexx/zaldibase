@@ -102,42 +102,110 @@ externesEditModuleServer <- function(id,
                      
                      #------------FIELD VALIDATION - FEEDBACK-------------------
                      
-                     # formFields <- reactiveValues(date_rendezvous = 0,
-                     #                              rendezvous_avec = 0)
-                     # 
-                     # observeEvent(input$date_rendezvous, {
-                     #   if (length(input$date_rendezvous) < 1) {
-                     #     shinyFeedback::showFeedbackDanger("date_rendezvous",
-                     #                                       text = "Choisissez une date pour le rendez-vous")
-                     #     shinyjs::disable('submit')
-                     #   } else if (ymd(input$date_rendezvous) < today()) {
-                     #     shinyFeedback::showFeedbackDanger("date_rendezvous",
-                     #                                       text = "Choisissez une date dans l'avenir")
-                     #     shinyjs::disable('submit')
-                     #   } else {
-                     #     shinyFeedback::hideFeedback("date_rendezvous")
-                     #     formFields$date_rendezvous = 1
-                     #   }
-                     # })
-                     # 
-                     # observeEvent(input$rendezvous_avec, {
-                     #   if (str_trim(input$rendezvous_avec) == "") {
-                     #     shinyFeedback::showFeedbackDanger("rendezvous_avec",
-                     #                                       text = "Choisissez un médecin")
-                     #     shinyjs::disable('submit')
-                     #   } else {
-                     #     shinyFeedback::hideFeedback("rendezvous_avec")
-                     #     formFields$rendezvous_avec = 1
-                     #   }
-                     # })
-                     # 
-                     # observe({
-                     #   
-                     #   if(formFields$date_rendezvous == 1 &
-                     #      formFields$rendezvous_avec == 1) {
-                     #     shinyjs::enable('submit')
-                     #   }
-                     # })
+                     formFields <- reactiveValues(contact_person = 0,
+                                                  hopital = 0,
+                                                  contact_phone = 0,
+                                                  contact_email = 0,
+                                                  nom = 0,
+                                                  prenom = 0,
+                                                  date_naissance = 0,
+                                                  phone_number_patient = 0)
+                     
+                     observeEvent(input$contact_person, {
+                       if (input$contact_person == "") {
+                         shinyFeedback::showFeedbackDanger("contact_person",
+                                                           text = "La personne de contact est obligatoire!")
+                         shinyjs::disable('submit')
+                       } else {
+                         shinyFeedback::hideFeedback("contact_person")
+                         formFields$contact_person = 1
+                       }
+                     })
+                     
+                     
+                     observeEvent(input$contact_phone, {
+                       if (input$contact_phone == "") {
+                         shinyFeedback::showFeedbackDanger("contact_phone",
+                                                           text = "Le numéro de téléphone du contact est obligatoire!")
+                         shinyjs::disable('submit')
+                       } else {
+                         shinyFeedback::hideFeedback("contact_phone")
+                         formFields$contact_phone = 1
+                       }
+                     })
+                     
+                     observeEvent(input$contact_email, {
+                       if (str_trim(input$contact_email == "")) {
+                         shinyFeedback::showFeedbackDanger("contact_email",
+                                                           text = "L'email de la personne de contact est obligatoire!")
+                         shinyjs::disable('submit')
+                       } else {
+                         shinyFeedback::hideFeedback("contact_email")
+                         formFields$contact_email = 1
+                       }
+                     })
+                     
+                     observeEvent(input$nom, {
+                       if (input$nom == "") {
+                         shinyFeedback::showFeedbackDanger("nom",
+                                                           text = "Le nom du patient est obligatoire!")
+                         shinyjs::disable('submit')
+                       } else {
+                         shinyFeedback::hideFeedback("nom")
+                         formFields$nom = 1
+                       }
+                     })
+                     
+                     observeEvent(input$prenom, {
+                       if (input$prenom == "") {
+                         shinyFeedback::showFeedbackDanger("prenom",
+                                                           text = "Le prénom du patient est obligatoire!")
+                         shinyjs::disable('submit')
+                       } else {
+                         shinyFeedback::hideFeedback("prenom")
+                         formFields$prenom = 1
+                       }
+                     })
+                     
+                     observeEvent(input$date_naissance, {
+                       if (length(input$date_naissance) < 1) {
+                         shinyFeedback::showFeedbackDanger("date_naissance",
+                                                           text = "Le date de naissance du patient est obligatoire!")
+                         shinyjs::disable('submit')
+                       } else {
+                         shinyFeedback::hideFeedback("date_naissance")
+                         formFields$date_naissance = 1
+                       }
+                     })
+                     
+                     observeEvent(input$phone_number_patient, {
+                       if (str_trim(input$phone_number_patient) == "") {
+                         shinyFeedback::showFeedbackDanger("phone_number_patient",
+                                                           text = "Le numéro de téléphone est obligatoire!")
+                         shinyjs::disable('submit')
+                       } else {
+                         shinyFeedback::hideFeedback("phone_number_patient")
+                         formFields$phone_number_patient = 1
+                       }
+                     })
+                     
+                     
+                     observe({
+                       
+                       if(formFields$contact_person == 1 &
+                          formFields$hopital == 1 &
+                          formFields$contact_phone == 1 &
+                          formFields$contact_email == 1 &
+                          formFields$nom == 1 &
+                          formFields$prenom == 1 &
+                          formFields$date_naissance == 1 &
+                          formFields$phone_number_patient == 1) {
+                         shinyjs::enable('submit')
+                       }
+                     })
+                     
+                     
+                     #------------END FIELD VALIDATION - FEEDBACK---------------
                      
                    }) # Close modal trigger
                  
@@ -146,7 +214,7 @@ externesEditModuleServer <- function(id,
                  
                  ################# CAPTURE DATA ################################
                  
-                 rendez_vous_dat <- reactive({
+                 externes_dat <- reactive({
                    
                    hold <- externe_patient()
                    
@@ -172,7 +240,7 @@ externesEditModuleServer <- function(id,
                  ############# SUBMIT ACTION: VALIDATE DATA ####################
                  
                  validate_edit <- eventReactive(input$submit, {
-                   dat <- rendez_vous_dat()
+                   dat <- externes_dat()
                      
                      # Logic to validate inputs...
                      
@@ -192,9 +260,7 @@ externesEditModuleServer <- function(id,
                    
                    tryCatch({
                      
-                     showModal(patientezDialog)
-                     
-                     query <- writeRendezVousDetailsQuery(dat$data$date_rendezvous,
+                     query <- writeExterneQuery(dat$data$date_rendezvous,
                                                           dat$data$time_rendezvous,
                                                           dat$data$rendezvous_avec,
                                                           dat$uid)
@@ -203,33 +269,15 @@ externesEditModuleServer <- function(id,
                      
                      dbExecute(conn, query)
                      
-                     nomCompletPatient <- paste0(dat$data$prenom, " ", str_to_upper(dat$data$nom))
-
-                     print('Trying to send notification email...')
-
-                     generateRendezvousEmail(nomCompletPatient,
-                                             dat$data$date_naissance,
-                                             dat$data$staff_decision,
-                                             dat$data$date_rendezvous,
-                                             dat$data$time_rendezvous,
-                                             dat$data$rendezvous_avec,
-                                             dat$data$explication) %>%
-                       smtp_send(
-                         to = dat$data$contact_email,
-                         from = zaldibase,
-                         subject = "Nouvelle notification CHU - équipue du neurochirurgical",
-                         credentials = creds_file(credentialsPath)
-                       )
                      
-                     session$userData$rendezvous_trigger(session$userData$rendezvous_trigger() + 1)
+                     session$userData$externes_trigger(session$userData$externes_trigger() + 1)
                      
-                     removeModal()
                      
-                     showToast("success", message = "Rendez-vous enregistré")}, 
+                     showToast("success", message = "Patient enregistré")}, 
                      
                      error = function(error) {
                        
-                       msg <- paste0("Erreur en faisant un rendez-vous")
+                       msg <- paste0("Erreur pendant l'enregistrement...")
                        # print `msg` so that we can find it in the logs
                        print(msg)
                        # print the actual error to log it
@@ -239,15 +287,11 @@ externesEditModuleServer <- function(id,
                        showToast("error", msg)
                      }
                    ) # Close try-catch
-                     
-                   
                    
                    })
                  
                  ############# END TALK TO DB, SUBMIT ACTION ###################
                  
-
-                 
                  }) # Close module server
   
-  } # End dossiersEditModuleServer
+  } # End externesEditModuleServer
