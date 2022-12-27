@@ -106,8 +106,6 @@ function(input, output, session) {
         })
     }
     
-    
-    
     # Select relevant columns for the user
     out <- out %>%
       transmute(nom, prenom, date_naissance, pathologie_1, displayStatusName(status))
@@ -1586,6 +1584,132 @@ function(input, output, session) {
                            modal_title = "Planification de rendez-vous",
                            rendezvous_patient = rendezvous_patient,
                            modal_trigger = reactive({input$rendezvous_patient_id}))
+  
+  
+  # Externes table ------------------------------------------------------------
+  
+  
+  # trigger to reload data from the "patients" table
+  session$userData$externes_trigger <- reactiveVal(0)
+  
+  
+  # Read in Mes Dossiers table from the database
+  externes <- reactive({
+    req(credentials()$user_auth)
+    
+    session$userData$externes_trigger()
+    
+    out <- NULL
+    tryCatch({
+      out <- conn %>%
+        tbl('patients') %>%
+        collect() %>%
+        mutate(created_at = as.POSIXct(created_at, tz = "UTC"),
+               modified_at = as.POSIXct(modified_at, tz = "UTC")) %>%
+        arrange(desc(modified_at)) %>%
+        filter(created_by == session$userData$username())
+      
+    }, 
+    error = function(err) {
+      msg <- "Could not find the externe dossier you are looking for!"
+      # print `msg` so that we can find it in the logs
+      print(msg)
+      # print the actual error to log it
+      print(error)
+      # show error `msg` to user.  User can then tell us about error and we can
+      # quickly identify where it cam from based on the value in `msg`
+      showToast("error", msg)
+    })
+    
+    out 
+    
+  })
+  
+  externes_table_prep <- reactiveVal(NULL)
+  
+  observeEvent(externes(), {
+    
+    out <- externes()
+    
+    ids <- out$uid
+    
+    actions <- purrr::map_chr(ids, function(id_) {
+      paste0('<div class="btn-group" style="width: 75px;" role="group" aria-label="Basic example">
+                     <button class="btn btn-primary btn-sm edit_btn" data-toggle="tooltip" data-placement="top" title="Modifier" id = ', id_, ' style="margin: 0"><i class="fa fa-pencil-square-o"></i></button>
+                            </div>')
+    })
+    
+    # Select relevant columns for the user
+    out <- out %>%
+      transmute(nom, prenom, date_naissance, pathologie_1, displayStatusName(status))
+    
+    # Set the Action Buttons row to the first column of the `dossiers` table
+    out <- cbind(tibble(" " = actions),
+                 out)
+    
+    if (is.null(externes_table_prep())) {
+      # loading data into the table for the first time, so we render the entire table
+      # rather than using a DT proxy
+      externes_table_prep(out)
+      
+    } else {
+      # table has already rendered, so use DT proxy to update the data in the
+      # table without reendering the entire table
+      replaceData(externes_table_proxy,
+                  out,
+                  resetPaging = FALSE,
+                  rownames = FALSE)
+    }
+  })
+  
+  
+  output$externes_table <- renderDT({
+    req(credentials()$user_auth, externes_table_prep())
+    
+    out <- externes_table_prep() 
+    
+    out %>%
+      datatable(rownames = FALSE,
+                colnames = c('Nom', 'Prénom', 'Date de naissance', 
+                             'Pathologie', 'Status'),
+                selection = "single",
+                class = "compact stripe row-border nowrap",
+                escape = -1,  # Escape the HTML in all except 1st column (which has the buttons)
+                options = list(scrollX = TRUE,
+                               dom = 'tp',
+                               columnDefs = list(list(targets = 0, orderable = FALSE)),
+                               pageLength = 10,
+                               language = list(emptyTable = "Vous n'avez pas de dossiers actifs",
+                                               paginate = list(`next` = 'Suivant',
+                                                               previous = 'Précédant')),
+                               drawCallback = JS("function(settings) {
+                                              // removes any lingering tooltips
+                                              $('.tooltip').remove()}"))
+      ) 
+    
+  })
+  
+  # Edit/Delete modules---------------------------------------------------------
+  
+  externes_table_proxy <- DT::dataTableProxy('externes_table')
+  
+  externesEditModuleServer("add_externe",
+                           modal_title = "Registrer un nouveau dossier",
+                           externe_patient = function() NULL,
+                           modal_trigger = reactive({input$add_externe}))
+  
+  
+  externe_to_edit <- eventReactive(input$externe_id_to_edit, {
+    
+    externes() %>%
+      filter(uid == input$externe_id_to_edit)
+    
+  })
+  
+  externesEditModuleServer("edit_externe",
+                           modal_title = "Modification du profil",
+                           externe_patient = externe_id_to_edit,
+                           modal_trigger = reactive({input$externe_id_to_edit}))
  
   # set suspendWhenHidden to FALSE so it renders even without output
   outputOptions(output, 'role', suspendWhenHidden = FALSE) 

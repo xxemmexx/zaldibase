@@ -219,7 +219,6 @@ tagList(
                                               ) %>% shinyjs::hidden()
                                           ) # Close Fluid row
                                  ) # Close tabpanel Garde
-                                          
                          ) # Close tabset panel
       ), # Close conditional panel admin
       conditionalPanel(condition = "output.role == 'secretariat'",
@@ -242,8 +241,33 @@ tagList(
                    ), # Close fluid row
                    tags$script(src = "rendezvous_table_module.js"),
                    tags$script(paste0("rendezvous_table_module_js('')")))
-        )
-      )
+        ) # Close tabset panel
+      ), # Close conditional panel secretariat
+      conditionalPanel(condition = "output.role == 'externe'",
+                       tabsetPanel(
+                         tabPanel("Mes dossiers",
+                                  tags$br(),
+                                  tags$br(),
+                                  fluidRow(column(width = 2),
+                                           column(width = 3,
+                                                  actionButton("add_externe",
+                                                               "Nouveau dossier",
+                                                               class = "btn-success",
+                                                               style = "color: #FFF0F5; background-color: #008000",
+                                                               icon = icon('plus'))),
+                                           column(width = 5),
+                                           column(width = 2)),
+                                  tags$br(),
+                                  fluidRow(column(width = 12,
+                                                  title = "Planification",
+                                                  DTOutput('externes_table') %>% withSpinner())
+                                  ), # Close fluid row
+                                  tags$script(src = "externes_table_module.js"),
+                                  tags$script(paste0("externes_table_module_js('')"))
+                                  )
+                         
+                       )
+      ) # Close conditional panel externe
     ), # Close Accueil
     tabPanel("About",
              div(style = "padding:30px;background-color:#3E3F3A;color:#FFFAFA;",
