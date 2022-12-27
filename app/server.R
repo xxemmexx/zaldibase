@@ -1694,7 +1694,7 @@ function(input, output, session) {
   externes_table_proxy <- DT::dataTableProxy('externes_table')
   
   externesEditModuleServer("add_externe",
-                           modal_title = "Registrer un nouveau dossier",
+                           modal_title = "Enregistrer un nouveau dossier",
                            externe_patient = function() NULL,
                            modal_trigger = reactive({input$add_externe}))
   
@@ -1708,7 +1708,7 @@ function(input, output, session) {
   
   externesEditModuleServer("edit_externe",
                            modal_title = "Modification du profil",
-                           externe_patient = externe_id_to_edit,
+                           externe_patient = externe_to_edit,
                            modal_trigger = reactive({input$externe_id_to_edit}))
  
   # set suspendWhenHidden to FALSE so it renders even without output

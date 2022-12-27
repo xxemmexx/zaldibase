@@ -36,31 +36,58 @@ externesEditModuleServer <- function(id,
                      showModal(
                        modalDialog(
                          div(style = "padding: 30px;",
-                             fluidRow(
-                               
-                               HTML(paste0("<h4 style=text-align:center;>Nouveau/Modification dossier ",
-                                           "</h4>")),
-                               tags$br(),
-                               tags$br(),
-                               column(width = 6,
-                                      dateInput(ns("date_naissance_externe"),
-                                                'Date (AAAA-MM-DD)',
-                                                value = ifelse((str_trim(hold$date_rendezvous) == ""), 
-                                                               as.character(today()+7), 
-                                                               hold$date_rendezvous),
-                                                language = "fr")),
-                               column(width = 3),
-                               column(width = 3)
-                               
+                             fluidRow(style = "background-color:#DBDFE3;",
+                                      
+                                      
+                                      HTML("<h4 style=text-align:center;><b>Origine de l'appel</b></h4>"),
+                                      column(width = 6,
+                                             textInput(ns('contact_person'),
+                                                       "Personne de contact",
+                                                       value = ifelse(is.null(hold), "", hold$contact_person)),
+                                             selectInput(ns("hopital"),
+                                                         "Centre Hospitalier d'origine",
+                                                         choices = c("Albertville - Moûtiers"))
+                                             
+                                      ),
+                                      column(width = 6,
+                                             textInput(ns('contact_phone'),
+                                                       "Numéro de téléphone du contact",
+                                                       value = ifelse(is.null(hold), "", hold$contact_phone)),
+                                             textInput(ns('contact_email'),
+                                                       "Email",
+                                                       value = ifelse(is.null(hold), "", hold$contact_email)))
                              ), # Close fluidrow
-                             fluidRow(column(width = 2),
-                                      column(width = 8,
-                                             selectInput(ns("origine_externe"),
-                                                         "Médecin",
-                                                         choices = c(" ", "Albertville-Moutiers"),
-                                                         selected = " ")),
-                                      column(width = 2)
-                                      ) # Close fluidrow
+                             fluidRow(HTML("<h4 style=text-align:center;><b>Données du patient</b></h4>"),
+                                      fluidRow(column(width = 6,
+                                                      textInput(ns("nom"),
+                                                                'Nom',
+                                                                value = ifelse(is.null(hold), "", hold$nom)),
+                                                      textInput(ns("prenom"),
+                                                                'Prénom',
+                                                                value = ifelse(is.null(hold), "", hold$prenom))
+                                      ), #close column
+                                      column(width = 6,
+                                             dateInput(ns("date_naissance"),
+                                                       'Date de naissance (AAAA-MM-JJ)',
+                                                       value = ifelse(is.null(hold), "", hold$date_naissance),
+                                                       language = "fr"),
+                                             textInput(ns("phone_number_patient"),
+                                                       'Numéro de téléphone du patient',
+                                                       value = ifelse(is.null(hold), "", hold$phone_number_patient))
+                                      ) # close column
+                                      ), # Close fluid row
+                                      fluidRow(column(width = 12,
+                                                      fileInput(ns('photos'),
+                                                                "Ajouter des images",
+                                                                multiple = TRUE,
+                                                                accept = 'image/*',
+                                                                buttonLabel = "Parcourir...",
+                                                                placeholder = "...ou placez fichier ici")
+                                                      
+                                                      
+                                      ) # close column
+                                      )
+                             ) # Close fluid row
                              ), # Close div
                          title = modal_title,
                          size = 'l',

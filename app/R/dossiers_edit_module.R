@@ -177,7 +177,6 @@ dossiersEditModuleServer <- function(id,
                                                                     value = ifelse(is.null(hold), "", hold$description_histoire),
                                                                     width = '740'))
                                                ), # Close fluidRow
-                                      
                                       fluidRow(column(width = 12,
                                                       fileInput(ns('photos'),
                                                                 "Ajouter des images",
