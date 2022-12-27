@@ -25,19 +25,20 @@ deliverAge <- function(aDateNaissance, aCreatedAtDate) {
 
 
 buildDecisionBanner <- function(aPreDecision, aDefDecision) {
-  if(str_trim(aPreDecision) == '' || is.null(aPreDecision)) {
+  
+  if(is.na(aPreDecision)) {
     preDecision = '-'
   } else {
     preDecision = aPreDecision
   }
   
-  if(str_trim(aDefDecision) == '' || is.null(aDefDecision)) {
+  if(is.na(aDefDecision)) {
     defDecision = '-'
   } else {
     defDecision = aDefDecision
   }
   
-  if(aDefDecision == '') {
+  if(str_trim(defDecision) == '') {
     paste0('<div class="pull-right"><p style="font-size:16px;margin: 0px 0;"><b>Décision préliminaire: ', preDecision, '</b></p></div>')
   } else {
     paste0('<div class="pull-right"><h4 style="font-size:16px;margin: 0px 0;"><b>Décision définitive: ', defDecision, '</b></h4></div><br>',
@@ -429,6 +430,67 @@ writeQuery <- function(aUID,
                                        ", status=", status,
                                        " WHERE uid='", aUID, "';")
                      )
+  thisQuery
+  
+}
+
+writeExterneQuery <- function(aUID, 
+                       aNom, 
+                       aPrenom, 
+                       aDateNaissance, 
+                       aPhoneNumber,
+                       aContactPerson,
+                       aContactPhone,
+                       aContactEmail,
+                       aHospital,
+                       aCreatedAt, 
+                       aCreatedBy, 
+                       aModifiedAt, 
+                       aModifiedBy,
+                       hasCoagulation = 0,
+                       needsRendezVous = 0,
+                       hasRendezVous = 0,
+                       isClosed = 0,
+                       isViewed = 0,
+                       status,
+                       aStatement = c("insert", "update")) {
+  
+  thisQuery = switch(aStatement,
+                     
+                     "insert" = paste0("INSERT INTO patients (uid, nom, prenom, 
+                     date_naissance, phone_number_patient,  
+                     contact_person, contact_phone, contact_email, hopital, has_coagulation,
+                     created_at, created_by, modified_at, modified_by, needs_rendezvous,
+                     has_rendezvous, is_closed, is_viewed, status) VALUES ('",
+                                       aUID, "', '", aNom, "', '", aPrenom, "', '", aDateNaissance, "', '",
+                                       aPhoneNumber, "', '", 
+                                       aContactPerson, "', '", aContactPhone, "', '", aContactEmail, "', '",
+                                       aHospital, "', ", hasCoagulation, ", '",
+                                       aCreatedAt, "', '", aCreatedBy, "', '", 
+                                       aModifiedAt, "', '", aModifiedBy, "', ", needsRendezVous, ", ",
+                                       hasRendezVous, ", ", isClosed, ", ", isViewed, ", 0);"),
+                     
+                     "update" = paste0("UPDATE patients SET nom='", aNom, 
+                                       "', prenom='", aPrenom, 
+                                       "', date_naissance='", aDateNaissance,
+                                       "', phone_number_patient='", aPhoneNumber,
+                                       "', contact_person='", aContactPerson,
+                                       "', contact_phone='", aContactPhone,
+                                       "', contact_email='", aContactEmail,
+                                       "', hopital='", aHospital,
+                                       "', has_coagulation = ", hasCoagulation,
+                                       ", created_at='", aCreatedAt, 
+                                       "', created_by='", aCreatedBy, 
+                                       "', modified_at='", aModifiedAt, 
+                                       "', modified_by='", aModifiedBy,
+                                       "', needs_rendezvous=", needsRendezVous,
+                                       ", has_rendezvous=", hasRendezVous,
+                                       ", is_closed=", isClosed,
+                                       ", is_viewed=", isViewed,
+                                       ", status=", status,
+                                       " WHERE uid='", aUID, "';")
+  )
+  
   thisQuery
   
 }

@@ -103,7 +103,6 @@ externesEditModuleServer <- function(id,
                      #------------FIELD VALIDATION - FEEDBACK-------------------
                      
                      formFields <- reactiveValues(contact_person = 0,
-                                                  hopital = 0,
                                                   contact_phone = 0,
                                                   contact_email = 0,
                                                   nom = 0,
@@ -193,7 +192,6 @@ externesEditModuleServer <- function(id,
                      observe({
                        
                        if(formFields$contact_person == 1 &
-                          formFields$hopital == 1 &
                           formFields$contact_phone == 1 &
                           formFields$contact_email == 1 &
                           formFields$nom == 1 &
@@ -218,20 +216,26 @@ externesEditModuleServer <- function(id,
                    
                    hold <- externe_patient()
                    
-                   #time_now <- Sys.time() %>% ymd_hms()
+                   time_now <- Sys.time() %>% ymd_hms()
                    
-                   # out <- list(uid = deliverUID(hold),
-                   #             data = list("date_rendezvous" = input$date_rendezvous,
-                   #                         "time_rendezvous" = deliverTimeString(input$heure_rendezvous, input$min_rendezvous),
-                   #                         "rendezvous_avec" = input$rendezvous_avec,
-                   #                         "nom" = hold$nom,
-                   #                         "prenom" = hold$prenom,
-                   #                         "date_naissance" = hold$date_naissance,
-                   #                         "staff_decision" = hold$staff_decision,
-                   #                         "explication" = hold$explication,
-                   #                         "contact_email" = hold$contact_email))
-                   # 
-                   # out
+                   out <- list(uid = deliverUID(hold),
+                               data = list("nom" = input$nom,
+                                           "prenom" = input$prenom,
+                                           "date_naissance" = writeISODate(input$date_naissance),
+                                           "phone_number_patient" = input$phone_number_patient,
+                                           "contact_person" = input$contact_person,
+                                           "contact_phone" = input$contact_phone,
+                                           "contact_email" = input$contact_email,
+                                           "hopital" = input$hopital,
+                                           "created_at" = deliverCreationTime(hold, time_now),
+                                           "created_by" = deliverCreator(hold, session$userData$username()),
+                                           "modified_at" = time_now,
+                                           "modified_by" = session$userData$username(),
+                                           "status" = hold$status
+                               )
+                   )
+                   
+                   out
                    })
                  
                  ############# END CAPTURE DATA ################################
@@ -260,18 +264,69 @@ externesEditModuleServer <- function(id,
                    
                    tryCatch({
                      
-                     query <- writeExterneQuery(dat$data$date_rendezvous,
-                                                          dat$data$time_rendezvous,
-                                                          dat$data$rendezvous_avec,
-                                                          dat$uid)
+                     if (is.na(dat$uid)) {
+                       
+                       uid <- generateIdentifier(dat$data$prenom, dat$data$nom) 
+                       statement = "insert"
+                       
+                     } else {
+                       
+                       uid <- dat$uid
+                       statement = "update"
+                       
+                     }
+                     
+                     if(!is.null(input$photos)) {
+                       files <- nrow(input$photos)
+                       
+                       if(files>=1) {
+                         for(i in 1:files) {
+                           thisFile <- input$photos[[i, "datapath"]]
+                           ext <- tools::file_ext(thisFile)
+                           
+                           if(localDB) {
+                             
+                             print("Saving image to local directory")
+                             
+                             saveFile(thisFile, uid, i, ext)
+                             
+                           } else {
+                             
+                             print("Transfering image to server")
+                             
+                             transferFile(thisFile,
+                                          uid,
+                                          dbInfo[[1]][[2]],
+                                          i,
+                                          ext,
+                                          deviceInfo[[1]][[1]],
+                                          deviceInfo[[1]][[2]],
+                                          TRUE)
+                           }
+                         }
+                       }
+                     }
+                     
+                     query <- writeExterneQuery(uid, 
+                                                dat$data$nom, 
+                                                dat$data$prenom,
+                                                dat$data$date_naissance, 
+                                                dat$data$phone_number_patient,
+                                                dat$data$contact_person,
+                                                dat$data$contact_phone,
+                                                dat$data$contact_email,
+                                                dat$data$hopital,
+                                                dat$data$created_at, 
+                                                dat$data$created_by, 
+                                                dat$data$modified_at, 
+                                                dat$data$modified_by,
+                                                status = dat$data$status,
+                                                aStatement = statement)
                      
                      print('Trying to execute query...')
-                     
                      dbExecute(conn, query)
                      
-                     
                      session$userData$externes_trigger(session$userData$externes_trigger() + 1)
-                     
                      
                      showToast("success", message = "Patient enregistré")}, 
                      
