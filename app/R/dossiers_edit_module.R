@@ -146,7 +146,24 @@ dossiersEditModuleServer <- function(id,
                                                                           language = "fr"))
                                                        ), #close fluidRow
                                                        ns = ns),
-                                      
+                                      tags$br(),
+                                      fluidRow(column(width = 12, 
+                                                      HTML("<b>Le patient, présent-il un syndrome inflammatoire ou infectieux actif?</b>"),
+                                                      radioButtons(ns('add_syndrome'), 
+                                                                   "", 
+                                                                   choices = c("Non" = 0, "Oui" = 1),
+                                                                   inline = FALSE,
+                                                                   selected = ifelse(is.null(hold) || str_trim(hold$syndrome) == "", 0, 1))
+                                               ) # Close column
+                                      ), # Close fluidRow
+                                      conditionalPanel("input.add_syndrome == 1",
+                                                       fluidRow(column(width = 12, align = 'center',
+                                                                       HTML('<b>Indiquez le syndrome observé</b>'),
+                                                                       textInput(ns('syndrome'),
+                                                                                 "",
+                                                                                 value = ifelse(is.null(hold), "", hold$syndrome),
+                                                                                 width = '66%'))),
+                                                       ns = ns), # Close conditional panel
                                       fluidRow(column(width = 12, align="center",
                                                       selectInput(ns('pathologie_1'),
                                                                   'Pathologie',
@@ -507,6 +524,22 @@ dossiersEditModuleServer <- function(id,
                        }
                      )
                      
+                     observeEvent(
+                       eventExpr = {
+                         input$syndrome
+                         input$add_syndrome
+                       }, 
+                       handlerExpr = {
+                         if (str_trim(input$syndrome) == "" & input$add_syndrome == 1) {
+                           shinyFeedback::showFeedbackDanger("syndrome",
+                                                             text = "Indiquez le syndrome")
+                         } else {
+                           shinyFeedback::hideFeedback("syndrome")
+                           
+                         }
+                       }
+                     )
+                     
                      observeEvent(input$description_histoire, {
                        if (str_trim(input$description_histoire) == "") {
                          shinyFeedback::showFeedbackDanger("description_histoire",
@@ -552,7 +585,8 @@ dossiersEditModuleServer <- function(id,
                    time_now <- Sys.time() %>% ymd_hms()
                    
                    out <- list(uid = deliverUID(hold),
-                               data = list("nom" = input$nom,
+                               data = list("patient_inconnu" = ifelse(input$patient_inconnu, 1, 0),
+                                           "nom" = input$nom,
                                            "prenom" = input$prenom,
                                            "sexe" = input$sex,
                                            "date_naissance" = writeISODate(input$date_naissance),
@@ -560,6 +594,7 @@ dossiersEditModuleServer <- function(id,
                                            "pathologie_1" = deliverStandardOrCustom(input$pathologie_1, input$description_pathologie_1, 1),
                                            "pathologie_2" = deliverStandardOrCustom(input$pathologie_2, input$description_pathologie_2, input$add_pathologie_2),
                                            "pathologie_3" = deliverStandardOrCustom(input$pathologie_3, input$description_pathologie_3, input$add_pathologie_3),
+                                           "syndrome" = input$syndrome,
                                            "description_histoire" = input$description_histoire,
                                            "pre_decision" = input$pre_decision,
                                            "def_decision" = input$def_decision,
@@ -657,6 +692,7 @@ dossiersEditModuleServer <- function(id,
                      
                      
                      thisQuery <- writeQuery(uid, 
+                                             dat$data$patient_inconnu,
                                              dat$data$nom, 
                                              dat$data$prenom,
                                              dat$data$sexe,
@@ -665,6 +701,7 @@ dossiersEditModuleServer <- function(id,
                                              dat$data$pathologie_1,
                                              dat$data$pathologie_2,
                                              dat$data$pathologie_3,
+                                             dat$data$syndrome,
                                              dat$data$description_histoire,
                                              dat$data$pre_decision,
                                              dat$data$def_decision,
