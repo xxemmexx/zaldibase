@@ -74,11 +74,12 @@ dossiersEditModuleServer <- function(id,
                                       ), #Close fluidRow
                                       tags$br(),
                                       fluidRow(HTML("<h4 style=text-align:center;><b>Données du patient</b></h4>"),
-                                               fluidRow(column(width = 6,
-                                                               checkboxInput(ns('patient_inconnu'),
-                                                                             HTML('<b>Patient inconnu</b>'),
-                                                                             value = ifelse(is.null(hold), FALSE, hold$patient_inconnu)),
-                                                               tags$br(),
+                                               fluidRow(column(width = 6, align="center",
+                                                               radioButtons(ns('sex'), 
+                                                                            HTML('<b>Sexe</b>'), 
+                                                                            choices = c("H" = 0, "F" = 1),
+                                                                            inline = TRUE,
+                                                                            selected = ifelse(is.null(hold), "H", hold$sexe)),
                                                                textInput(ns("nom"),
                                                                          'Nom',
                                                                          value = ifelse(is.null(hold), "", hold$nom)),
@@ -87,11 +88,10 @@ dossiersEditModuleServer <- function(id,
                                                                          value = ifelse(is.null(hold), "", hold$prenom))
                                                       ), #close column
                                                column(width = 6,
-                                                      radioButtons(ns('sex'), 
-                                                                   HTML('<b>Sexe</b>'), 
-                                                                   choices = c("H" = 0, "F" = 1),
-                                                                   inline = TRUE,
-                                                                   selected = ifelse(is.null(hold), "H", hold$sexe)),
+                                                      checkboxInput(ns('patient_inconnu'),
+                                                                    HTML('<b>Patient inconnu</b>'),
+                                                                    value = ifelse(is.null(hold), FALSE, hold$patient_inconnu)),
+                                                      tags$br(),
                                                       dateInput(ns("date_naissance"),
                                                                 'Date de naissance (AAAA-MM-JJ)',
                                                                 value = ifelse(is.null(hold), "", hold$date_naissance),
@@ -101,13 +101,21 @@ dossiersEditModuleServer <- function(id,
                                                                 value = ifelse(is.null(hold), "", hold$phone_number_patient))
                                                       ) # close column
                                                ), # Close fluidRow
-                                      fluidRow(
-                                        checkboxInput(ns('add_coagulation'),
-                                                      'Fluidifiants/Trouble coagulation?',
-                                                      value = ifelse(is.null(hold), FALSE, hold$has_coagulation))
-                                        
-                                      ), #close fluidRow
-                                      conditionalPanel("input.add_coagulation",
+                                      fluidRow(HTML("<h4 style=text-align:center;><b>Contexte de la maladie</b></h4>"),
+                                               column(width = 12, 
+                                                      HTML('<b>Le patient, prend-il des fluidifiants adressant des troubles de coagulation?</b>'),
+                                                      radioButtons(ns('add_coagulation'), 
+                                                                   "", 
+                                                                   choices = c("Non" = 0, "Oui" = 1),
+                                                                   inline = FALSE,
+                                                                   selected = ifelse(is.null(hold), 0, hold$has_coagulation))
+                                               ) # Close column
+                                               ), # Close fluidRow
+                                      conditionalPanel("input.add_coagulation == 1",
+                                                       tags$br(),
+                                                       fluidRow(column(width = 12,
+                                                                       HTML('<b>Indiquez quels médicaments ont été administrés ainsi que la date de leur dernière prise</b>'))),
+                                                       tags$br(),
                                                        fluidRow(
                                                          column(width = 4,
                                                                 selectInput(ns('traitement_1'),
@@ -139,60 +147,79 @@ dossiersEditModuleServer <- function(id,
                                                        ), #close fluidRow
                                                        ns = ns),
                                       
-                                      fluidRow(column(width = 12,
+                                      fluidRow(column(width = 12, align="center",
                                                       selectInput(ns('pathologie_1'),
                                                                   'Pathologie',
                                                                   choices = pathologies,
-                                                                  selected = ifelse(is.null(hold), "", hold$pathologie_1)),
+                                                                  selected = ifelse(is.null(hold), "", hold$pathologie_1),
+                                                                  width = '66%'),
                                                       conditionalPanel("input.pathologie_1 == 'Autre...'",
                                                                        textAreaInput(ns('description_pathologie_1'),
                                                                                      'Description',
-                                                                                     placeholder = "Decrivez..."),
+                                                                                     value = ifelse(is.null(hold), "", hold$pathologie_1),
+                                                                                     placeholder = "Decrivez...",
+                                                                                     width = '66%'),
                                                                        ns = ns),
-                                                      checkboxInput(ns('add_pathologie_2'),
-                                                                    'Ajouter une 2ème pathologie',
-                                                                    value = ifelse((is.null(hold$pathologie_2) || hold$pathologie_2 == ""), FALSE, TRUE)),
-                                                      conditionalPanel("input.add_pathologie_2",
+                                                      tags$br(),
+                                                      HTML("<b>Le patient, subit-il d'une deuxième pathologie?</b>"),
+                                                      radioButtons(ns('add_pathologie_2'), 
+                                                                   "", 
+                                                                   choices = c("Non" = 0, "Oui" = 1),
+                                                                   inline = TRUE,
+                                                                   selected = ifelse(str_trim(hold$pathologie_2) == "", 0, 1)),
+                                                      conditionalPanel("input.add_pathologie_2 == 1",
                                                                        selectInput(ns('pathologie_2'),
                                                                                    'Pathologie',
                                                                                    choices = pathologies,
-                                                                                   selected = ifelse(is.null(hold), "", hold$pathologie_2)),
+                                                                                   selected = ifelse(str_trim(hold$pathologie_2) == "", "", hold$pathologie_2),
+                                                                                   width = '66%'),
                                                                        conditionalPanel("input.pathologie_2 == 'Autre...'",
                                                                                         textAreaInput(ns('description_pathologie_2'),
                                                                                                       'Description',
-                                                                                                      placeholder = "Decrivez..."),
+                                                                                                      placeholder = "Decrivez...",
+                                                                                                      value = ifelse(str_trim(hold$pathologie_2) == "", "", hold$pathologie_2),
+                                                                                                      width = '66%'),
                                                                                         ns = ns),
-                                                                       checkboxInput(ns('add_pathologie_3'),
-                                                                                     'Ajouter une 3ème pathologie',
-                                                                                     value = ifelse((is.null(hold$pathologie_3) || hold$pathologie_3 == ""), FALSE, TRUE)),
-                                                                       conditionalPanel("input.add_pathologie_3",
+                                                                       HTML("<b>Le patient, subit-il d'une troisième pathologie?</b>"),
+                                                                       radioButtons(ns('add_pathologie_3'), 
+                                                                                    "", 
+                                                                                    choices = c("Non" = 0, "Oui" = 1),
+                                                                                    inline = TRUE,
+                                                                                    selected = ifelse(str_trim(hold$pathologie_3) == "", 0, 1)),
+                                                                       conditionalPanel("input.add_pathologie_3 == 1",
                                                                                         selectInput(ns('pathologie_3'),
                                                                                                     'Pathologie',
                                                                                                     choices = pathologies,
-                                                                                                    selected = ifelse(is.null(hold), "", hold$pathologie_3)),
+                                                                                                    selected = ifelse(str_trim(hold$pathologie_3) == "", "", hold$pathologie_3),
+                                                                                                    width = '66%'),
                                                                                         conditionalPanel("input.pathologie_3 == 'Autre...'",
                                                                                                          textAreaInput(ns('description_pathologie_3'),
                                                                                                                        'Description',
-                                                                                                                       placeholder = "Decrivez..."),
+                                                                                                                       placeholder = "Decrivez...",
+                                                                                                                       value = ifelse(str_trim(hold$pathologie_3) == "", "", hold$pathologie_3),
+                                                                                                                       width = '66%'),
                                                                                                          ns = ns),
                                                                                         ns = ns),
                                                                        ns = ns)
                                                       ) # Close column
                                                ), # Close fluidRow
-                                      fluidRow(column(width = 12,
+                                      tags$br(),
+                                      fluidRow(column(width = 12, align="center",
                                                       textAreaInput(ns('description_histoire'),
-                                                                    'Histoire',
+                                                                    'Histoire de la maladie',
                                                                     placeholder = "Décrivez...",
                                                                     value = ifelse(is.null(hold), "", hold$description_histoire),
-                                                                    width = '740'))
+                                                                    width = '100%',
+                                                                    height = '100px'))
                                                ), # Close fluidRow
-                                      fluidRow(column(width = 12,
+                                      fluidRow(column(width = 12, align="center",
                                                       fileInput(ns('photos'),
                                                                 "Ajouter des images",
                                                                 multiple = TRUE,
                                                                 accept = 'image/*',
                                                                 buttonLabel = "Parcourir...",
-                                                                placeholder = "...ou placez fichier ici")
+                                                                placeholder = "...ou placez fichier ici",
+                                                                width = '66%')
                                                       
                                                       
                                                       ) # close column
@@ -239,7 +266,8 @@ dossiersEditModuleServer <- function(id,
                                                   prenom = 0,
                                                   date_naissance = 0,
                                                   phone_number_patient = 0,
-                                                  pathologie_1 = 0)
+                                                  pathologie_1 = 0,
+                                                  description_histoire = 0)
                      
                      
                      observeEvent(input$contact_person, {
@@ -371,6 +399,53 @@ dossiersEditModuleServer <- function(id,
                        }
                      )
                      
+                     observeEvent(
+                       eventExpr = {
+                         input$traitement_1
+                         input$date_derniere_prise_1
+                       }, 
+                       handlerExpr = {
+                         if (!(str_trim(input$traitement_1) == "") & length(input$date_derniere_prise_1) < 1) {
+                           shinyFeedback::showFeedbackDanger("date_derniere_prise_1",
+                                                             text = "Fournissez une date!")
+                         } else {
+                           shinyFeedback::hideFeedback("date_derniere_prise_1")
+                           
+                         }
+                       }
+                     )
+                     
+                     observeEvent(
+                       eventExpr = {
+                         input$traitement_2
+                         input$date_derniere_prise_2
+                       }, 
+                       handlerExpr = {
+                         if (!(str_trim(input$traitement_2) == "") & length(input$date_derniere_prise_2) < 1) {
+                           shinyFeedback::showFeedbackDanger("date_derniere_prise_2",
+                                                             text = "Fournissez une date!")
+                         } else {
+                           shinyFeedback::hideFeedback("date_derniere_prise_2")
+                           
+                         }
+                       }
+                     )
+                     
+                     observeEvent(
+                       eventExpr = {
+                         input$traitement_3
+                         input$date_derniere_prise_3
+                       }, 
+                       handlerExpr = {
+                         if (!(str_trim(input$traitement_3) == "") & length(input$date_derniere_prise_3) < 1) {
+                           shinyFeedback::showFeedbackDanger("date_derniere_prise_3",
+                                                             text = "Fournissez une date!")
+                         } else {
+                           shinyFeedback::hideFeedback("date_derniere_prise_3")
+                           
+                         }
+                       }
+                     )
                      
                      observeEvent(input$pathologie_1, {
                        if (str_trim(input$pathologie_1) == "") {
@@ -400,6 +475,16 @@ dossiersEditModuleServer <- function(id,
                        } # Close if statement pathologie == 'Autre'
                      }) # Close pathologie observer
                      
+                     observeEvent(input$description_histoire, {
+                       if (str_trim(input$description_histoire) == "") {
+                         shinyFeedback::showFeedbackDanger("description_histoire",
+                                                           text = "L'histoire de la maladie est obligatoire!")
+                         shinyjs::disable('submit')
+                       } else {
+                         shinyFeedback::hideFeedback("description_histoire")
+                         formFields$description_histoire = 1
+                       }
+                     })
                      
                      
                      observe({
@@ -412,7 +497,8 @@ dossiersEditModuleServer <- function(id,
                           formFields$prenom == 1 &
                           formFields$date_naissance == 1 &
                           formFields$phone_number_patient == 1 &
-                          formFields$pathologie_1 == 1) {
+                          formFields$pathologie_1 == 1 & 
+                          formFields$description_histoire == 1) {
                          shinyjs::enable('submit')
                        }
                      })

@@ -25,10 +25,6 @@ rendezvousEditModuleServer <- function(id,
                  
                  ns <- session$ns
                  
-                 
-                 
-                 
-                 
                    ############# MODAL TRIGGER #################################
                    observeEvent(modal_trigger(), {
                      

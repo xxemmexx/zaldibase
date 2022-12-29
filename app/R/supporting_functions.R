@@ -81,6 +81,14 @@ convertUsernameToDisplayname <- function(aUsername, aUserTibble) {
   row$name
 }
 
+getAffiliation <- function(aUsername, aUserTibble) {
+  userInfo <- aUserTibble %>% 
+    filter(user == aUsername)
+  
+  userInfo$affiliation
+}
+
+
 convertToDisplayName <- function(aUsername) {
   getDisplayName[aUsername] %>% unname()
 }
