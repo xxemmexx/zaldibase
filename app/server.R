@@ -187,7 +187,6 @@ function(input, output, session) {
     }    
   })
   
-  
   observeEvent(dossiers_patient_filenames_count(), {
     if(dossiers_patient_filenames_count() < 1){
       shinyjs::hide("arrows_container")
@@ -203,6 +202,7 @@ function(input, output, session) {
       shinyjs::show("archive_arrows_container")
     }
   })
+  
 
   patientUID <- reactive({
     

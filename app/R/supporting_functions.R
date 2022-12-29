@@ -109,7 +109,7 @@ buildContactCard <- function(aPatientPhone, aContactPerson, aContactPhone,
          <h4><b>Données du patient</b></h4><br>
          <b>Numéro de téléphone: </b> ', aPatientPhone, '<br>
          <b>Enregistré(e) depuis le: </b>', thisDate, ' <br>
-         <b> Garde: </b>', thisUser[[1]], '
+         <b>Enregistré(e) par: </b>', thisUser[[1]], '
          </div>')
 }
 
@@ -228,7 +228,26 @@ deliverUID <- function(aValueOnHold) {
   thisUID
 }
 
-deliverStandardOrCustom <- function(aStandard, anOtherValue, include = TRUE) {
+
+deliverStandardOrCustom <- function(aStandard, anOtherValue, include) {
+  
+  print(paste0("Executing with values: ", aStandard, ", ", anOtherValue, " and ", include))
+  
+  if(is.null(include)) {
+    include <- FALSE
+  }
+  
+  if(is.na(include)) {
+    include <- FALSE
+  }
+  
+  if(include == 0) {
+    include <- FALSE
+  }
+  
+  if(include == 1) {
+    include <- TRUE
+  }
   
   if(include) {
     
@@ -236,12 +255,15 @@ deliverStandardOrCustom <- function(aStandard, anOtherValue, include = TRUE) {
       return(anOtherValue)
     }
     
+    print(paste0('Exiting with ', aStandard))
     aStandard
     
   } else {
+    print('Exiting with empty string')
     return('')
   }
 }
+
 
 deliverCreator <- function(aValueOnHold, aUsername) {
   
@@ -351,6 +373,7 @@ writeGardeQuery <- function(aUsername, aPartner, aTimestamp) {
 }
 
 writeQuery <- function(aUID, 
+                       aPatientInconnu,
                        aNom, 
                        aPrenom, 
                        aSexe,
@@ -386,7 +409,7 @@ writeQuery <- function(aUID,
   
   thisQuery = switch(aStatement,
                      
-                     "insert" = paste0("INSERT INTO patients (uid, nom, prenom, 
+                     "insert" = paste0("INSERT INTO patients (uid, patient_inconnu, nom, prenom, 
                      sexe, date_naissance, phone_number_patient, pathologie_1, 
                      pathologie_2, pathologie_3, description_histoire, pre_decision, 
                      def_decision, 
@@ -396,7 +419,7 @@ writeQuery <- function(aUID,
                      date_derniere_prise_2, treat_coagulant_3, date_derniere_prise_3,
                      created_at, created_by, modified_at, modified_by, needs_rendezvous,
                      has_rendezvous, is_closed, is_viewed, status) VALUES ('",
-                     aUID, "', '", aNom, "', '", aPrenom, "', ", aSexe, ", '", aDateNaissance, "', '",
+                     aUID, "', ", aPatientInconnu, ", '", aNom, "', '", aPrenom, "', ", aSexe, ", '", aDateNaissance, "', '",
                      aPhoneNumber, "', '", aPathologie1, "', '", aPathologie2, "', '",
                      aPathologie3, "', '", aHistory, "', '", aPreDecision, "', '", aDefDecision, "', '",
                      aContactPerson, "', '", aContactPhone, "', '", aContactEmail, "', '",
@@ -407,7 +430,8 @@ writeQuery <- function(aUID,
                      aModifiedAt, "', '", aModifiedBy, "', ", needsRendezVous, ", ",
                      hasRendezVous, ", ", isClosed, ", ", isViewed, ", 0);"),
                      
-                     "update" = paste0("UPDATE patients SET nom='", aNom, 
+                     "update" = paste0("UPDATE patients SET patient_inconnu= ", aPatientInconnu,
+                                       ", nom='", aNom, 
                                        "', prenom='", aPrenom, 
                                        "', sexe=", aSexe,
                                        ", date_naissance='", aDateNaissance,
@@ -447,8 +471,13 @@ writeQuery <- function(aUID,
 writeExterneQuery <- function(aUID, 
                        aNom, 
                        aPrenom, 
+                       aSexe,
                        aDateNaissance, 
                        aPhoneNumber,
+                       aPathologie1,
+                       aPathologie2,
+                       aPathologie3,
+                       aHistory,
                        aContactPerson,
                        aContactPhone,
                        aContactEmail,
@@ -467,13 +496,16 @@ writeExterneQuery <- function(aUID,
   
   thisQuery = switch(aStatement,
                      
-                     "insert" = paste0("INSERT INTO patients (uid, nom, prenom, 
-                     date_naissance, phone_number_patient,  
+                     "insert" = paste0("INSERT INTO patients (uid, patient_inconnu, nom, prenom, sexe, 
+                     date_naissance, phone_number_patient, pathologie_1, 
+                     pathologie_2, pathologie_3, description_histoire, 
                      contact_person, contact_phone, contact_email, hopital, has_coagulation,
                      created_at, created_by, modified_at, modified_by, needs_rendezvous,
                      has_rendezvous, is_closed, is_viewed, status) VALUES ('",
-                                       aUID, "', '", aNom, "', '", aPrenom, "', '", aDateNaissance, "', '",
-                                       aPhoneNumber, "', '", 
+                                       aUID, "', 0, '", aNom, "', '", aPrenom, "', ", 
+                                       aSexe, ", '", aDateNaissance, "', '",
+                                       aPhoneNumber, "', '", aPathologie1, "', '", aPathologie2, "', '",
+                                       aPathologie3, "', '", aHistory, "', '", 
                                        aContactPerson, "', '", aContactPhone, "', '", aContactEmail, "', '",
                                        aHospital, "', ", hasCoagulation, ", '",
                                        aCreatedAt, "', '", aCreatedBy, "', '", 
@@ -481,9 +513,14 @@ writeExterneQuery <- function(aUID,
                                        hasRendezVous, ", ", isClosed, ", ", isViewed, ", 0);"),
                      
                      "update" = paste0("UPDATE patients SET nom='", aNom, 
-                                       "', prenom='", aPrenom, 
-                                       "', date_naissance='", aDateNaissance,
+                                       "', prenom='", aPrenom,
+                                       "', sexe =", aSexe,
+                                       ", date_naissance='", aDateNaissance,
                                        "', phone_number_patient='", aPhoneNumber,
+                                       "', pathologie_1='", aPathologie1, 
+                                       "', pathologie_2='", aPathologie2, 
+                                       "', pathologie_3='", aPathologie3, 
+                                       "', description_histoire='", aHistory,
                                        "', contact_person='", aContactPerson,
                                        "', contact_phone='", aContactPhone,
                                        "', contact_email='", aContactEmail,

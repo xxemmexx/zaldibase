@@ -433,8 +433,13 @@ externesEditModuleServer <- function(id,
                    out <- list(uid = deliverUID(hold),
                                data = list("nom" = input$nom,
                                            "prenom" = input$prenom,
+                                           "sexe" = input$sex,
                                            "date_naissance" = writeISODate(input$date_naissance),
                                            "phone_number_patient" = input$phone_number_patient,
+                                           "pathologie_1" = deliverStandardOrCustom(input$pathologie_1, input$description_pathologie_1, 1),
+                                           "pathologie_2" = deliverStandardOrCustom(input$pathologie_2, input$description_pathologie_2, input$add_pathologie_2),
+                                           "pathologie_3" = deliverStandardOrCustom(input$pathologie_3, input$description_pathologie_3, input$add_pathologie_3),
+                                           "description_histoire" = input$description_histoire,
                                            "contact_person" = input$contact_person,
                                            "contact_phone" = input$contact_phone,
                                            "contact_email" = input$contact_email,
@@ -522,8 +527,13 @@ externesEditModuleServer <- function(id,
                      query <- writeExterneQuery(uid, 
                                                 dat$data$nom, 
                                                 dat$data$prenom,
+                                                dat$data$sexe,
                                                 dat$data$date_naissance, 
                                                 dat$data$phone_number_patient,
+                                                dat$data$pathologie_1,
+                                                dat$data$pathologie_2,
+                                                dat$data$pathologie_3,
+                                                dat$data$description_histoire,
                                                 dat$data$contact_person,
                                                 dat$data$contact_phone,
                                                 dat$data$contact_email,
@@ -536,6 +546,7 @@ externesEditModuleServer <- function(id,
                                                 aStatement = statement)
                      
                      print('Trying to execute query...')
+                     print(query)
                      dbExecute(conn, query)
                      
                      session$userData$externes_trigger(session$userData$externes_trigger() + 1)
