@@ -387,6 +387,38 @@ externesEditModuleServer <- function(id,
                        } # Close if statement pathologie == 'Autre'
                      }) # Close pathologie observer
                      
+                     observeEvent(
+                       eventExpr = {
+                         input$pathologie_2
+                         input$add_pathologie_2
+                       }, 
+                       handlerExpr = {
+                         if (str_trim(input$pathologie_2) == "" & input$add_pathologie_2 == 1) {
+                           shinyFeedback::showFeedbackDanger("pathologie_2",
+                                                             text = "Indiquez une pathologie")
+                         } else {
+                           shinyFeedback::hideFeedback("pathologie_2")
+                           
+                         }
+                       }
+                     )
+                     
+                     observeEvent(
+                       eventExpr = {
+                         input$pathologie_3
+                         input$add_pathologie_3
+                       }, 
+                       handlerExpr = {
+                         if (str_trim(input$pathologie_3) == "" & input$add_pathologie_3 == 1) {
+                           shinyFeedback::showFeedbackDanger("pathologie_3",
+                                                             text = "Indiquez une pathologie")
+                         } else {
+                           shinyFeedback::hideFeedback("pathologie_3")
+                           
+                         }
+                       }
+                     )
+                     
                      observeEvent(input$description_histoire, {
                        if (str_trim(input$description_histoire) == "") {
                          shinyFeedback::showFeedbackDanger("description_histoire",
