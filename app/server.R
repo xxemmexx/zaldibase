@@ -162,60 +162,47 @@ function(input, output, session) {
   observe({
     if(is.null(input$dossiers_table_rows_selected)) {
       shinyjs::hide("show_contact_details")
+      shinyjs::hide("arrows_container")
+      shinyjs::hide("refresh_images")
     } else {
+      archive_table_proxy %>% selectRows(NULL)
+      shinyjs::show("photo_container")
+      shinyjs::hide("archive_photo_container")
       shinyjs::show("show_contact_details")
+      shinyjs::show("refresh_images")
     }    
     })
   
   observe({
     if(is.null(input$archive_table_rows_selected)) {
       shinyjs::hide("archive_show_contact_details")
-    } else {
-      shinyjs::show("archive_show_contact_details")
-    }    
-  })
-  
-  observe({
-    if((is.null(input$dossiers_table_rows_selected) & is.null(input$archive_table_rows_selected)) ||
-       dossiers_patient_filenames_count() < 1) {
-      shinyjs::hide("decrease_index")
-      shinyjs::hide("increase_index")
-      shinyjs::hide("expand_image")
-      shinyjs::hide("refresh_images")
+      shinyjs::hide("archive_arrows_container")
       shinyjs::hide("archive_refresh_images")
-    } else if(!is.null(input$dossiers_table_rows_selected)) {
-      shinyjs::show("arrows_container")
-      shinyjs::show("refresh_images")
-    } else if(!is.null(input$archive_table_rows_selected)) {
-      shinyjs::show("archive_arrows_container")
-      shinyjs::show("archive_refresh_images")
-    }    
-  })
-  
-  observe({
-    if(is.null(input$dossiers_table_rows_selected)) {
-      
-    } else {
-      archive_table_proxy %>% selectRows(NULL)
-      shinyjs::show("photo_container")
-      shinyjs::hide("archive_photo_container")
-      shinyjs::show("refresh_images")
-      shinyjs::show("arrows_container")
-    }     
-  })
-  
-  observe({
-    if(is.null(input$archive_table_rows_selected)) {
-      
     } else {
       dossiers_table_proxy %>% selectRows(NULL)
+      shinyjs::show("archive_show_contact_details")
+      shinyjs::show("archive_refresh_images")
       shinyjs::hide("photo_container")
       shinyjs::show("archive_photo_container")
-      shinyjs::show("archive_refresh_images")
-      shinyjs::show("archive_arrows_container")
-    }     
+    }    
   })
   
+  
+  observeEvent(dossiers_patient_filenames_count(), {
+    if(dossiers_patient_filenames_count() < 1){
+      shinyjs::hide("arrows_container")
+    } else {
+      shinyjs::show("arrows_container")
+    }
+  })
+  
+  observeEvent(archive_patient_filenames_count(), {
+    if(archive_patient_filenames_count() < 1) {
+      shinyjs::hide("archive_arrows_container")
+    } else {
+      shinyjs::show("archive_arrows_container")
+    }
+  })
 
   patientUID <- reactive({
     
