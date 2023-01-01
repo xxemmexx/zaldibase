@@ -86,7 +86,11 @@ tagList(
                                                     uiOutput('pathologies'),
                                                     uiOutput('archive_pathologies'),
                                                     tags$br(),
+                                                    uiOutput('syndrome'),
+                                                    uiOutput('archive_syndrome'),
+                                                    tags$br(),
                                                     uiOutput('comorbidites'),
+                                                    uiOutput('archive_comorbidites'),
                                                     tags$br(),
                                                     uiOutput('description_histoire'),
                                                     uiOutput('archive_description_histoire')
@@ -201,6 +205,10 @@ tagList(
                                                          tags$br(),
                                                          uiOutput('staff_pathologies'),
                                                          tags$br(),
+                                                         uiOutput('staff_syndrome'),
+                                                         tags$br(),
+                                                         uiOutput('staff_comorbidites'),
+                                                         tags$br(),
                                                          uiOutput('staff_description_histoire')
                                                          )
                                                   ) # Close fluid row
@@ -266,6 +274,9 @@ tagList(
                                   ), # Close fluid row
                                   tags$script(src = "externes_table_module.js"),
                                   tags$script(paste0("externes_table_module_js('')"))
+                                  ),
+                         tabPanel("Fiche du patient", icon = icon("eye"),
+                                  #h3(textOutput('patient_display_name_ext'))
                                   )
                          
                        )

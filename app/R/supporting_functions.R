@@ -176,9 +176,11 @@ buildUnorderedList <- function(aList, aTitle) {
     
     items <- paste0('<li>', cleanList[[1]], '</li>')
     
-    for(i in 2:n) {
-      if(!(str_trim(cleanList[[i]]) == '')) {
-        items <- paste0(items, '<li>', cleanList[[i]], '</li>')
+    if(n > 1) {
+      for(i in 2:n) {
+        if(!(str_trim(cleanList[[i]]) == '')) {
+          items <- paste0(items, '<li>', cleanList[[i]], '</li>')
+        }
       }
     }
     
@@ -202,14 +204,25 @@ writeStars <- function(aCoefficient) {
   )
 }
 
-tabeEx <- tribble(
-  ~colA, ~colB,
-  "a",   1,
-  "b",   2,
-  "c",   3
-)
-
-tabeEx$colA[[1]]
+deliverComorbiditeTibble <- function(aDataRow) {
+  
+  rawComorbs <- tribble(
+    ~type, ~coefficient,
+    "Metabolique", aDataRow$comorb_metabolique,
+    "Cardiovasculaire", aDataRow$comorb_cardiovasculaire,
+    "Renale", aDataRow$comorb_renale,
+    "Hepatique", aDataRow$comorb_hepatique,
+    "Oncologique/Hematologique", aDataRow$comorb_oncologique,
+    "Neurologique", aDataRow$comorb_neurologique,
+    aDataRow$comorbidite_1, aDataRow$comorb_1,
+    aDataRow$comorbidite_2, aDataRow$comorb_2
+  )
+  
+  rawComorbs %>%
+    filter(coefficient > 0) %>%
+    arrange(desc(coefficient)) %>%
+    mutate(stars = writeStars(coefficient))
+}
 
 
 
@@ -221,11 +234,11 @@ buildComorbiditeTable <- function(aComorbiditeTibble) {
     return('<div></div>')
   }
   
-  headers <- '<b>Comorbidités</b><br>
+  headers <- '<b>Comorbidités</b><br><br>
       <table style="width:100%">
       <tr>
       <th></th>
-      <th style="width:55%;"></th>
+      <th style="width:65%;"></th>
       </tr>'
   
   closingTag <- '</table>'

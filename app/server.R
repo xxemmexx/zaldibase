@@ -488,28 +488,22 @@ function(input, output, session) {
     
   })
   
-  output$comorbidites <-renderUI({
+  output$syndrome <-renderUI({
+    req(patient_data()$syndrome)
     
-    rawComorbs <- tribble(
-      ~type, ~coefficient,
-      "Metabolique", patient_data()$comorb_metabolique,
-      "Cardiovasculaire", patient_data()$comorb_cardiovasculaire,
-      "Renale", patient_data()$comorb_renale,
-      "Hepatique", patient_data()$comorb_hepatique,
-      "Oncologique/Hematologique", patient_data()$comorb_oncologique,
-      "Neurologique", patient_data()$comorb_neurologique,
-      patient_data()$comorbidite_1, patient_data()$comorb_1,
-      patient_data()$comorbidite_2, patient_data()$comorb_2
-    )
-    
-    comorbs <- rawComorbs %>%
-      filter(coefficient > 0) %>%
-      arrange(desc(coefficient)) %>%
-      mutate(stars = writeStars(coefficient))
-    
-    x <- buildComorbiditeTable(comorbs)
+    x <- buildUnorderedList(list(patient_data()$syndrome),
+                            "Syndrome inflammatoire ou infectieux actif")
     
     HTML(x)
+    
+  })
+  
+  output$comorbidites <-renderUI({
+    
+    patient_data() %>%
+      deliverComorbiditeTibble() %>%
+      buildComorbiditeTable() %>%
+      HTML()
     
   })
   
@@ -779,6 +773,25 @@ function(input, output, session) {
     
     
     HTML(x)
+    
+  })
+  
+  output$archive_syndrome <-renderUI({
+    req(archive_patient_data()$syndrome)
+    
+    x <- buildUnorderedList(list(archive_patient_data()$syndrome),
+                            "Syndrome inflammatoire ou infectieux actif")
+    
+    HTML(x)
+    
+  })
+  
+  output$archive_comorbidites <-renderUI({
+    
+    archive_patient_data() %>%
+      deliverComorbiditeTibble() %>%
+      buildComorbiditeTable() %>%
+      HTML()
     
   })
   
@@ -1337,6 +1350,26 @@ function(input, output, session) {
     HTML(x)
     
   })
+  
+  output$staff_syndrome <-renderUI({
+    req(patient_data_staff()$syndrome)
+    
+    x <- buildUnorderedList(list(patient_data_staff()$syndrome[[patientIdx]]),
+                            "Syndrome inflammatoire ou infectieux actif")
+    
+    HTML(x)
+    
+  })
+  
+  output$staff_comorbidites <-renderUI({
+    
+    patient_data_staff()[patientIdx,] %>%
+      deliverComorbiditeTibble() %>%
+      buildComorbiditeTable() %>%
+      HTML()
+    
+  })
+  
   
   output$staff_description_histoire <-renderUI({
     req(patient_data_staff()$description_histoire)
