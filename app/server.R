@@ -488,6 +488,31 @@ function(input, output, session) {
     
   })
   
+  output$comorbidites <-renderUI({
+    
+    rawComorbs <- tribble(
+      ~type, ~coefficient,
+      "Metabolique", patient_data()$comorb_metabolique,
+      "Cardiovasculaire", patient_data()$comorb_cardiovasculaire,
+      "Renale", patient_data()$comorb_renale,
+      "Hepatique", patient_data()$comorb_hepatique,
+      "Oncologique/Hematologique", patient_data()$comorb_oncologique,
+      "Neurologique", patient_data()$comorb_neurologique,
+      patient_data()$comorbidite_1, patient_data()$comorb_1,
+      patient_data()$comorbidite_2, patient_data()$comorb_2
+    )
+    
+    comorbs <- rawComorbs %>%
+      filter(coefficient > 0) %>%
+      arrange(desc(coefficient)) %>%
+      mutate(stars = writeStars(coefficient))
+    
+    x <- buildComorbiditeTable(comorbs)
+    
+    HTML(x)
+    
+  })
+  
   
   output$description_histoire <-renderUI({
     req(patient_data()$description_histoire)

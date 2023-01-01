@@ -158,7 +158,13 @@ hasAnyEmptyValues <- function(aList) {
 
 buildUnorderedList <- function(aList, aTitle) {
   
-  if(is.null(aList) || !hasAnyValues(aList)) {
+  if(is.null(aList)) {
+    return('<div></div>')
+  }
+  
+  cleanList <- aList[!is.na(aList)]
+  
+  if(!hasAnyValues(cleanList)) {
     
     htmlList <- '<div></div>'
     
@@ -166,13 +172,13 @@ buildUnorderedList <- function(aList, aTitle) {
     
     #print(aList)
     
-    n <- length(aList)
+    n <- length(cleanList)
     
-    items <- paste0('<li>', aList[[1]], '</li>')
+    items <- paste0('<li>', cleanList[[1]], '</li>')
     
     for(i in 2:n) {
-      if(!(str_trim(aList[[i]]) == '')) {
-        items <- paste0(items, '<li>', aList[[i]], '</li>')
+      if(!(str_trim(cleanList[[i]]) == '')) {
+        items <- paste0(items, '<li>', cleanList[[i]], '</li>')
       }
     }
     
@@ -185,6 +191,62 @@ buildUnorderedList <- function(aList, aTitle) {
   }
   
   return(htmlList)
+}
+
+writeStars <- function(aCoefficient) {
+  case_when(
+    aCoefficient == 0 ~ "&#9734; &#9734; &#9734;",
+    aCoefficient == 1 ~  "&#9733; &#9734; &#9734;",
+    aCoefficient == 2 ~  "&#9733; &#9733; &#9734;",
+    aCoefficient == 3 ~  "&#9733; &#9733; &#9733;"
+  )
+}
+
+tabeEx <- tribble(
+  ~colA, ~colB,
+  "a",   1,
+  "b",   2,
+  "c",   3
+)
+
+tabeEx$colA[[1]]
+
+
+
+buildComorbiditeTable <- function(aComorbiditeTibble) {
+  
+  nRows <- nrow(aComorbiditeTibble)
+  
+  if(nRows < 1) {
+    return('<div></div>')
+  }
+  
+  headers <- '<b>Comorbidités</b><br>
+      <table style="width:100%">
+      <tr>
+      <th></th>
+      <th style="width:55%;"></th>
+      </tr>'
+  
+  closingTag <- '</table>'
+  
+  for(i in 1:nRows) {
+    if(i == 1) {
+      tableRows <- paste0('<tr>
+      <td style="text-align:right;">', aComorbiditeTibble$type[[1]], '</td>
+      <td style="text-align:left;">&emsp; ', aComorbiditeTibble$stars[[1]], '</td>
+      </tr>')
+    } else {
+      tableRows <- paste0(tableRows, 
+      '<tr>
+      <td style="text-align:right;">', aComorbiditeTibble$type[[i]], '</td>
+      <td style="text-align:left;">&emsp; ', aComorbiditeTibble$stars[[i]], '</td>
+      </tr>')
+    }
+    
+  }
+  
+  paste0(headers, tableRows, closingTag)
 }
 
 buildParagraph <- function(aParagraph, aTitle) {

@@ -86,6 +86,8 @@ tagList(
                                                     uiOutput('pathologies'),
                                                     uiOutput('archive_pathologies'),
                                                     tags$br(),
+                                                    uiOutput('comorbidites'),
+                                                    tags$br(),
                                                     uiOutput('description_histoire'),
                                                     uiOutput('archive_description_histoire')
                                                     
