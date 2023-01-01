@@ -1755,6 +1755,160 @@ function(input, output, session) {
                            modal_title = "Modification du profil",
                            externe_patient = externe_to_edit,
                            modal_trigger = reactive({input$externe_id_to_edit}))
+  
+  
+  # Patient data from archive--------------------------------------------------
+  
+  extPatientUID <- reactive({
+    
+    externes()[input$externes_table_rows_selected,][[1]]
+    
+  })
+  
+  externes_patient_data <- eventReactive(input$externes_table_rows_selected, {
+    
+    patientRow <- NULL
+    tryCatch({
+      patientRow <- conn %>%
+        tbl('patients') %>%
+        collect() %>%
+        mutate(created_at = as.POSIXct(created_at, tz = "UTC"),
+               modified_at = as.POSIXct(modified_at, tz = "UTC")) %>%
+        arrange(desc(modified_at)) %>%
+        filter(uid == extPatientUID())
+      
+    }, 
+    error = function(err) {
+      msg <- "Could not find that particular patient in externes!"
+      # print `msg` so that we can find it in the logs
+      print(msg)
+      # print the actual error to log it
+      print(error)
+      # show error `msg` to user.  User can then tell us about error and we can
+      # quickly identify where it cam from based on the value in `msg`
+      showToast("error", msg)
+    })
+    
+    patientRow
+  })
+  
+  # Patient data for externes---------------------------------------------------
+  
+  output$patient_display_name_ext <- renderText({
+    
+    paste0(externes_patient_data()$prenom, ' ', str_to_upper(externes_patient_data()$nom, locale = 'fr'))
+    
+  })
+  
+  output$patient_age_ext <-renderText({
+    
+    paste0("âgé(e) de ", deliverAge(externes_patient_data()$date_naissance,
+                                    externes_patient_data()$created_at), " ans")
+    
+  })
+  
+  
+  # output$info_icons <- renderUI({
+  #   req(patient_data())
+  #   
+  #   iconCoagulation <- ''
+  #   textCoagulation <- ''
+  #   iconPediatrician <- ''
+  #   textPediatrician <- ''
+  #   
+  #   if(patient_data()$has_coagulation) {
+  #     iconCoagulation <- '<img src="blood.jpeg" alt="drop" width="27" height="31.5"/>'
+  #     textCoagulation <- buildTreatmentBanner(patient_data()$treat_coagulant_1,
+  #                                             patient_data()$date_derniere_prise_1,
+  #                                             patient_data()$treat_coagulant_2,
+  #                                             patient_data()$date_derniere_prise_2,
+  #                                             patient_data()$treat_coagulant_3,
+  #                                             patient_data()$date_derniere_prise_3)
+  #     
+  #   } 
+  #   
+  #   if(deliverAge(patient_data()$date_naissance, patient_data()$created_at) < 18) {
+  #     iconPediatrician <- '<img src="child_icon.jpeg" alt="child" height="30"/>'
+  #     textPediatrician <- "<h4><b>Pédiatrie</b></h4>"
+  #     
+  #   }
+  #   
+  #   x <- paste0('<table style="width:100%">
+  #     <tr>
+  #     <th></th>
+  #     <th style="width:95%;"></th>
+  #     </tr>
+  #     <tr>
+  #     <td style="text-align:center;">', iconCoagulation, '</td>
+  #     <td style="text-align:left;">', textCoagulation, '</td>
+  #     </tr>
+  #     <tr>
+  #     <td style="text-align:center;">', iconPediatrician, '</td>
+  #     <td style="text-align:left;">', textPediatrician, '</td>
+  #     </tr>
+  #     </table> ')
+  #   
+  #   HTML(x)
+  #   
+  # })
+  # 
+  # observeEvent(input$show_contact_details, {
+  #   showModal(modalDialog(
+  #     title = paste0(patient_data()$prenom, ' ', str_to_upper(patient_data()$nom, locale = 'fr')),
+  #     buildContactCard(patient_data()$phone_number_patient,
+  #                      patient_data()$contact_person, 
+  #                      patient_data()$contact_phone, 
+  #                      patient_data()$contact_email,
+  #                      patient_data()$hopital, 
+  #                      patient_data()$created_at, 
+  #                      patient_data()$created_by, 
+  #                      user_base) %>% HTML(),
+  #     easyClose = TRUE,
+  #     footer = modalButton("Fermer")
+  #   ))
+  # })
+  
+  output$pathologies_ext <-renderUI({
+    req(externes_patient_data()$pathologie_1)
+    
+    x <- buildUnorderedList(list(externes_patient_data()$pathologie_1,
+                                 externes_patient_data()$pathologie_2,
+                                 externes_patient_data()$pathologie_3),
+                            "Pathologie(s)")
+    
+    
+    HTML(x)
+    
+  })
+  
+  output$syndrome_ext <-renderUI({
+    req(externes_patient_data()$syndrome)
+    
+    x <- buildUnorderedList(list(externes_patient_data()$syndrome),
+                            "Syndrome inflammatoire ou infectieux actif")
+    
+    HTML(x)
+    
+  })
+  
+  output$comorbidites_ext <-renderUI({
+    
+    externes_patient_data() %>%
+      deliverComorbiditeTibble() %>%
+      buildComorbiditeTable() %>%
+      HTML()
+    
+  })
+  
+  
+  output$description_histoire_ext <-renderUI({
+    req(externes_patient_data()$description_histoire)
+    
+    x <- buildParagraph(externes_patient_data()$description_histoire, "Histoire")
+    
+    HTML(x)
+    
+  })
  
   # set suspendWhenHidden to FALSE so it renders even without output
   outputOptions(output, 'role', suspendWhenHidden = FALSE) 

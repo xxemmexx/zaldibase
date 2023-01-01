@@ -276,7 +276,79 @@ tagList(
                                   tags$script(paste0("externes_table_module_js('')"))
                                   ),
                          tabPanel("Fiche du patient", icon = icon("eye"),
-                                  #h3(textOutput('patient_display_name_ext'))
+                                  tags$br(),
+                                  tags$br(),
+                                  fluidRow(column(width = 1),
+                                           column(width = 10,
+                                                  wellPanel(
+                                                    h3(textOutput('patient_display_name_ext')),
+                                                    h4(textOutput('patient_age_ext')),
+                                                    tags$br(),
+                                                    tags$br(),
+                                                    uiOutput('pathologies_ext'),
+                                                    tags$br(),
+                                                    uiOutput('syndrome_ext'),
+                                                    tags$br(),
+                                                    uiOutput('comorbidites_ext'),
+                                                    tags$br(),
+                                                    uiOutput('description_histoire_ext')
+                                                  )
+                                                  # wellPanel(
+                                                  #   tags$style(type = 'text/css',
+                                                  #              '.modal-dialog { width: fit-content !important; }'),
+                                                  #   uiOutput('photos_title') %>% withSpinner(),
+                                                  #   uiOutput('archive_photos_title') %>% withSpinner(),
+                                                  #   tags$br(),
+                                                  #   tags$span(
+                                                  #     actionButton("refresh_images", 
+                                                  #                  "",
+                                                  #                  icon("refresh"),
+                                                  #                  style="color: #FFF0F5; background-color: #3E3F3A;"),
+                                                  #     actionButton("archive_refresh_images", 
+                                                  #                  "",
+                                                  #                  icon("refresh"),
+                                                  #                  style="color: #FFF0F5; background-color: #3E3F3A;"),
+                                                  #     style = "position:absolute;right:2em;"),
+                                                  #   tags$div(id = "photo_container",
+                                                  #            style = "text-align: center;",
+                                                  #            imageOutput("tiffImage")),
+                                                  #   tags$div(id = "archive_photo_container",
+                                                  #            style = "text-align: center;",
+                                                  #            imageOutput("archive_tiffImage")),
+                                                  #   tags$div(id = "arrows_container",
+                                                  #            style = "text-align: center;",
+                                                  #            actionButton("decrease_index", 
+                                                  #                         "",
+                                                  #                         icon("arrow-left"),
+                                                  #                         style="color: #FFF0F5; background-color: #3E3F3A"),
+                                                  #            actionButton("expand_image", 
+                                                  #                         "",
+                                                  #                         icon("arrows-alt"),
+                                                  #                         style="color: #FFF0F5; background-color: #3E3F3A"),
+                                                  #            actionButton("increase_index", 
+                                                  #                         "",
+                                                  #                         icon("arrow-right"),
+                                                  #                         style="color: #FFF0F5; background-color: #3E3F3A")
+                                                  #   ), # Close div
+                                                  #   tags$div(id = "archive_arrows_container",
+                                                  #            style = "text-align: center;",
+                                                  #            actionButton("decrease_archive_index", 
+                                                  #                         "",
+                                                  #                         icon("arrow-left"),
+                                                  #                         style="color: #FFF0F5; background-color: #3E3F3A"),
+                                                  #            actionButton("expand_archive_image", 
+                                                  #                         "",
+                                                  #                         icon("arrows-alt"),
+                                                  #                         style="color: #FFF0F5; background-color: #3E3F3A"),
+                                                  #            actionButton("increase_archive_index", 
+                                                  #                         "",
+                                                  #                         icon("arrow-right"),
+                                                  #                         style="color: #FFF0F5; background-color: #3E3F3A")
+                                                  #   ) # Close div
+                                                  # ) # Close well panel
+                                           ),
+                                           column(width = 1)
+                                  ) # Close fluid row
                                   )
                          
                        )

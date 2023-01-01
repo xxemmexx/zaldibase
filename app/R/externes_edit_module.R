@@ -86,52 +86,10 @@ externesEditModuleServer <- function(id,
                                       ) # close column
                                       ) # Close fluidRow
                              ), # Close fluid row
-                                      fluidRow(HTML("<h4 style=text-align:center;><b>Contexte de la maladie</b></h4>"),
-                                               column(width = 12, 
-                                                      HTML('<b>Le patient, prend-il des fluidifiants adressant des troubles de coagulation?</b>'),
-                                                      radioButtons(ns('add_coagulation'), 
-                                                                   "", 
-                                                                   choices = c("Non" = 0, "Oui" = 1),
-                                                                   inline = FALSE,
-                                                                   selected = ifelse(is.null(hold), 0, hold$has_coagulation))
-                                               ) # Close column
-                                      ), # Close fluidRow
-                                      conditionalPanel("input.add_coagulation == 1",
-                                                       tags$br(),
-                                                       fluidRow(column(width = 12,
-                                                                       HTML('<b>Indiquez quels médicaments ont été administrés ainsi que la date de leur dernière prise</b>'))),
-                                                       tags$br(),
-                                                       fluidRow(
-                                                         column(width = 4,
-                                                                selectInput(ns('traitement_1'),
-                                                                            'Médicament 1',
-                                                                            choices = medications,
-                                                                            selected = ifelse(is.null(hold), "", hold$treat_coagulant_1)),
-                                                                dateInput(ns("date_derniere_prise_1"),
-                                                                          'Dernière prise',
-                                                                          value = ifelse(is.null(hold), "", hold$date_derniere_prise_1),
-                                                                          language = "fr")),
-                                                         column(width = 4,
-                                                                selectInput(ns('traitement_2'),
-                                                                            'Médicament 2',
-                                                                            choices = medications,
-                                                                            selected = ifelse(is.null(hold), "", hold$treat_coagulant_2)),
-                                                                dateInput(ns("date_derniere_prise_2"),
-                                                                          'Dernière prise',
-                                                                          value = ifelse(is.null(hold), "", hold$date_derniere_prise_2),
-                                                                          language = "fr")),
-                                                         column(width = 4,
-                                                                selectInput(ns('traitement_3'),
-                                                                            'Médicament 3',
-                                                                            choices = medications,
-                                                                            selected = ifelse(is.null(hold), "", hold$treat_coagulant_3)),
-                                                                dateInput(ns("date_derniere_prise_3"),
-                                                                          'Dernière prise',
-                                                                          value = ifelse(is.null(hold), "", hold$date_derniere_prise_3),
-                                                                          language = "fr"))
-                                                       ), #close fluidRow
-                                                       ns = ns),
-                                      
+                             tags$br(),
+                             HTML("<h4 style=text-align:center;><b>Contexte de la maladie</b></h4>"),
+                             tags$br(),
+                             HTML("<h5 style=text-align:left;font-family:Garamond><b>PATHOLOGIES</b></h5>"),
                              fluidRow(column(width = 12, align="center",
                                              selectInput(ns('pathologie_1'),
                                                          'Pathologie',
@@ -188,27 +146,76 @@ externesEditModuleServer <- function(id,
                                                               ns = ns)
                              ) # Close column
                              ), # Close fluidRow
-                                      tags$br(),
-                                      fluidRow(column(width = 12, align="center",
-                                                      textAreaInput(ns('description_histoire'),
-                                                                    'Histoire de la maladie',
-                                                                    placeholder = "Décrivez...",
-                                                                    value = ifelse(is.null(hold), "", hold$description_histoire),
-                                                                    width = '100%',
-                                                                    height = '100px'))
-                                      ), # Close fluidRow
-                                      fluidRow(column(width = 12, align="center",
-                                                      fileInput(ns('photos'),
-                                                                "Ajouter des images",
-                                                                multiple = TRUE,
-                                                                accept = 'image/*',
-                                                                buttonLabel = "Parcourir...",
-                                                                placeholder = "...ou placez fichier ici",
-                                                                width = '66%')
-                                                      
-                                                      
-                                      ) # close column
-                                      ) # Close fluid row
+                             HTML("<h5 style=text-align:left;font-family:Garamond><b>FLUIDIFIANTS</b></h5>"),
+                             fluidRow(
+                               column(width = 12, 
+                                      HTML('<b>Le patient, prend-il des fluidifiants adressant des troubles de coagulation?</b>'),
+                                      radioButtons(ns('add_coagulation'), 
+                                                   "", 
+                                                   choices = c("Non" = 0, "Oui" = 1),
+                                                   inline = FALSE,
+                                                   selected = ifelse(is.null(hold), 0, hold$has_coagulation))
+                               ) # Close column
+                             ), # Close fluidRow
+                             conditionalPanel("input.add_coagulation == 1",
+                                              tags$br(),
+                                              fluidRow(column(width = 12,
+                                                              HTML('<b>Indiquez quels médicaments ont été administrés ainsi que la date de leur dernière prise</b>'))),
+                                              tags$br(),
+                                              fluidRow(
+                                                column(width = 4,
+                                                       selectInput(ns('traitement_1'),
+                                                                   'Médicament 1',
+                                                                   choices = medications,
+                                                                   selected = ifelse(is.null(hold), "", hold$treat_coagulant_1)),
+                                                       dateInput(ns("date_derniere_prise_1"),
+                                                                 'Dernière prise',
+                                                                 value = ifelse(is.null(hold), "", hold$date_derniere_prise_1),
+                                                                 language = "fr")),
+                                                column(width = 4,
+                                                       selectInput(ns('traitement_2'),
+                                                                   'Médicament 2',
+                                                                   choices = medications,
+                                                                   selected = ifelse(is.null(hold), "", hold$treat_coagulant_2)),
+                                                       dateInput(ns("date_derniere_prise_2"),
+                                                                 'Dernière prise',
+                                                                 value = ifelse(is.null(hold), "", hold$date_derniere_prise_2),
+                                                                 language = "fr")),
+                                                column(width = 4,
+                                                       selectInput(ns('traitement_3'),
+                                                                   'Médicament 3',
+                                                                   choices = medications,
+                                                                   selected = ifelse(is.null(hold), "", hold$treat_coagulant_3)),
+                                                       dateInput(ns("date_derniere_prise_3"),
+                                                                 'Dernière prise',
+                                                                 value = ifelse(is.null(hold), "", hold$date_derniere_prise_3),
+                                                                 language = "fr"))
+                                              ), #close fluidRow
+                                              ns = ns),
+                             tags$br(),
+                             HTML("<h5 style=text-align:left;font-family:Garamond><b>HISTOIRE DE LA MALADIE</b></h5>"),
+                             fluidRow(column(width = 12, align="center",
+                                             textAreaInput(ns('description_histoire'),
+                                                           'Histoire de la maladie',
+                                                           placeholder = "Décrivez...",
+                                                           value = ifelse(is.null(hold), "", hold$description_histoire),
+                                                           width = '100%',
+                                                           height = '100px'))
+                             ), # Close fluidRow
+                             tags$br(),
+                             fluidRow(column(width = 12, align="center",
+                                             fileInput(ns('photos'),
+                                                       "Ajouter des images",
+                                                       multiple = TRUE,
+                                                       accept = 'image/*',
+                                                       buttonLabel = "Parcourir...",
+                                                       placeholder = "...ou placez fichier ici",
+                                                       width = '66%')
+                                             
+                                             
+                             ) # close column
+                             ) # Close fluid row
+                                      
                              ), # Close div
                          title = modal_title,
                          size = 'l',
