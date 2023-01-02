@@ -698,6 +698,45 @@ writeRendezVousDetailsQuery <- function(aDate, aTime, aDoctor, aPatientUid) {
   
 }
 
+writeChatQuery <- function(aTimestamp, aPatientUID, aUsername, aMessage) {
+  
+  paste0("INSERT INTO correspondence (timestamp, uid, username, message) VALUES 
+        ('", aTimestamp, "', '",
+         aPatientUID, "', '",
+         aUsername, "', '",
+         aMessage, "');")
+}
+
+fetchMessages <- function(aConnection, aPatientUID){
+  dplyr::tbl(aConnection, "correspondence") %>%
+    collect() %>%
+    filter(uid == aPatientUID) %>%
+    mutate(timestamp = as.POSIXct(timestamp, tz = "UTC")) %>%
+    arrange(desc(timestamp))
+}
+
+fetchAllMessages <- function(aConnection){
+  dplyr::tbl(aConnection, "correspondence") %>%
+    collect() %>%
+    mutate(timestamp = as.POSIXct(timestamp, tz = "UTC")) %>%
+    arrange(desc(timestamp))
+}
+
+renderChatMessages <- function(aListOfMessages, aUsername) {
+  div(id = "chat-container",
+      class = "chat-container",
+      aListOfMessages %>%
+        purrrlyr::by_row(~ div(class =  dplyr::if_else(
+          .$username == aUsername,
+          "chat-message-right", "chat-message-left"),
+          a(class = "username", unname(getDisplayName[.$username])),
+          div(class = "message", .$message),
+          div(class = "datetime", .$timestamp)
+        ))
+      %>% {.$.out}
+  )
+}
+
 displayStatusName <- function(aStatus) {
   case_when(
     aStatus == 0 ~ "En cours...",

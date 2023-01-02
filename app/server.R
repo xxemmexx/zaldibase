@@ -1909,6 +1909,48 @@ function(input, output, session) {
     HTML(x)
     
   })
+  
+  # Chat ----------------------------------------------------------------------
+  dbTimer <- shiny::reactiveTimer(intervalMs = 1000)
+  
+  # observe({
+  #   req(patientUID())
+  #   
+  #   dbTimer()
+  #   
+  #   if(!is.null(patientUID())) {
+  #     messages_db <- reactiveValues(messages = fetchMessages(conn, patientUID()))
+  #   }    
+  # })
+  
+  messages_db <- reactiveValues(messages = fetchAllMessages(conn))
+  
+  
+  observeEvent(input$chat_send, {
+    
+    # only do anything if there's a message
+    if (!(input$chat_message == "" | is.null(input$chat_message))) {
+      
+      messageTimestamp <- Sys.time() %>%
+        as.character()
+      
+      chatQuery <- writeChatQuery(messageTimestamp,
+                                  patientUID(),
+                                  session$userData$username(),
+                                  input$chat_message)
+      
+      dbExecute(conn, chatQuery)
+      
+      messages_db$messages <- fetchMessages(conn, patientUID())
+      
+      # clear the message text
+      shiny::updateTextInput(inputId = "chat_message", value = "")
+    }
+  })
+  
+  output$chat_body <- renderUI({
+    renderChatMessages(messages_db$messages, session$userData$username())
+  })
  
   # set suspendWhenHidden to FALSE so it renders even without output
   outputOptions(output, 'role', suspendWhenHidden = FALSE) 

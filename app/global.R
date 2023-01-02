@@ -20,6 +20,7 @@ require(magick)
 require(blastula)
 require(quarto)
 require(purrr)
+require(purrrlyr)
 require(tidyr)
 
 localDB = TRUE
