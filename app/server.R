@@ -1055,7 +1055,7 @@ function(input, output, session) {
     
     # Select relevant columns for the user
     out <- out %>%
-      pivot_longer(!modified_at, names_to = "action", values_to = "garde") %>%
+      pivot_longer(!modified_at & !garde_id, names_to = "action", values_to = "garde") %>%
       transmute(Engarde = convertToDisplayName(garde))
 
     
