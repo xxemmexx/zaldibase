@@ -307,7 +307,6 @@ function(input, output, session) {
     } else {
       x <- paste0('<h4> ', dossiers_patient_filenames_count(),
                   ' images trouvées </h4>')
-      
     }
     
     HTML(x)
@@ -1806,6 +1805,130 @@ function(input, output, session) {
                                     externes_patient_data()$created_at), " ans")
     
   })
+  
+  externes_patient_filenames_count <- reactive({
+    req(extPatientUID())
+    
+    session$userData$emptyCache()
+    
+    pathToPatientImages <- paste0(tiffDir, extPatientUID())
+    
+    if(!file.exists(pathToPatientImages)) {
+      
+      thisMode = 'test'
+      
+      filenames <- fetchFiles(extPatientUID(), 
+                              dbInfo[[1]][[2]], 
+                              '22', 
+                              deviceInfo[[1]][[1]], 
+                              deviceInfo[[1]][[2]],
+                              thisMode,
+                              aLocalDB = localDB)
+      
+      filename_count <- filenames %>%
+        length()
+      
+      
+      fetchPhotos(extPatientUID(),
+                  dbInfo[[1]][[2]],
+                  '22',
+                  deviceInfo[[1]][[1]],
+                  deviceInfo[[1]][[2]],
+                  filenames,
+                  thisMode,
+                  localDB)
+    } else {
+      
+      filename_split <- list.files(pathToPatientImages, pattern = '.tiff') %>%
+        str_split('_')
+      
+      
+      if(length(filename_split) == 0) {
+        filename_count <- 0
+      } else {
+        filename_count <- filename_split[[1]][[2]] %>% strtoi()
+      }
+    }
+    
+    return(filename_count)
+    
+  })
+  
+  output$externes_photos_title <-renderUI({
+    req(externes_patient_filenames_count())
+    
+    if(externes_patient_filenames_count() == 0) {
+      x <- paste0("<h4> Aucune image n'a été transférée </h4>")
+    } else if (externes_patient_filenames_count() == 1) {
+      x <- paste0("<h4> 1 image transférée </h4>")
+    } else {
+      x <- paste0('<h4> ', externes_patient_filenames_count(),
+                  ' images transférées </h4>')
+    }
+    
+    HTML(x)
+    
+  })
+  
+  
+  imgIdxExt <- 1
+  makeReactiveBinding('imgIdxExt')
+  
+  observeEvent(input$increase_index_externes, {
+    
+    if(imgIdxExt == externes_patient_filenames_count()) {
+      imgIdxExt <<- 1
+    } else {
+      imgIdxExt <<- imgIdxExt + 1
+    }
+  })
+  
+  observeEvent(input$decrease_index_externes, {
+    
+    if(imgIdxExt == 1) {
+      imgIdxExt <<- externes_patient_filenames_count()
+    } else {
+      imgIdxExt <<- imgIdxExt - 1
+    }
+  })
+  
+  externesPatientPhotos <- reactive({
+    req(externes_patient_filenames_count())
+    
+    targetDir <- paste0(tiffDir, extPatientUID())
+    
+    imageFile <- list.files(path = targetDir, pattern = '.tiff')
+    
+    image_read(paste0(targetDir, '/', imageFile))
+    
+  })
+  
+  
+  output$externes_tiffImage <- renderImage(
+    {
+      req(externes_patient_filenames_count())
+      
+      # A temp file to save the output.
+      # This file will be removed later by renderImage
+      outfile <- tempfile(fileext = '.png')
+      
+      #width  <- session$clientData$output_tiffImage_width
+      #height <- session$clientData$output_tiffImage_height
+      
+      # Generate the PNG
+      #png(outfile, width = 400, height = 300)
+      externesPatientPhotos()[imgIdxExt] %>%
+        image_scale(geometry = "x380") %>%
+        image_write(path = outfile, format = "png")
+      #dev.off()
+      
+      # Return a list containing the filename
+      list(src = outfile,
+           contentType = 'image/png',
+           alt = "This is alternate text")
+      
+    }, 
+    deleteFile = TRUE)
   
   
   # output$info_icons <- renderUI({

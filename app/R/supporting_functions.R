@@ -723,17 +723,16 @@ fetchAllMessages <- function(aConnection){
 }
 
 renderChatMessages <- function(aListOfMessages, aUsername) {
-  div(id = "chat-container",
-      class = "chat-container",
+  
+  div(id = "chat-container", class = "chat-container",
       aListOfMessages %>%
-        purrrlyr::by_row(~ div(class =  dplyr::if_else(
-          .$username == aUsername,
-          "chat-message-right", "chat-message-left"),
-          a(class = "username", unname(getDisplayName[.$username])),
-          div(class = "message", .$message),
-          div(class = "datetime", .$timestamp)
-        ))
-      %>% {.$.out}
+        purrrlyr::by_row(~ div(class =  dplyr::if_else(.$username == aUsername,
+                                                       "chat-message-right", 
+                                                       "chat-message-left"),
+                               a(class = "username", unname(getDisplayName[.$username])),
+                               div(class = "message", .$message),
+                               div(class = "datetime", .$timestamp))) %>% 
+        {.$.out}
   )
 }
 
