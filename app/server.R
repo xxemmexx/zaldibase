@@ -2034,20 +2034,15 @@ function(input, output, session) {
   })
   
   # Chat ----------------------------------------------------------------------
-  dbTimer <- shiny::reactiveTimer(intervalMs = 1000)
+  messages_db <- reactiveValues(messages = fetchMessages(conn))
   
-  # observe({
-  #   req(patientUID())
-  #   
-  #   dbTimer()
-  #   
-  #   if(!is.null(patientUID())) {
-  #     messages_db <- reactiveValues(messages = fetchMessages(conn, patientUID()))
-  #   }    
-  # })
+  dbTimer <- reactiveTimer(intervalMs = 5000)
   
-  messages_db <- reactiveValues(messages = fetchAllMessages(conn))
-  
+  observe({
+    dbTimer()
+    
+    messages_db$messages <- fetchMessages(conn)
+  })
   
   observeEvent(input$chat_send, {
     
@@ -2072,7 +2067,43 @@ function(input, output, session) {
   })
   
   output$chat_body <- renderUI({
-    renderChatMessages(messages_db$messages, session$userData$username())
+    req(patientUID())
+    
+    messages <- messages_db$messages %>%
+      filter(uid == patientUID())
+    
+    renderChatMessages(messages, session$userData$username())
+  })
+  
+  observeEvent(input$chat_send_externes, {
+    
+    # only do anything if there's a message
+    if (!(input$chat_message_externes == "" | is.null(input$chat_message_externes))) {
+      
+      messageTimestamp <- Sys.time() %>%
+        as.character()
+      
+      chatQuery <- writeChatQuery(messageTimestamp,
+                                  extPatientUID(),
+                                  session$userData$username(),
+                                  input$chat_message_externes)
+      
+      dbExecute(conn, chatQuery)
+      
+      messages_db$messages <- fetchMessages(conn, extPatientUID())
+      
+      # clear the message text
+      shiny::updateTextInput(inputId = "chat_message_externes", value = "")
+    }
+  })
+  
+  output$chat_body_externes <- renderUI({
+    req(extPatientUID())
+    
+    messages <- messages_db$messages %>%
+      filter(uid == extPatientUID())
+    
+    renderChatMessages(messages, session$userData$username())
   })
  
   # set suspendWhenHidden to FALSE so it renders even without output

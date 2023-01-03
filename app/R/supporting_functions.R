@@ -707,12 +707,18 @@ writeChatQuery <- function(aTimestamp, aPatientUID, aUsername, aMessage) {
          aMessage, "');")
 }
 
-fetchMessages <- function(aConnection, aPatientUID){
-  dplyr::tbl(aConnection, "correspondence") %>%
-    collect() %>%
-    filter(uid == aPatientUID) %>%
-    mutate(timestamp = as.POSIXct(timestamp, tz = "UTC")) %>%
-    arrange(desc(timestamp))
+fetchMessages <- function(aConnection, aPatientUID = NULL){
+  
+  if(is.null(aPatientUID)) {
+    fetchAllMessages(aConnection)
+  } else {
+    dplyr::tbl(aConnection, "correspondence") %>%
+      collect() %>%
+      filter(uid == aPatientUID) %>%
+      mutate(timestamp = as.POSIXct(timestamp, tz = "UTC")) %>%
+      arrange(desc(timestamp))
+  }
+  
 }
 
 fetchAllMessages <- function(aConnection){

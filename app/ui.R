@@ -334,6 +334,26 @@ tagList(
                                                                           icon("arrow-right"),
                                                                           style="color: #FFF0F5; background-color: #3E3F3A")
                                                     ) # Close div
+                                                  ), # Close well panel
+                                                  wellPanel(
+                                                    tags$div(id = "chat_area_externes",
+                                                             HTML('<h4>Correspondence</h4>'),
+                                                             textAreaInput('chat_message_externes',
+                                                                           '',
+                                                                           placeholder = "Ecrivez votre message ici...",
+                                                                           value = '',
+                                                                           width = '100%',
+                                                                           height = '90px'),
+                                                             tags$div(style="text-align:right;",
+                                                                      actionButton("chat_send_externes",
+                                                                                   "",
+                                                                                   icon("paper-plane"),
+                                                                                   style="color: #FFF0F5; background-color: #008080")
+                                                             ),
+                                                             tags$br(),
+                                                             uiOutput("chat_body_externes")
+                                                    ) # Close div chat container
+                                                    
                                                   ) # Close well panel
                                            ),
                                            column(width = 1)
