@@ -2075,6 +2075,14 @@ function(input, output, session) {
     renderChatMessages(messages, session$userData$username())
   })
   
+  observe({
+    if(identical(patientUID(), character(0))) {
+      shinyjs::hide("chat_area")
+    } else {
+      shinyjs::show("chat_area")
+    }    
+  })
+  
   observeEvent(input$chat_send_externes, {
     
     # only do anything if there's a message
@@ -2104,6 +2112,14 @@ function(input, output, session) {
       filter(uid == extPatientUID())
     
     renderChatMessages(messages, session$userData$username())
+  })
+  
+  observe({
+    if(identical(extPatientUID(), character(0))) {
+      shinyjs::hide("chat_area_externes")
+    } else {
+      shinyjs::show("chat_area_externes")
+    }    
   })
  
   # set suspendWhenHidden to FALSE so it renders even without output
