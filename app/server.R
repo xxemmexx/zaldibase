@@ -373,7 +373,6 @@ function(input, output, session) {
     }, 
     deleteFile = TRUE)
   
-  
   observeEvent(input$expand_image, {
     
     clearTmpImgs()
@@ -1243,8 +1242,6 @@ function(input, output, session) {
   
   staff_decision_names <- reactive(paste0("staff_decision_", seq_len(patient_data_staff_count())))
   
-  #decision_input_controllers <- reactive()
-  
   output$staff_decisions <- renderUI({
     req(patient_data_staff())
     
@@ -1263,7 +1260,8 @@ function(input, output, session) {
     explanation_input_controllers <- map(staff_explanation_names(), ~ textAreaInput(.x, 
                                                                                     "Explication",
                                                                                     value = isolate(input[[.x]]),
-                                                                                    width = '100%'))
+                                                                                    width = '100%',
+                                                                                    height = '140px'))
     explanation_input_controllers[[patientIdx]]
   })
   
@@ -1378,6 +1376,154 @@ function(input, output, session) {
     HTML(x)
     
   })
+  
+  staff_patient_filenames_count <- reactive({
+    req(patient_data_staff()$uid)
+    
+    session$userData$emptyCache()
+    
+    pathToPatientImages <- paste0(tiffDir, patient_data_staff()$uid[[patientIdx]])
+    
+    if(!file.exists(pathToPatientImages)) {
+      
+      thisMode = 'test'
+      
+      filenames <- fetchFiles(patient_data_staff()$uid[[patientIdx]], 
+                              dbInfo[[1]][[2]], 
+                              '22', 
+                              deviceInfo[[1]][[1]], 
+                              deviceInfo[[1]][[2]],
+                              thisMode,
+                              aLocalDB = localDB)
+      
+      filename_count <- filenames %>%
+        length()
+      
+      
+      fetchPhotos(patient_data_staff()$uid[[patientIdx]],
+                  dbInfo[[1]][[2]],
+                  '22',
+                  deviceInfo[[1]][[1]],
+                  deviceInfo[[1]][[2]],
+                  filenames,
+                  thisMode,
+                  localDB)
+    } else {
+      
+      filename_split <- list.files(pathToPatientImages, pattern = '.tiff') %>%
+        str_split('_')
+      
+      
+      if(length(filename_split) == 0) {
+        filename_count <- 0
+      } else {
+        filename_count <- filename_split[[1]][[2]] %>% strtoi()
+      }
+    }
+    
+    return(filename_count)
+    
+  })
+  
+  output$staff_photos_title <-renderUI({
+    req(staff_patient_filenames_count())
+    
+    if(staff_patient_filenames_count() == 0) {
+      x <- paste0("<h4> Aucune image n'a été trouvée </h4>")
+    } else if (staff_patient_filenames_count() == 1) {
+      x <- paste0("<h4> 1 image trouvée </h4>")
+    } else {
+      x <- paste0('<h4> ', staff_patient_filenames_count(),
+                  ' images trouvées </h4>')
+    }
+    
+    HTML(x)
+    
+  })
+  
+  
+  imgIdxStaff <- 1
+  makeReactiveBinding('imgIdxStaff')
+  
+  observeEvent(input$increase_index_staff, {
+    
+    if(imgIdxStaff == staff_patient_filenames_count()) {
+      imgIdxStaff <<- 1
+    } else {
+      imgIdxStaff <<- imgIdxStaff + 1
+    }
+  })
+  
+  observeEvent(input$decrease_index_staff, {
+    
+    if(imgIdxStaff == 1) {
+      imgIdxStaff <<- staff_patient_filenames_count()
+    } else {
+      imgIdxStaff <<- imgIdxStaff - 1
+    }
+  })
+  
+  staffPatientPhotos <- reactive({
+    req(staff_patient_filenames_count())
+    
+    targetDir <- paste0(tiffDir, patient_data_staff()$uid[[patientIdx]])
+    
+    imageFile <- list.files(path = targetDir, pattern = '.tiff')
+    
+    image_read(paste0(targetDir, '/', imageFile))
+    
+  })
+  
+  
+  output$staff_tiffImage <- renderImage(
+    {
+      req(staff_patient_filenames_count())
+      
+      # A temp file to save the output.
+      # This file will be removed later by renderImage
+      outfile <- tempfile(fileext = '.png')
+      
+      #width  <- session$clientData$output_tiffImage_width
+      #height <- session$clientData$output_tiffImage_height
+      
+      # Generate the PNG
+      #png(outfile, width = 400, height = 300)
+      staffPatientPhotos()[imgIdxStaff] %>%
+        image_scale(geometry = "x380") %>%
+        image_write(path = outfile, format = "png")
+      #dev.off()
+      
+      # Return a list containing the filename
+      list(src = outfile,
+           contentType = 'image/png',
+           alt = "This is alternate text")
+      
+    }, 
+    deleteFile = TRUE)
+  
+  observeEvent(input$expand_image_staff, {
+    
+    clearTmpImgs()
+    
+    timeSuffix <- Sys.time() %>% 
+      gsub("^[^\\s]+\\s", "", .) %>%
+      str_replace_all(":", "")
+    
+    staffPatientPhotos()[imgIdxStaff] %>%
+      image_scale(geometry = "x780") %>%
+      image_write(path = paste0(tmpImg, timeSuffix), format = "png")
+    
+    
+    showModal(
+      modalDialog(
+        HTML(paste0('<img src="tmpimg', timeSuffix, '">')),
+        size = "xl",
+        easyClose = TRUE,
+        footer = NULL
+      )
+    )
+  })
+  
   
   observeEvent(input$staff_meeting, {
     shinyjs::toggle("staff_ui")

@@ -235,6 +235,31 @@ tagList(
                                                   ) # Close fluid row
                                               ), # Close well panel
                                               wellPanel(
+                                                tags$style(type = 'text/css',
+                                                           '.modal-dialog { width: fit-content !important; }'),
+                                                uiOutput('staff_photos_title') %>% withSpinner(),
+                                                tags$br(),
+                                                
+                                                tags$div(id = "staff_photo_container",
+                                                         style = "text-align: center;",
+                                                         imageOutput("staff_tiffImage")),
+                                                tags$div(id = "staff_arrows_container",
+                                                         style = "text-align: center;",
+                                                         actionButton("decrease_index_staff",
+                                                                      "",
+                                                                      icon("arrow-left"),
+                                                                      style="color: #FFF0F5; background-color: #3E3F3A"),
+                                                         actionButton("expand_image_staff", 
+                                                                      "",
+                                                                      icon("arrows-alt"),
+                                                                      style="color: #FFF0F5; background-color: #3E3F3A"),
+                                                         actionButton("increase_index_staff",
+                                                                      "",
+                                                                      icon("arrow-right"),
+                                                                      style="color: #FFF0F5; background-color: #3E3F3A")
+                                                ) # Close div
+                                              ), # Close well panel
+                                              wellPanel(
                                                 fluidRow(
                                                   column(width = 3),
                                                   column(width = 6,

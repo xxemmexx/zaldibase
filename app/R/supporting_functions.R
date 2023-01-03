@@ -23,6 +23,15 @@ deliverAge <- function(aDateNaissance, aCreatedAtDate) {
   interval(ymd(aDateNaissance), sdISO(ymd_hms(aCreatedAtDate))) %/% years(1)
 }
 
+displaySimpleDateTime <- function(aTimestamp) {
+  timestampList <- aTimestamp %>% 
+    str_split(" ")
+  
+  paste0(sd(ymd(timestampList[[1]][[1]])),
+         " ",
+         str_sub(timestampList[[1]][[2]], end = -4),
+         " hrs.")
+} 
 
 buildDecisionBanner <- function(aPreDecision, aDefDecision) {
   
@@ -737,7 +746,7 @@ renderChatMessages <- function(aListOfMessages, aUsername) {
                                                        "chat-message-left"),
                                a(class = "username", unname(getDisplayName[.$username])),
                                div(class = "message", .$message),
-                               div(class = "datetime", .$timestamp))) %>% 
+                               div(class = "datetime", displaySimpleDateTime(.$timestamp)))) %>% 
         {.$.out}
   )
 }
