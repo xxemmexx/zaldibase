@@ -1012,7 +1012,12 @@ function(input, output, session) {
     if(identical(archivePatientUID(), character(0))) {
       shinyjs::hide("reopen_from_archive")
     } else {
-      shinyjs::show("reopen_from_archive")
+      if(archive_patient_data()$is_closed == 1) {
+        shinyjs::show("reopen_from_archive")
+      } else {
+        shinyjs::hide("reopen_from_archive")
+      }
+      
     }    
   })
   
