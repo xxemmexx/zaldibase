@@ -1008,6 +1008,56 @@ function(input, output, session) {
     )
   })
   
+  observe({
+    if(identical(archivePatientUID(), character(0))) {
+      shinyjs::hide("reopen_from_archive")
+    } else {
+      shinyjs::show("reopen_from_archive")
+    }    
+  })
+  
+  observeEvent(input$reopen_from_archive, {
+    
+    showModal(modalDialog(
+      div(style = "padding: 30px;", class = "text-center",
+          HTML(printReopenDossierExplanation)),
+      easyClose = FALSE,
+      size = 'l',
+      footer = list(modalButton('Annuler'),
+                    actionButton('submit_reopen',
+                                 'Réouvrir',
+                                 class = "btn btn-primary mb1 bg-olive"))))
+    
+  }) # Close observe event
+  
+  observeEvent(input$submit_reopen, {
+    
+    removeModal()
+    
+    tryCatch({
+      
+      reopenQuery <- writeReopenDossierQuery(archive_patient_data())
+      
+      dbExecute(conn, reopenQuery)
+      
+      session$userData$dossiers_trigger(session$userData$dossiers_trigger() + 1)
+      
+      showToast("success", message = "Le dossier a bien été réouvert")}, 
+      
+      error = function(error) {
+        
+        msg <- paste0("Erreur pendant la réouverture - contactez votre admin")
+        # print `msg` so that we can find it in the logs
+        print(msg)
+        # print the actual error to log it
+        print(error)
+        # show error `msg` to user.  User can then tell us about error and we can
+        # quickly identify where it cam from based on the value in `msg`
+        showToast("error", msg)
+      }
+    )
+  })
+  
   # Garde table ------------------------------------------------------------
   
   # trigger to reload data from the "garde" table
@@ -2228,6 +2278,8 @@ function(input, output, session) {
       shinyjs::show("chat_area")
     }    
   })
+  
+  
   
   observeEvent(input$chat_send_externes, {
     

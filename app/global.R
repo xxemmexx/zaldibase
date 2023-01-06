@@ -166,6 +166,8 @@ printWarningHighPrivileges <- '<p style="color:#FF4500;font-size:60px">&#9888;</
 
 printPatientez <- '<p style="color:#3E3F3A;font-size:60px;">&#9993;</p> <br> <h3 style = "line-height: 1.75;">Patientez...</h3>'
 
+printReopenDossierExplanation <- '<p style="color:#3E3F3A;font-size:60px;">&#9997;</p> <br> <h3 style = "line-height: 1.75;">En réouvrant ce dossier, vous allez créer un nouveau <br> dossier qui reprendra les données de ce patient. <br> Êtes-vous sûr de vouloir réouvrir le dossier?</h3>'
+
 patientezDialog <- modalDialog(
   div(style = "padding: 30px;", class = "text-center",
       HTML(printPatientez)),
