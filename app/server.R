@@ -1041,8 +1041,9 @@ function(input, output, session) {
     
     tryCatch({
       
-      reopenQuery <- writeReopenDossierQuery(archive_patient_data())
-      
+      reopenQuery <- writeReopenDossierQuery(archive_patient_data(),
+                                             session$userData$username())
+
       dbExecute(conn, reopenQuery)
       
       session$userData$dossiers_trigger(session$userData$dossiers_trigger() + 1)

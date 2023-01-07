@@ -456,6 +456,47 @@ writeGardeQuery <- function(aUsername, aPartner, aTimestamp) {
   
 }
 
+writeReopenDossierQuery <- function(aPatientDataRow, aCreator) {
+  
+  uid <- generateIdentifier(aPatientDataRow$prenom, aPatientDataRow$nom)
+  patientInconnu <- 0
+  timeNow <- Sys.time() %>% ymd_hms()
+  needsRendezVous <- 0
+  hasRendezVous <- 0
+  isClosed <- 0
+  isViewed <- 0
+  status <- 0
+  
+  paste0("INSERT INTO patients (uid, patient_inconnu, nom, prenom, 
+                     sexe, date_naissance, phone_number_patient, pathologie_1, 
+                     pathologie_2, pathologie_3, syndrome, comorb_metabolique, comorb_cardiovasculaire, 
+                     comorb_renale, comorb_hepatique, comorb_oncologique, comorb_neurologique, 
+                     comorbidite_1, comorb_1, comorbidite_2, comorb_2, description_histoire, 
+                     pre_decision, def_decision, staff_decision,
+                     contact_person, contact_phone, contact_email, hopital, 
+                     has_coagulation,
+                     treat_coagulant_1, date_derniere_prise_1, treat_coagulant_2, 
+                     date_derniere_prise_2, treat_coagulant_3, date_derniere_prise_3,
+                     created_at, created_by, modified_at, modified_by, needs_rendezvous,
+                     has_rendezvous, is_closed, is_viewed, status) VALUES ('",
+         uid, "', ", patientInconnu, ", '", aPatientDataRow$nom, "', '", 
+         aPatientDataRow$prenom, "', ", aPatientDataRow$sexe, ", '", aPatientDataRow$date_naissance, "', '",
+         aPatientDataRow$phone_number_patient, "', '", aPatientDataRow$pathologie_1, "', '", aPatientDataRow$pathologie_2, "', '",
+         aPatientDataRow$pathologie_3, "', '", aPatientDataRow$syndrome, "', ", aPatientDataRow$comorb_metabolique, ", ", 
+         aPatientDataRow$comorb_cardiovasculaire, ", ", aPatientDataRow$comorb_renale, ", ", aPatientDataRow$comorb_hepatique, ", ", 
+         aPatientDataRow$comorb_oncologique, ", ", aPatientDataRow$comorb_neurologique, ", '", aPatientDataRow$comorbidite_1, "', ", 
+         aPatientDataRow$comorb_1, ", '", aPatientDataRow$comorbidite_2, "', ", aPatientDataRow$comorb_2, ", '", 
+         aPatientDataRow$description_histoire, "', '', '', '', '", 
+         aPatientDataRow$contact_person, "', '", aPatientDataRow$contact_phone, "', '", aPatientDataRow$contact_email, "', '",
+         aPatientDataRow$hopital, "', ", aPatientDataRow$has_coagulation, ", '",
+         aPatientDataRow$treat_coagulant_1, "', '", aPatientDataRow$date_derniere_prise_1, "', '", aPatientDataRow$treat_coagulant_2, "', '", 
+         aPatientDataRow$date_derniere_prise_2, "', '", aPatientDataRow$treat_coagulant_3, "', '", aPatientDataRow$date_derniere_prise_3, "', '",
+         timeNow, "', '", aCreator, "', '", 
+         timeNow, "', '", aCreator, "', ", needsRendezVous, ", ",
+         hasRendezVous, ", ", isClosed, ", ", isViewed, ", ", status, ");")
+  
+}
+
 writeQuery <- function(aUID, 
                        aPatientInconnu,
                        aNom, 
