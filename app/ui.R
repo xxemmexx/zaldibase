@@ -290,7 +290,21 @@ tagList(
                                                   column(width = 12,
                                                          uiOutput("staff_decision_explanations"))
                                                 ) # Close fluid row
-                                                ) # Close well panel
+                                                ), # Close well panel
+                                              wellPanel(
+                                                tags$div(id = "staff_chat_area",
+                                                         HTML('<h4>Correspondence</h4>'),
+                                                         uiOutput("staff_chat_message"),
+                                                         # tags$div(style="text-align:right;",
+                                                         #          actionButton("staff_chat_send",
+                                                         #                       "",
+                                                         #                       icon("paper-plane"),
+                                                         #                       style="color: #FFF0F5; background-color: #008080")
+                                                         # ),
+                                                         tags$br(),
+                                                         uiOutput("staff_chat_body")
+                                                )
+                                              ) #Close well panel
                                               ) %>% shinyjs::hidden()
                                           ) # Close Fluid row
                                  ) # Close tabpanel Garde

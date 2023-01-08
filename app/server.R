@@ -2285,7 +2285,6 @@ function(input, output, session) {
     }    
   })
   
-  
   observeEvent(input$chat_send_externes, {
     
     # only do anything if there's a message
@@ -2362,6 +2361,89 @@ function(input, output, session) {
     } else {
       shinyjs::show("chat_area_archive")
     }    
+  })
+  
+  observeEvent(input$chat_send_externes, {
+    
+    # only do anything if there's a message
+    if (!(input$chat_message_externes == "" | is.null(input$chat_message_externes))) {
+      
+      messageTimestamp <- Sys.time() %>%
+        as.character()
+      
+      chatQuery <- writeChatQuery(messageTimestamp,
+                                  extPatientUID(),
+                                  session$userData$username(),
+                                  input$chat_message_externes)
+      
+      dbExecute(conn, chatQuery)
+      
+      messages_db$messages <- fetchMessages(conn, extPatientUID())
+      
+      # clear the message text
+      shiny::updateTextInput(inputId = "chat_message_externes", value = "")
+    }
+  })
+  
+  output$chat_body_externes <- renderUI({
+    req(extPatientUID())
+    
+    messages <- messages_db$messages %>%
+      filter(uid == extPatientUID())
+    
+    renderChatMessages(messages, session$userData$username())
+  })
+  
+  observe({
+    if(identical(extPatientUID(), character(0))) {
+      shinyjs::hide("chat_area_externes")
+    } else {
+      shinyjs::show("chat_area_externes")
+    }    
+  })
+  
+  staff_chat_names <- reactive(paste0("chat_message_", seq_len(patient_data_staff_count())))
+  
+  output$staff_chat_message <- renderUI({
+    req(patient_data_staff())
+    
+    chat_input_controllers <- map(staff_chat_names(), ~ textAreaInput(.x, 
+                                                                      "",
+                                                                      value = isolate(input[[.x]]),
+                                                                      width = '100%',
+                                                                      height = '140px'))
+    chat_input_controllers[[patientIdx]]
+  })
+  
+  observeEvent(input$chat_send_staff, {
+    
+    # only do anything if there's a message
+    if (!(input[[staff_decision_names()[[patientIdx]]]] == "" | is.null(input[[staff_decision_names()[[patientIdx]]]]))) {
+      
+      messageTimestamp <- Sys.time() %>%
+        as.character()
+      
+      chatQuery <- writeChatQuery(messageTimestamp,
+                                  patient_data_staff()$uid[[patientIdx]],
+                                  session$userData$username(),
+                                  input[[staff_decision_names()[[patientIdx]]]])
+      
+      dbExecute(conn, chatQuery)
+      
+      messages_db$messages <- fetchMessages(conn, patient_data_staff()$uid[[patientIdx]])
+      
+      # clear the message text
+      shiny::updateTextInput(inputId = staff_decision_names()[[patientIdx]], value = "")
+    }
+  })
+  
+  output$staff_chat_body <- renderUI({
+    req(patient_data_staff()$uid)
+    
+    messages <- messages_db$messages %>%
+      filter(uid == patient_data_staff()$uid[[patientIdx]])
+    
+    renderChatMessages(messages, session$userData$username())
   })
  
   # set suspendWhenHidden to FALSE so it renders even without output
