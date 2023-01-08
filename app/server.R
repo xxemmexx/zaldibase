@@ -2286,7 +2286,6 @@ function(input, output, session) {
   })
   
   
-  
   observeEvent(input$chat_send_externes, {
     
     # only do anything if there's a message
@@ -2323,6 +2322,45 @@ function(input, output, session) {
       shinyjs::hide("chat_area_externes")
     } else {
       shinyjs::show("chat_area_externes")
+    }    
+  })
+  
+  observeEvent(input$chat_send_archive, {
+    
+    # only do anything if there's a message
+    if (!(input$chat_message_archive == "" | is.null(input$chat_message_archive))) {
+      
+      messageTimestamp <- Sys.time() %>%
+        as.character()
+      
+      chatQuery <- writeChatQuery(messageTimestamp,
+                                  archivePatientUID(),
+                                  session$userData$username(),
+                                  input$chat_message_archive)
+      
+      dbExecute(conn, chatQuery)
+      
+      messages_db$messages <- fetchMessages(conn, archivePatientUID())
+      
+      # clear the message text
+      shiny::updateTextInput(inputId = "chat_message_archive", value = "")
+    }
+  })
+  
+  output$chat_body_archive <- renderUI({
+    req(archivePatientUID())
+    
+    messages <- messages_db$messages %>%
+      filter(uid == archivePatientUID())
+    
+    renderChatMessages(messages, session$userData$username())
+  })
+  
+  observe({
+    if(identical(archivePatientUID(), character(0))) {
+      shinyjs::hide("chat_area_archive")
+    } else {
+      shinyjs::show("chat_area_archive")
     }    
   })
  

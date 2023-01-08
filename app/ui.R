@@ -170,8 +170,24 @@ tagList(
                                                                  ),
                                                     tags$br(),
                                                     uiOutput("chat_body")
+                                                    ), # Close div chat container
+                                                    tags$div(id = "chat_area_archive",
+                                                             HTML('<h4>Correspondence</h4>'),
+                                                             textAreaInput('chat_message_archive',
+                                                                           '',
+                                                                           placeholder = "Ecrivez votre message ici...",
+                                                                           value = '',
+                                                                           width = '100%',
+                                                                           height = '90px'),
+                                                             tags$div(style="text-align:right;",
+                                                                      actionButton("chat_send_archive",
+                                                                                   "",
+                                                                                   icon("paper-plane"),
+                                                                                   style="color: #FFF0F5; background-color: #008080")
+                                                             ),
+                                                             tags$br(),
+                                                             uiOutput("chat_body_archive")
                                                     ) # Close div chat container
-                                                    
                                                   ) # Close well panel
                                                   ),
                                            column(width = 1)
