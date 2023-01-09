@@ -2272,7 +2272,8 @@ function(input, output, session) {
     req(patientUID())
     
     messages <- messages_db$messages %>%
-      filter(uid == patientUID())
+      filter(uid == patientUID(),
+             !(str_trim(message) == ""))
     
     renderChatMessages(messages, session$userData$username())
   })
@@ -2311,7 +2312,8 @@ function(input, output, session) {
     req(extPatientUID())
     
     messages <- messages_db$messages %>%
-      filter(uid == extPatientUID())
+      filter(uid == extPatientUID(),
+             !(str_trim(message) == ""))
     
     renderChatMessages(messages, session$userData$username())
   })
@@ -2350,7 +2352,8 @@ function(input, output, session) {
     req(archivePatientUID())
     
     messages <- messages_db$messages %>%
-      filter(uid == archivePatientUID())
+      filter(uid == archivePatientUID(),
+             !(str_trim(message) == ""))
     
     renderChatMessages(messages, session$userData$username())
   })
@@ -2389,7 +2392,8 @@ function(input, output, session) {
     req(extPatientUID())
     
     messages <- messages_db$messages %>%
-      filter(uid == extPatientUID())
+      filter(uid == extPatientUID(),
+             !(str_trim(message) == ""))
     
     renderChatMessages(messages, session$userData$username())
   })
@@ -2415,7 +2419,7 @@ function(input, output, session) {
     chat_input_controllers[[patientIdx]]
   })
   
-  observeEvent(input$chat_send_staff, {
+  observeEvent(input$staff_chat_send, {
     
     # only do anything if there's a message
     if (!(input[[staff_decision_names()[[patientIdx]]]] == "" | is.null(input[[staff_decision_names()[[patientIdx]]]]))) {
@@ -2423,17 +2427,23 @@ function(input, output, session) {
       messageTimestamp <- Sys.time() %>%
         as.character()
       
+      message <- input[[staff_chat_names()[[patientIdx]]]]
+      print(input[[staff_chat_names()[[patientIdx]]]])
+      print(patientIdx)
+      print(staff_chat_names()[[patientIdx]])
+      
       chatQuery <- writeChatQuery(messageTimestamp,
                                   patient_data_staff()$uid[[patientIdx]],
                                   session$userData$username(),
-                                  input[[staff_decision_names()[[patientIdx]]]])
+                                  message)
       
+      print(chatQuery)
       dbExecute(conn, chatQuery)
       
       messages_db$messages <- fetchMessages(conn, patient_data_staff()$uid[[patientIdx]])
       
       # clear the message text
-      shiny::updateTextInput(inputId = staff_decision_names()[[patientIdx]], value = "")
+      shiny::updateTextInput(inputId = staff_chat_names()[[patientIdx]], value = "")
     }
   })
   
@@ -2441,7 +2451,8 @@ function(input, output, session) {
     req(patient_data_staff()$uid)
     
     messages <- messages_db$messages %>%
-      filter(uid == patient_data_staff()$uid[[patientIdx]])
+      filter(uid == patient_data_staff()$uid[[patientIdx]],
+             !(str_trim(message) == ""))
     
     renderChatMessages(messages, session$userData$username())
   })

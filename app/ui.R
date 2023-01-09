@@ -295,12 +295,12 @@ tagList(
                                                 tags$div(id = "staff_chat_area",
                                                          HTML('<h4>Correspondence</h4>'),
                                                          uiOutput("staff_chat_message"),
-                                                         # tags$div(style="text-align:right;",
-                                                         #          actionButton("staff_chat_send",
-                                                         #                       "",
-                                                         #                       icon("paper-plane"),
-                                                         #                       style="color: #FFF0F5; background-color: #008080")
-                                                         # ),
+                                                         tags$div(style="text-align:right;",
+                                                                  actionButton("staff_chat_send",
+                                                                               "",
+                                                                               icon("paper-plane"),
+                                                                               style="color: #FFF0F5; background-color: #008080")
+                                                         ),
                                                          tags$br(),
                                                          uiOutput("staff_chat_body")
                                                 )
