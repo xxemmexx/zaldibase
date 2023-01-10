@@ -19,6 +19,12 @@ printButtonLabel <- function(aModalTitle) {
           "C'est bon!")
 }
 
+prepareString <- function(aString) {
+  
+  aString %>%
+    str_replace_all("'", "`")
+}
+
 deliverAge <- function(aDateNaissance, aCreatedAtDate) {
   interval(ymd(aDateNaissance), sdISO(ymd_hms(aCreatedAtDate))) %/% years(1)
 }
@@ -315,7 +321,7 @@ deliverUID <- function(aValueOnHold) {
 
 deliverStandardOrCustom <- function(aStandard, anOtherValue, include) {
   
-  print(paste0("Executing with values: ", aStandard, ", ", anOtherValue, " and ", include))
+  #print(paste0("Executing with values: ", aStandard, ", ", anOtherValue, " and ", include))
   
   if(is.null(include)) {
     include <- FALSE
@@ -336,11 +342,11 @@ deliverStandardOrCustom <- function(aStandard, anOtherValue, include) {
   if(include) {
     
     if(aStandard == "Autre...") {
-      return(anOtherValue)
+      return(prepareString(anOtherValue))
     }
     
-    print(paste0('Exiting with ', aStandard))
-    aStandard
+    #print(paste0('Exiting with ', aStandard))
+    #aStandard
     
   } else {
     print('Exiting with empty string')
@@ -460,6 +466,13 @@ writeReopenDossierQuery <- function(aPatientDataRow, aCreator) {
   
   uid <- generateIdentifier(aPatientDataRow$prenom, aPatientDataRow$nom)
   patientInconnu <- 0
+  nom <- aPatientDataRow$nom %>% prepareString()
+  prenom <- aPatientDataRow$prenom %>% prepareString()
+  syndrome <- aPatientDataRow$syndrome %>% prepareString()
+  comorbidite_1 <- aPatientDataRow$comorbidite_1 %>% prepareString()
+  comorbidite_2 <- aPatientDataRow$comorbidite_2 %>% prepareString()
+  histoire <- aPatientDataRow$description_histoire %>% prepareString()
+  contactPerson <- aPatientDataRow$contact_person %>% prepareString()
   timeNow <- Sys.time() %>% ymd_hms()
   needsRendezVous <- 0
   hasRendezVous <- 0
@@ -479,15 +492,15 @@ writeReopenDossierQuery <- function(aPatientDataRow, aCreator) {
                      date_derniere_prise_2, treat_coagulant_3, date_derniere_prise_3,
                      created_at, created_by, modified_at, modified_by, needs_rendezvous,
                      has_rendezvous, is_closed, is_viewed, status) VALUES ('",
-         uid, "', ", patientInconnu, ", '", aPatientDataRow$nom, "', '", 
-         aPatientDataRow$prenom, "', ", aPatientDataRow$sexe, ", '", aPatientDataRow$date_naissance, "', '",
+         uid, "', ", patientInconnu, ", '", nom, "', '", 
+         prenom, "', ", aPatientDataRow$sexe, ", '", aPatientDataRow$date_naissance, "', '",
          aPatientDataRow$phone_number_patient, "', '", aPatientDataRow$pathologie_1, "', '", aPatientDataRow$pathologie_2, "', '",
-         aPatientDataRow$pathologie_3, "', '", aPatientDataRow$syndrome, "', ", aPatientDataRow$comorb_metabolique, ", ", 
+         aPatientDataRow$pathologie_3, "', '", syndrome, "', ", aPatientDataRow$comorb_metabolique, ", ", 
          aPatientDataRow$comorb_cardiovasculaire, ", ", aPatientDataRow$comorb_renale, ", ", aPatientDataRow$comorb_hepatique, ", ", 
-         aPatientDataRow$comorb_oncologique, ", ", aPatientDataRow$comorb_neurologique, ", '", aPatientDataRow$comorbidite_1, "', ", 
-         aPatientDataRow$comorb_1, ", '", aPatientDataRow$comorbidite_2, "', ", aPatientDataRow$comorb_2, ", '", 
-         aPatientDataRow$description_histoire, "', '', '', '', '", 
-         aPatientDataRow$contact_person, "', '", aPatientDataRow$contact_phone, "', '", aPatientDataRow$contact_email, "', '",
+         aPatientDataRow$comorb_oncologique, ", ", aPatientDataRow$comorb_neurologique, ", '", comorbidite_1, "', ", 
+         aPatientDataRow$comorb_1, ", '", comorbidite_2, "', ", aPatientDataRow$comorb_2, ", '", 
+         histoire, "', '', '', '', '", 
+         contactPerson, "', '", aPatientDataRow$contact_phone, "', '", aPatientDataRow$contact_email, "', '",
          aPatientDataRow$hopital, "', ", aPatientDataRow$has_coagulation, ", '",
          aPatientDataRow$treat_coagulant_1, "', '", aPatientDataRow$date_derniere_prise_1, "', '", aPatientDataRow$treat_coagulant_2, "', '", 
          aPatientDataRow$date_derniere_prise_2, "', '", aPatientDataRow$treat_coagulant_3, "', '", aPatientDataRow$date_derniere_prise_3, "', '",

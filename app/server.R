@@ -1615,7 +1615,7 @@ function(input, output, session) {
         for(i in 1:patient_data_staff_count()) {
           
           thisQuery <- writeStaffDecisionQuery(input[[staff_decision_names()[[i]]]], 
-                                               input[[staff_explanation_names()[[i]]]],
+                                               prepareString(input[[staff_explanation_names()[[i]]]]),
                                                uids[[i]])
           
           dbExecute(conn, thisQuery)
@@ -2257,7 +2257,7 @@ function(input, output, session) {
       chatQuery <- writeChatQuery(messageTimestamp,
                                   patientUID(),
                                   session$userData$username(),
-                                  input$chat_message)
+                                  prepareString(input$chat_message))
       
       dbExecute(conn, chatQuery)
       
@@ -2297,7 +2297,7 @@ function(input, output, session) {
       chatQuery <- writeChatQuery(messageTimestamp,
                                   extPatientUID(),
                                   session$userData$username(),
-                                  input$chat_message_externes)
+                                  prepareString(input$chat_message_externes))
       
       dbExecute(conn, chatQuery)
       
@@ -2337,7 +2337,7 @@ function(input, output, session) {
       chatQuery <- writeChatQuery(messageTimestamp,
                                   archivePatientUID(),
                                   session$userData$username(),
-                                  input$chat_message_archive)
+                                  prepareString(input$chat_message_archive))
       
       dbExecute(conn, chatQuery)
       
@@ -2377,7 +2377,7 @@ function(input, output, session) {
       chatQuery <- writeChatQuery(messageTimestamp,
                                   extPatientUID(),
                                   session$userData$username(),
-                                  input$chat_message_externes)
+                                  prepareString(input$chat_message_externes))
       
       dbExecute(conn, chatQuery)
       
@@ -2427,10 +2427,8 @@ function(input, output, session) {
       messageTimestamp <- Sys.time() %>%
         as.character()
       
-      message <- input[[staff_chat_names()[[patientIdx]]]]
-      print(input[[staff_chat_names()[[patientIdx]]]])
-      print(patientIdx)
-      print(staff_chat_names()[[patientIdx]])
+      message <- input[[staff_chat_names()[[patientIdx]]]] %>%
+        prepareString()
       
       chatQuery <- writeChatQuery(messageTimestamp,
                                   patient_data_staff()$uid[[patientIdx]],
@@ -2459,5 +2457,5 @@ function(input, output, session) {
  
   # set suspendWhenHidden to FALSE so it renders even without output
   outputOptions(output, 'role', suspendWhenHidden = FALSE) 
-  
+
 }
