@@ -201,14 +201,16 @@ tagList(
                                                   DTOutput('archive_table') %>% withSpinner()))
                                            ),
                          tabPanel("Staff", icon = icon("user-nurse"), value = "staff",
-                                 fluidRow(column(width = 8,
+                                 fluidRow(column(width = 1),
+                                          column(width = 8,
                                                  tags$br(),
                                                  tags$br(),
                                                  tags$span(actionButton("staff_meeting", 
                                                                         "Lancer le staff meeting",
                                                                         icon("users"), 
                                                                         style="color: #FFF0F5; background-color: #325d88"),
-                                                           style = "position:absolute;left:2em;"))
+                                                           style = "position:absolute;left:2em;")),
+                                          column(width = 3)
                                           ), # Close Fluid row
                                  tags$br(),
                                  tags$br(),
@@ -231,82 +233,91 @@ tagList(
                                               ) %>% shinyjs::hidden()
                                    
                                  ),
-                                 
-                                 fluidRow(div(id = "staff_ui",
-                                              wellPanel(
-                                                fluidRow(
-                                                  column(width = 12,
-                                                         h3(textOutput('staff_patient_display_name')),
-                                                         h4(textOutput('staff_patient_age')),
-                                                         uiOutput('staff_info_icons'),
-                                                         uiOutput('staff_pre_def_decisions'),
+                                 fluidRow(
+                                   column(width = 2,
+                                          fluidRow(div(id = "staff_patient_overview",
+                                                       wellPanel(
+                                                         DTOutput('patient_overview')
+                                                       )
+                                                       ) # Close div
+                                                   ) # Close fluid row
+                                          ), # Close column
+                                   column(width = 10,
+                                          fluidRow(div(id = "staff_ui",
+                                                       wellPanel(
+                                                         fluidRow(
+                                                           h3(textOutput('staff_patient_display_name')),
+                                                           h4(textOutput('staff_patient_age')),
+                                                           uiOutput('staff_info_icons'),
+                                                           uiOutput('staff_pre_def_decisions'),
+                                                           tags$br(),
+                                                           tags$br(),
+                                                           tags$br(),
+                                                           uiOutput('staff_pathologies'),
+                                                           tags$br(),
+                                                           uiOutput('staff_syndrome'),
+                                                           tags$br(),
+                                                           uiOutput('staff_comorbidites'),
+                                                           tags$br(),
+                                                           uiOutput('staff_description_histoire')
+                                                         ) # Close fluid row
+                                                       ), # Close well panel
+                                                       wellPanel(
+                                                         tags$style(type = 'text/css',
+                                                                    '.modal-dialog { width: fit-content !important; }'),
+                                                         uiOutput('staff_photos_title') %>% withSpinner(),
                                                          tags$br(),
-                                                         tags$br(),
-                                                         tags$br(),
-                                                         uiOutput('staff_pathologies'),
-                                                         tags$br(),
-                                                         uiOutput('staff_syndrome'),
-                                                         tags$br(),
-                                                         uiOutput('staff_comorbidites'),
-                                                         tags$br(),
-                                                         uiOutput('staff_description_histoire')
-                                                         )
-                                                  ) # Close fluid row
-                                              ), # Close well panel
-                                              wellPanel(
-                                                tags$style(type = 'text/css',
-                                                           '.modal-dialog { width: fit-content !important; }'),
-                                                uiOutput('staff_photos_title') %>% withSpinner(),
-                                                tags$br(),
-                                                
-                                                tags$div(id = "staff_photo_container",
-                                                         style = "text-align: center;",
-                                                         imageOutput("staff_tiffImage")),
-                                                tags$div(id = "staff_arrows_container",
-                                                         style = "text-align: center;",
-                                                         actionButton("decrease_index_staff",
-                                                                      "",
-                                                                      icon("arrow-left"),
-                                                                      style="color: #FFF0F5; background-color: #3E3F3A"),
-                                                         actionButton("expand_image_staff", 
-                                                                      "",
-                                                                      icon("arrows-alt"),
-                                                                      style="color: #FFF0F5; background-color: #3E3F3A"),
-                                                         actionButton("increase_index_staff",
-                                                                      "",
-                                                                      icon("arrow-right"),
-                                                                      style="color: #FFF0F5; background-color: #3E3F3A")
-                                                ) # Close div
-                                              ), # Close well panel
-                                              wellPanel(
-                                                fluidRow(
-                                                  column(width = 3),
-                                                  column(width = 6,
-                                                         tags$br(),
-                                                         uiOutput("staff_decisions")),
-                                                  column(width = 3)
-                                                  ), # Close fluid row
-                                                fluidRow(
-                                                  column(width = 12,
-                                                         uiOutput("staff_decision_explanations"))
-                                                ) # Close fluid row
-                                                ), # Close well panel
-                                              wellPanel(
-                                                tags$div(id = "staff_chat_area",
-                                                         HTML('<h4>Correspondence</h4>'),
-                                                         uiOutput("staff_chat_message"),
-                                                         tags$div(style="text-align:right;",
-                                                                  actionButton("staff_chat_send",
+                                                         
+                                                         tags$div(id = "staff_photo_container",
+                                                                  style = "text-align: center;",
+                                                                  imageOutput("staff_tiffImage")),
+                                                         tags$div(id = "staff_arrows_container",
+                                                                  style = "text-align: center;",
+                                                                  actionButton("decrease_index_staff",
                                                                                "",
-                                                                               icon("paper-plane"),
-                                                                               style="color: #FFF0F5; background-color: #008080")
-                                                         ),
-                                                         tags$br(),
-                                                         uiOutput("staff_chat_body")
-                                                )
-                                              ) #Close well panel
-                                              ) %>% shinyjs::hidden()
+                                                                               icon("arrow-left"),
+                                                                               style="color: #FFF0F5; background-color: #3E3F3A"),
+                                                                  actionButton("expand_image_staff", 
+                                                                               "",
+                                                                               icon("arrows-alt"),
+                                                                               style="color: #FFF0F5; background-color: #3E3F3A"),
+                                                                  actionButton("increase_index_staff",
+                                                                               "",
+                                                                               icon("arrow-right"),
+                                                                               style="color: #FFF0F5; background-color: #3E3F3A")
+                                                         ) # Close div
+                                                       ), # Close well panel
+                                                       wellPanel(
+                                                         fluidRow(
+                                                           column(width = 3),
+                                                           column(width = 6,
+                                                                  tags$br(),
+                                                                  uiOutput("staff_decisions")),
+                                                           column(width = 3)
+                                                         ), # Close fluid row
+                                                         fluidRow(
+                                                           column(width = 12,
+                                                                  uiOutput("staff_decision_explanations"))
+                                                         ) # Close fluid row
+                                                       ), # Close well panel
+                                                       wellPanel(
+                                                         tags$div(id = "staff_chat_area",
+                                                                  HTML('<h4>Correspondence</h4>'),
+                                                                  uiOutput("staff_chat_message"),
+                                                                  tags$div(style="text-align:right;",
+                                                                           actionButton("staff_chat_send",
+                                                                                        "",
+                                                                                        icon("paper-plane"),
+                                                                                        style="color: #FFF0F5; background-color: #008080")
+                                                                  ),
+                                                                  tags$br(),
+                                                                  uiOutput("staff_chat_body")
+                                                         )
+                                                       ) #Close well panel
+                                          ) %>% shinyjs::hidden()
                                           ) # Close Fluid row
+                                          ) # Close column
+                                 ) # Close fluidrow
                                  ) # Close tabpanel Garde
                          ) # Close tabset panel
       ), # Close conditional panel admin
@@ -433,5 +444,3 @@ tagList(
              )
   )
 )
-
-

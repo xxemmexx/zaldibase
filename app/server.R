@@ -1321,12 +1321,46 @@ function(input, output, session) {
     explanation_input_controllers[[patientIdx]]
   })
   
+  
+  
+  output$patient_overview <- renderDT({
+    
+    
+    out <- patient_data_staff() %>%
+      transmute(displayName = writePatientDisplayName(prenom, nom)) %>%
+      mutate(displayName = paste0(if_else(iconVector() == 1,
+                                          as.character(icon("check", lib = "font-awesome")),
+                                          ""), 
+                                  " ", 
+                                  displayName)) %>%
+      datatable(rownames = FALSE,
+                colnames = c('Patients dans ce meeting'),
+                selection = "none",
+                class = "compact stripe row-border nowrap",
+                escape = -1,
+                options = list(scrollX = TRUE,
+                               dom = 't',
+                               columnDefs = list(list(targets = 0, orderable = FALSE)),
+                               pageLength = 10,
+                               language = list(emptyTable = "Aucun patient"),
+                               drawCallback = JS("function(settings) {
+                                              // removes any lingering tooltips
+                                              $('.tooltip').remove()}"))
+      )
+    
+  })
+  
+  iconVector <- reactive({
+    
+    rep(1, nrow(patient_data_staff()))
+    
+  })
+  
   output$staff_patient_display_name <- renderText({
     req(patient_data_staff())
     
-    paste0(patient_data_staff()$prenom[[patientIdx]], 
-           ' ', 
-           str_to_upper(patient_data_staff()$nom[[patientIdx]], locale = 'fr'))
+    writePatientDisplayName(patient_data_staff()$prenom[[patientIdx]],
+                            patient_data_staff()$nom[[patientIdx]])
     
   })
   
@@ -1607,10 +1641,6 @@ function(input, output, session) {
       tryCatch({
         
         uids <- patient_data_staff()$uid
-        # prenoms <- patient_data_staff()$prenom
-        # noms <- patient_data_staff()$nom
-        # dates_naissance <- patient_data_staff()$date_naissance
-        # emails_retour <- patient_data_staff()$contact_email
         
         for(i in 1:patient_data_staff_count()) {
           

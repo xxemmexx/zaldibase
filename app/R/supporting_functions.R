@@ -19,6 +19,12 @@ printButtonLabel <- function(aModalTitle) {
           "C'est bon!")
 }
 
+writePatientDisplayName <- function(aPrenom, aNom) {
+  
+  paste0(aPrenom, ' ', str_to_upper(aNom, locale = 'fr'))
+  
+}
+
 prepareString <- function(aString) {
   
   aString %>%
@@ -785,7 +791,8 @@ fetchMessages <- function(aConnection, aPatientUID = NULL){
 }
 
 fetchAllMessages <- function(aConnection){
-  dplyr::tbl(aConnection, "correspondence") %>%
+  aConnection %>%
+    tbl("correspondence") %>%
     collect() %>%
     mutate(timestamp = as.POSIXct(timestamp, tz = "UTC")) %>%
     arrange(desc(timestamp))
@@ -1009,10 +1016,6 @@ fetchFilesFromLocalDirectory <- function(aZaldibaseDir) {
   aDestination <- paste0(imgsDir, aZaldibaseDir, "/")
   
   filenames <- list.files(aDestination)
-  
-  # if (identical(filenames, character(0))) {
-  #   return(list)
-  # } 
   
   filenames
                          
