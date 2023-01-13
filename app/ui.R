@@ -236,10 +236,16 @@ tagList(
                                  fluidRow(
                                    column(width = 2,
                                           fluidRow(div(id = "staff_patient_overview",
-                                                       wellPanel(
-                                                         DTOutput('patient_overview')
+                                                       wellPanel(style = "border: 1px solid #e3e3e3;border-radius: 4px;",
+                                                         tags$br(),
+                                                         tags$br(),
+                                                         tags$br(),
+                                                         DTOutput('patient_overview'),
+                                                         tags$br(),
+                                                         tags$br(),
+                                                         tags$br()
                                                        )
-                                                       ) # Close div
+                                                       ) %>% shinyjs::hidden() # Close div
                                                    ) # Close fluid row
                                           ), # Close column
                                    column(width = 10,

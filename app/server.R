@@ -1334,7 +1334,7 @@ function(input, output, session) {
                                   " ", 
                                   displayName)) %>%
       datatable(rownames = FALSE,
-                colnames = c('Patients dans ce meeting'),
+                colnames = c('Aperçu patients'),
                 selection = "none",
                 class = "compact stripe row-border nowrap",
                 escape = -1,
@@ -1342,7 +1342,7 @@ function(input, output, session) {
                                dom = 't',
                                columnDefs = list(list(targets = 0, orderable = FALSE)),
                                pageLength = 10,
-                               language = list(emptyTable = "Aucun patient"),
+                               language = list(emptyTable = "Aucun dossier ouvert"),
                                drawCallback = JS("function(settings) {
                                               // removes any lingering tooltips
                                               $('.tooltip').remove()}"))
@@ -1618,6 +1618,7 @@ function(input, output, session) {
   observeEvent(input$staff_meeting, {
     shinyjs::toggle("staff_ui")
     shinyjs::toggle("staff_ui_controllers")
+    shinyjs::toggle("staff_patient_overview")
     
   })
   
@@ -1655,6 +1656,7 @@ function(input, output, session) {
         
         shinyjs::toggle("staff_ui")
         shinyjs::toggle("staff_ui_controllers")
+        shinyjs::toggle("staff_patient_overview")
         shinyjs::hide("staff_meeting")
         
         showToast("success", message = "Staff meeting terminée correctement")}, 
