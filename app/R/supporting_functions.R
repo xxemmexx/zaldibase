@@ -31,6 +31,7 @@ prepareString <- function(aString) {
     str_replace_all("'", "`")
 }
 
+
 deliverAge <- function(aDateNaissance, aCreatedAtDate) {
   interval(ymd(aDateNaissance), sdISO(ymd_hms(aCreatedAtDate))) %/% years(1)
 }
@@ -176,6 +177,48 @@ hasAnyEmptyValues <- function(aList) {
   
   return(hasEmptyValues)
 }
+
+convertToAdjustedVector <- function(aList, shouldBeLength) {
+
+  actualLength <- length(aList)
+  
+  vec <- flatten(lapply(aList, function(x) ifelse(is.null(x), " ", x)))
+  
+  if(is.null(vec)) {
+    return(rep("", shouldBeLength))
+  }
+  
+  vec
+}
+
+decisionIsValid <- function(aDecision, count) {
+  case_when(
+    str_trim(aDecision) == "" ~ 0,
+    is.null(aDecision) ~ 0,
+    nchar(aDecision) > 0 ~ 1
+  )
+}
+
+explanationIsValid <- function(aDecision, anExplanation) {
+  if_else(aDecision == 'Clôturer dossier', 
+          1,
+          case_when(
+            str_trim(anExplanation) == "" ~ 0,
+            is.null(anExplanation) ~ 0,
+            nchar(anExplanation) > 0 ~ 1
+          ))
+}
+
+dossierIsReviewed <- function(aDecision, anExplanation) {
+  if_else(aDecision & anExplanation, 1, 0)
+}
+
+tickName <- function(isValid, aDisplayName) {
+  if_else(isValid, 
+          paste0(as.character(icon("check", lib = "font-awesome")), " ", aDisplayName), 
+          aDisplayName)
+}
+
 
 buildUnorderedList <- function(aList, aTitle) {
   

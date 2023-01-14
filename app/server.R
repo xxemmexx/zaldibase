@@ -1321,21 +1321,39 @@ function(input, output, session) {
     explanation_input_controllers[[patientIdx]]
   })
   
+  checkVectorDecisions <- reactive({
+    map(staff_decision_names(), ~ input[[.x]]) %>%
+      convertToAdjustedVector(patient_data_staff_count())
+
+  })
   
+  checkVectorExplanations <- reactive({
+    map(staff_explanation_names(), ~ input[[.x]]) %>%
+      convertToAdjustedVector(patient_data_staff_count())
+    
+  })
   
+  overviewTable <- reactive({
+    req(checkVectorDecisions(), patient_data_staff())
+    
+    patient_data_staff() %>%
+      transmute(displayName = writePatientDisplayName(prenom, nom),
+                dec = decisionIsValid(checkVectorDecisions(), patient_data_staff_count()),
+                expl = explanationIsValid(checkVectorDecisions(), checkVectorExplanations()),
+                valid = dossierIsReviewed(dec, expl),
+                tickedName = tickName(as.logical(valid), displayName))
+    
+  })
+  
+
   output$patient_overview <- renderDT({
+    req(overviewTable())
     
-    
-    out <- patient_data_staff() %>%
-      transmute(displayName = writePatientDisplayName(prenom, nom)) %>%
-      mutate(displayName = paste0(if_else(iconVector() == 1,
-                                          as.character(icon("check", lib = "font-awesome")),
-                                          ""), 
-                                  " ", 
-                                  displayName)) %>%
+    overviewTable() %>%
+      select(tickedName) %>%
       datatable(rownames = FALSE,
                 colnames = c('Aperçu patients'),
-                selection = "none",
+                selection = "single",
                 class = "compact stripe row-border nowrap",
                 escape = -1,
                 options = list(scrollX = TRUE,
@@ -1349,12 +1367,12 @@ function(input, output, session) {
       )
     
   })
-  
-  iconVector <- reactive({
-    
-    rep(1, nrow(patient_data_staff()))
-    
-  })
+
+  observe({
+    if(!is.null(input$patient_overview_rows_selected)) {
+      patientIdx <<- input$patient_overview_rows_selected
+    }
+  }) 
   
   output$staff_patient_display_name <- renderText({
     req(patient_data_staff())
@@ -1614,12 +1632,14 @@ function(input, output, session) {
     )
   })
   
+  session$userData$staff_meting_overview <- reactiveVal(0)
   
   observeEvent(input$staff_meeting, {
     shinyjs::toggle("staff_ui")
     shinyjs::toggle("staff_ui_controllers")
     shinyjs::toggle("staff_patient_overview")
     
+  
   })
   
   observeEvent(input$cloturer_staff_meeting, {
@@ -1653,6 +1673,7 @@ function(input, output, session) {
         }
         
         session$userData$staff_trigger(session$userData$staff_trigger() + 1)
+        session$userData$dossiers_trigger(session$userData$dossiers_trigger() + 1)
         
         shinyjs::toggle("staff_ui")
         shinyjs::toggle("staff_ui_controllers")

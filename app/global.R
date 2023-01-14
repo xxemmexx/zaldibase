@@ -10,7 +10,6 @@ require(shinycssloaders)
 require(lubridate)
 require(shinyFeedback)
 require(stringr)
-require(dplyr)
 require(dbplyr)
 require(bslib)
 require(sodium)
@@ -21,6 +20,7 @@ require(quarto)
 require(purrr)
 require(purrrlyr)
 require(tidyr)
+require(dplyr)
 
 localDB = TRUE
 
@@ -79,7 +79,7 @@ decisions <- c(" ", "A hospitaliser / A rappatrier",
                "Prise en charge externe ou non-chirurgicale",
                "Complément d`examen à faire")
 
-decisions_dev <- c(" ", "Rendez-vous / Suivi")
+decisions_dev <- c(" ", "Rendez-vous / Suivi", "Clôturer dossier")
 
 pathologies <- c(" ", "Trauma crânien",
                  "Trauma rachidien",
