@@ -304,7 +304,19 @@ tagList(
                                                          fluidRow(
                                                            column(width = 12,
                                                                   uiOutput("staff_decision_explanations"))
-                                                         ) # Close fluid row
+                                                         ), # Close fluid row
+                                                         fluidRow(div(id = "staff_ui_controllers_2",
+                                                                      style = "padding:10px 5px 10px 50px;background-color:#3E3F3A;",
+                                                                      actionButton("decrease_patient_index_2", 
+                                                                                   "",
+                                                                                   icon("arrow-left"),
+                                                                                   style="color: #DAA520; background-color:#3E3F3A"),
+                                                                      actionButton("increase_patient_index_2", 
+                                                                                   "",
+                                                                                   icon("arrow-right"),
+                                                                                   style="color: #DAA520; background-color:#3E3F3A")
+                                                                      ) # Close div 
+                                                                  ) # Close fluid row
                                                        ), # Close well panel
                                                        wellPanel(
                                                          tags$div(id = "staff_chat_area",

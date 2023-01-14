@@ -1296,6 +1296,24 @@ function(input, output, session) {
     }
   })
   
+  observeEvent(input$increase_patient_index_2, {
+    
+    if(patientIdx == patient_data_staff_count()) {
+      patientIdx <<- 1
+    } else {
+      patientIdx <<- patientIdx + 1
+    }
+  })
+  
+  observeEvent(input$decrease_patient_index_2, {
+    
+    if(patientIdx == 1) {
+      patientIdx <<- patient_data_staff_count()
+    } else {
+      patientIdx <<- patientIdx - 1
+    }
+  })
+  
   staff_decision_names <- reactive(paste0("staff_decision_", seq_len(patient_data_staff_count())))
   
   output$staff_decisions <- renderUI({
