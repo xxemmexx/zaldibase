@@ -25,6 +25,13 @@ writePatientDisplayName <- function(aPrenom, aNom) {
   
 }
 
+deliverGardeDisplayName <- function(aMedecin1, aMedecin2, aUserTibble) {
+  name1 <- convertUsernameToDisplayname(aMedecin1, aUserTibble)
+  name2 <- convertUsernameToDisplayname(aMedecin2, aUserTibble)
+  
+  paste0(name1, " / ", name2)
+}
+
 prepareString <- function(aString) {
   
   aString %>%
@@ -91,6 +98,31 @@ buildTreatmentBanner <- function (aMedicine1, aDerniereDate1,
   
 }
 
+buildMetadataBanner <- function(aCreator, anOrigin, aTimestamp, aGarde) {
+  
+  paste0('<div class="pull-right">
+         <h5 style="color:#777875;">Enregistré par : ', aCreator,'<br>
+         Origine : ', anOrigin, '<br>
+         Enregistré le : ', aTimestamp, '<br>
+         Pendant la garde : ', aGarde, '<br>
+         </div>')
+  
+}
+
+buildContactCard <- function(aPatientPhone, aContactPerson, aContactPhone, 
+                             aContactEmail, aHospital) {
+  
+  paste0('<div>
+         <h4><b>Données de la personne de contact</b></h4><br>
+         <b>Nom: </b> ', aContactPerson, '<br>
+         <b>Numéro de téléphone: </b> ', aContactPhone, '<br>
+         <b>Email: </b>', aContactEmail, '<br>
+         <b>Centre hospitalier d`origine: </b> ', aHospital, '<br><br>
+         <h4><b>Données du patient</b></h4><br>
+         <b>Numéro de téléphone: </b> ', aPatientPhone, '<br>
+         </div>')
+}
+
 convertUsernameToDisplayname <- function(aUsername, aUserTibble) {
   
   row <- aUserTibble %>%
@@ -109,26 +141,6 @@ getAffiliation <- function(aUsername, aUserTibble) {
 
 convertToDisplayName <- function(aUsername) {
   getDisplayName[aUsername] %>% unname()
-}
-
-buildContactCard <- function(aPatientPhone, aContactPerson, aContactPhone, 
-                             aContactEmail, aHospital, aCreatedAt, 
-                             aCreatedBy, aUserTibble) {
-  
-  thisDate <- sd(ymd_hms(aCreatedAt))
-  thisUser <- convertUsernameToDisplayname(aCreatedBy, aUserTibble)
-  
-  paste0('<div>
-         <h4><b>Données de la personne de contact</b></h4><br>
-         <b>Nom: </b> ', aContactPerson, '<br>
-         <b>Numéro de téléphone: </b> ', aContactPhone, '<br>
-         <b>Email: </b>', aContactEmail, '<br>
-         <b>Centre hospitalier d`origine: </b> ', aHospital, '<br><br>
-         <h4><b>Données du patient</b></h4><br>
-         <b>Numéro de téléphone: </b> ', aPatientPhone, '<br>
-         <b>Enregistré(e) depuis le: </b>', thisDate, ' <br>
-         <b>Enregistré(e) par: </b>', thisUser[[1]], '
-         </div>')
 }
 
 deliverGardeChoices <- function(aPrivilege, aUserTibble) {

@@ -457,6 +457,48 @@ function(input, output, session) {
     
   })
   
+  output$decisions <-renderUI({
+    
+    x <- buildDecisionBanner(patient_data()$pre_decision, patient_data()$def_decision)
+    
+    HTML(x)
+    
+  })
+  
+  output$dossier_metadata <-renderUI({
+    
+    tryCatch({
+      out <- conn %>%
+        tbl('garde') %>%
+        collect() %>%
+        filter(garde_id == patient_data()$garde_id)
+      
+    }, 
+    error = function(err) {
+      msg <- "Could not find the garde you are looking for!"
+      # print `msg` so that we can find it in the logs
+      print(msg)
+      # print the actual error to log it
+      print(error)
+      # show error `msg` to user.  User can then tell us about error and we can
+      # quickly identify where it cam from based on the value in `msg`
+      showToast("error", msg)
+    })
+    
+    
+    garde <- deliverGardeDisplayName(out$modified_by, out$partner, user_base)
+    author <- convertUsernameToDisplayname(patient_data()$created_by, user_base)
+    timestamp <- displaySimpleDateTime(patient_data()$created_at)
+
+    x <- buildMetadataBanner(author,
+                             patient_data()$hopital,
+                             timestamp,
+                             garde)
+
+    HTML(x)
+    
+  })
+  
   observeEvent(input$show_contact_details, {
     showModal(modalDialog(
       title = paste0(patient_data()$prenom, ' ', str_to_upper(patient_data()$nom, locale = 'fr')),
@@ -464,10 +506,7 @@ function(input, output, session) {
                        patient_data()$contact_person, 
                        patient_data()$contact_phone, 
                        patient_data()$contact_email,
-                       patient_data()$hopital, 
-                       patient_data()$created_at, 
-                       patient_data()$created_by, 
-                       user_base) %>% HTML(),
+                       patient_data()$hopital) %>% HTML(),
       easyClose = TRUE,
       footer = modalButton("Fermer")
     ))
@@ -515,13 +554,7 @@ function(input, output, session) {
     
   })
   
-  output$decisions <-renderUI({
-    
-    x <- buildDecisionBanner(patient_data()$pre_decision, patient_data()$def_decision)
-    
-    HTML(x)
-    
-  })
+
   
   
   # Edit/Delete modules---------------------------------------------------------
