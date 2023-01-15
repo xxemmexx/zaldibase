@@ -48,25 +48,21 @@ displaySimpleDateTime <- function(aTimestamp) {
 
 buildDecisionBanner <- function(aPreDecision, aDefDecision) {
   
-  if(is.na(aPreDecision)) {
+  if(is.na(aPreDecision) | aPreDecision == '') {
     preDecision = '-'
   } else {
     preDecision = aPreDecision
   }
   
-  if(is.na(aDefDecision)) {
+  if(is.na(aDefDecision) | aDefDecision == '') {
     defDecision = '-'
   } else {
     defDecision = aDefDecision
   }
   
-  if(str_trim(defDecision) == '') {
-    paste0('<div class="pull-right"><p style="font-size:16px;margin: 0px 0;"><b>Décision préliminaire: ', preDecision, '</b></p></div>')
-  } else {
-    paste0('<div class="pull-right"><h4 style="font-size:16px;margin: 0px 0;"><b>Décision définitive: ', defDecision, '</b></h4></div><br>',
-           '<div class="pull-right"><h4 style="color:#A9A9A9;font-size:16px;margin: 5px 0;"><b>Décision préliminaire: ', preDecision, '</b></h4></div>'
-           )
-  }
+  paste0('<div class="pull-right"><h4 style="font-size:16px;margin: 0px 0;"><b>Décision définitive: ', defDecision, '</b></h4></div><br>',
+         '<div class="pull-right"><h4 style="font-size:16px;margin: 5px 0;"><b>Décision préliminaire: ', preDecision, '</b></h4></div>'
+  )
 }
 
 buildTreatmentBanner <- function (aMedicine1, aDerniereDate1,
