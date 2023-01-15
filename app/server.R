@@ -1363,6 +1363,20 @@ function(input, output, session) {
     
   })
   
+  staffMeetingReady <- reactive({
+    
+    summary <- overviewTable() %>%
+      summarise(readiness = sum(valid))
+    
+    summary$readiness == patient_data_staff_count()
+    
+  })
+  
+  observe({
+    if(staffMeetingReady()) {
+      shinyjs::toggle("cloturer_staff_meeting")
+    }
+  })
 
   output$patient_overview <- renderDT({
     req(overviewTable())

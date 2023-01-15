@@ -1211,9 +1211,15 @@ L'équipe du Neurochirurgical")
 }
 
 # tib <- tribble(
-#   ~modified_at, ~modified_by, ~partner,
-#   "2022-10-21",   'zaldijn001', 'escudro001'
+#   ~modified_at, ~modified_by, ~partner, ~status,
+#   "2022-10-21",   'zaldijn001', 'escudro001', 1,
+#   "2022-10-21",   'zaldijn001', 'escudro001', 1
 # )
+# 
+# ex <- tib %>%
+#   summarise(ready = sum(status))
+
+
 # tib %>%
 #   pivot_longer(!modified_at, names_to = "action", values_to = "garde") %>%
 #   transmute(`En garde maintenant:` = garde)
