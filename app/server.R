@@ -1653,11 +1653,11 @@ function(input, output, session) {
   session$userData$staff_meting_overview <- reactiveVal(0)
   
   observeEvent(input$staff_meeting, {
-    shinyjs::toggle("staff_ui")
     shinyjs::toggle("staff_ui_controllers")
     shinyjs::toggle("staff_patient_overview")
-    
-  
+    shinyjs::toggle("staff_ui")
+    shinyjs::toggle("staff_ui_controllers_2")
+    shinyjs::toggle("staff_ui_chat")
   })
   
   observeEvent(input$cloturer_staff_meeting, {

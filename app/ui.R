@@ -217,7 +217,7 @@ tagList(
                                  tags$br(),
                                  tags$br(),
                                  fluidRow(div(id = "staff_ui_controllers",
-                                              style = "padding:10px 5px 10px 50px;background-color:#3E3F3A;",
+                                              style = "padding:10px 5px 10px 800px;background-color:#3E3F3A;",
                                               actionButton("decrease_patient_index", 
                                                            "",
                                                            icon("arrow-left"),
@@ -304,20 +304,30 @@ tagList(
                                                          fluidRow(
                                                            column(width = 12,
                                                                   uiOutput("staff_decision_explanations"))
-                                                         ), # Close fluid row
-                                                         fluidRow(div(id = "staff_ui_controllers_2",
-                                                                      style = "padding:10px 5px 10px 50px;background-color:#3E3F3A;",
-                                                                      actionButton("decrease_patient_index_2", 
-                                                                                   "",
-                                                                                   icon("arrow-left"),
-                                                                                   style="color: #DAA520; background-color:#3E3F3A"),
-                                                                      actionButton("increase_patient_index_2", 
-                                                                                   "",
-                                                                                   icon("arrow-right"),
-                                                                                   style="color: #DAA520; background-color:#3E3F3A")
-                                                                      ) # Close div 
-                                                                  ) # Close fluid row
-                                                       ), # Close well panel
+                                                         ) # Close fluid row
+                                                         
+                                                       ) # Close well panel
+                                                        #Close well panel
+                                          ) %>% shinyjs::hidden()
+                                          ) # Close Fluid row
+                                          ) # Close column
+                                 ), # Close fluidrow
+                                 fluidRow(div(id = "staff_ui_controllers_2",
+                                              style = "padding:10px 5px 10px 800px;background-color:#3E3F3A;",
+                                              actionButton("decrease_patient_index_2", 
+                                                           "",
+                                                           icon("arrow-left"),
+                                                           style="color: #DAA520; background-color:#3E3F3A"),
+                                              actionButton("increase_patient_index_2", 
+                                                           "",
+                                                           icon("arrow-right"),
+                                                           style="color: #DAA520; background-color:#3E3F3A")
+                                 ) %>% shinyjs::hidden() # Close div 
+                                 ), # Close fluid row
+                                 fluidRow(
+                                   column(width = 2),
+                                   column(width = 10,
+                                          fluidRow(div(id = "staff_ui_chat",
                                                        wellPanel(
                                                          tags$div(id = "staff_chat_area",
                                                                   HTML('<h4>Correspondence</h4>'),
@@ -331,11 +341,11 @@ tagList(
                                                                   tags$br(),
                                                                   uiOutput("staff_chat_body")
                                                          )
-                                                       ) #Close well panel
-                                          ) %>% shinyjs::hidden()
-                                          ) # Close Fluid row
+                                                         )
+                                                       ) %>% shinyjs::hidden()
+                                                   ) # Close fluid row
                                           ) # Close column
-                                 ) # Close fluidrow
+                                 )
                                  ) # Close tabpanel Garde
                          ) # Close tabset panel
       ), # Close conditional panel admin
