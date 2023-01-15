@@ -772,23 +772,24 @@ writeRendezVousQuery <- function(aPatientUid, aMode) {
   
 }
 
+writeStatusUpdate <- function(aDecision) {
+  case_when(
+    aDecision == "Rendez-vous / Suivi" ~ ", is_viewed = 1, needs_rendezvous = 1, status = 4",
+    aDecision == "Clôturer dossier" ~  ", is_closed = 1, is_viewed = 1, status = -1"
+  )
+}
+
 writeStaffDecisionQuery <- function(aStaffDecision, anExplanation, aPatientUid) {
   
   updateStaffDecision <- paste0("UPDATE patients SET staff_decision = '",
                                 aStaffDecision, "', explication = '",
                                 anExplanation, "'")
   
-  updateStatus <- ", is_viewed = 1, needs_rendezvous = 1, status = 4"
+  updateStatus <- writeStatusUpdate(aStaffDecision)
   
   whereClause <- paste0(" WHERE uid = '", aPatientUid, "';")
   
-  if(aStaffDecision == "Rendez-vous / Suivi") {
-    query <- paste0(updateStaffDecision, updateStatus, whereClause)
-  } else {
-    query <- paste0(updateStaffDecision, whereClause)
-  }
-  
-  query
+  return(paste0(updateStaffDecision, updateStatus, whereClause))
   
 }
 
@@ -857,21 +858,23 @@ renderChatMessages <- function(aListOfMessages, aUsername) {
 
 displayStatusName <- function(aStatus) {
   case_when(
+    aStatus == -1 ~ "Dossier fermé",
     aStatus == 0 ~ "En cours...",
-    aStatus == 1 ~  "À opérer",
-    aStatus == 2 ~  "Opéré(e)",
-    aStatus == 3 ~  "En attente d'info supplémentaire",
+    aStatus == 3 ~  "En attente d'examen/infos supplémentaires",
     aStatus == 4 ~ "Attend sécretariat pour un rendez-vous",
-    aStatus == 5 ~ "Rendez-vous accordé"
+    aStatus == 5 ~ "Rendez-vous accordé",
+    aStatus == 8 ~  "Opéré(e)",
+    aStatus == 9 ~  "À opérer"
   )
 }
 
 displayStatusCode <- function(aStatus) {
   case_when(
+    aStatus == "Dossier fermé" ~ -1,
     aStatus == "En cours..." ~ 0,
-    aStatus == "À opérer" ~ 1,
-    aStatus == "Opéré(e)" ~ 2,
-    aStatus == "En attente d'info supplémentaire" ~ 3,
+    aStatus == "À opérer" ~ 8,
+    aStatus == "Opéré(e)" ~ 9,
+    aStatus == "En attente d'examen/infos supplémentaires" ~ 3,
     aStatus == "Attend sécretariat pour un rendez-vous" ~ 4,
     aStatus == "Rendez-vous accordé" ~ 5
   )

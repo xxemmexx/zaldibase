@@ -1303,6 +1303,8 @@ function(input, output, session) {
     } else {
       patientIdx <<- patientIdx + 1
     }
+    
+    shinyjs::runjs("window.scrollTo(0,0)")
   })
   
   observeEvent(input$decrease_patient_index_2, {
@@ -1312,6 +1314,8 @@ function(input, output, session) {
     } else {
       patientIdx <<- patientIdx - 1
     }
+    
+    shinyjs::runjs("window.scrollTo(0,0)")
   })
   
   staff_decision_names <- reactive(paste0("staff_decision_", seq_len(patient_data_staff_count())))
@@ -1676,59 +1680,43 @@ function(input, output, session) {
   
   observeEvent(input$cloturer_staff_meeting, {
 
-    listOfDecisions <- map(staff_decision_names(), ~ input[[.x]])
-    listOfExplanations <- map(staff_explanation_names(), ~ input[[.x]])
-    
-    if(hasAnyEmptyValues(listOfDecisions) | hasAnyEmptyValues(listOfExplanations)) {
+    tryCatch({
       
-      showModal(modalDialog(
-        div(style = "padding: 30px;", class = "text-center",
-               HTML(printWarningIncompleteStaffMeeting)),
-        title = "Dossier(s) incomplet(s)",
-        easyClose = TRUE,
-        footer = modalButton("Fermer")
-      ))
+      uids <- patient_data_staff()$uid
       
-    } else {
+      for(i in 1:patient_data_staff_count()) {
+        
+        thisQuery <- writeStaffDecisionQuery(input[[staff_decision_names()[[i]]]], 
+                                             prepareString(input[[staff_explanation_names()[[i]]]]),
+                                             uids[[i]])
+        
+        dbExecute(conn, thisQuery)
+      }
       
-      tryCatch({
-        
-        uids <- patient_data_staff()$uid
-        
-        for(i in 1:patient_data_staff_count()) {
-          
-          thisQuery <- writeStaffDecisionQuery(input[[staff_decision_names()[[i]]]], 
-                                               prepareString(input[[staff_explanation_names()[[i]]]]),
-                                               uids[[i]])
-          
-          dbExecute(conn, thisQuery)
-        }
-        
-        session$userData$staff_trigger(session$userData$staff_trigger() + 1)
-        session$userData$dossiers_trigger(session$userData$dossiers_trigger() + 1)
-        
-        shinyjs::toggle("staff_ui")
-        shinyjs::toggle("staff_ui_controllers")
-        shinyjs::toggle("staff_patient_overview")
-        shinyjs::hide("staff_meeting")
-        
-        showToast("success", message = "Staff meeting terminée correctement")}, 
-        
-        error = function(error) {
-          
-          msg <- paste0("Erreur - contactez votre admin")
-          # print `msg` so that we can find it in the logs
-          print(msg)
-          # print the actual error to log it
-          print(error)
-          # show error `msg` to user.  User can then tell us about error and we can
-          # quickly identify where it cam from based on the value in `msg`
-          showToast("error", msg)
-        }
-      ) # Close try-catch
+      session$userData$staff_trigger(session$userData$staff_trigger() + 1)
+      session$userData$dossiers_trigger(session$userData$dossiers_trigger() + 1)
       
+      shinyjs::toggle("staff_ui")
+      shinyjs::toggle("staff_ui_controllers")
+      shinyjs::toggle("staff_ui_controllers_2")
+      shinyjs::toggle("staff_patient_overview")
+      shinyjs::toggle("staff_ui_chat")
+      shinyjs::hide("staff_meeting")
       
-    } # Close else block executing actions
+      showToast("success", message = "Staff meeting terminée correctement")}, 
+      
+      error = function(error) {
+        
+        msg <- paste0("Erreur - contactez votre admin")
+        # print `msg` so that we can find it in the logs
+        print(msg)
+        # print the actual error to log it
+        print(error)
+        # show error `msg` to user.  User can then tell us about error and we can
+        # quickly identify where it cam from based on the value in `msg`
+        showToast("error", msg)
+      }
+    ) # Close try-catch
 
   })
   

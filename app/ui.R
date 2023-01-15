@@ -229,8 +229,7 @@ tagList(
                                               actionButton("cloturer_staff_meeting", 
                                                            "Clôturer le staff meeting",
                                                            icon("users"),
-                                                           style="color: #FFF0F5;background-color:#d9534f;position:absolute;right:2em;") %>%
-                                                shinyjs::hidden()
+                                                           style="color: #FFF0F5;background-color:#d9534f;position:absolute;right:2em;") %>% shinyjs::hidden()
                                               ) %>% shinyjs::hidden()
                                    
                                  ),
