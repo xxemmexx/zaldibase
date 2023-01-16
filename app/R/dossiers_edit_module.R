@@ -770,10 +770,19 @@ dossiersEditModuleServer <- function(id,
                        uid <- generateIdentifier(dat$data$prenom, dat$data$nom) 
                        statement = "insert"
                        
+                       out <- conn %>%
+                         tbl("garde") %>%
+                         collect() %>%
+                         arrange(desc(garde_id)) %>%
+                         top_n(1)
+                       
+                       gardeId <- out$garde_id
+                       
                        } else {
                          
                          uid <- dat$uid
                          statement = "update"
+                         gardeId <- 0
                          
                        }
                      
@@ -849,6 +858,7 @@ dossiersEditModuleServer <- function(id,
                                              dat$data$created_by, 
                                              dat$data$modified_at, 
                                              dat$data$modified_by,
+                                             gardeId,
                                              status = dat$data$status,
                                              aStatement = statement)
                      
