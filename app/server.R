@@ -466,6 +466,7 @@ function(input, output, session) {
   })
   
   output$dossier_metadata <-renderUI({
+    req(patient_data())
     
     tryCatch({
       out <- conn %>%
@@ -497,6 +498,17 @@ function(input, output, session) {
 
     HTML(x)
     
+  })
+  
+  output$dossier_status <-renderUI({
+    req(patient_data())
+    
+    statusDisplayName <- patient_data()$status %>%
+      displayStatusName()
+    
+    x <- paste0('<b><h4 style="color:#800000;text-align:right">Status : ', statusDisplayName,'</h4></b>')
+      
+    HTML(x)
   })
   
   observeEvent(input$show_contact_details, {
@@ -792,6 +804,52 @@ function(input, output, session) {
       easyClose = TRUE,
       footer = modalButton("Fermer")
     ))
+  })
+  
+  output$archive_metadata <-renderUI({
+    req(archive_patient_data())
+    
+    tryCatch({
+      out <- conn %>%
+        tbl('garde') %>%
+        collect() %>%
+        filter(garde_id == archive_patient_data()$garde_id)
+      
+    }, 
+    error = function(err) {
+      msg <- "Could not find the garde you are looking for!"
+      # print `msg` so that we can find it in the logs
+      print(msg)
+      # print the actual error to log it
+      print(error)
+      # show error `msg` to user.  User can then tell us about error and we can
+      # quickly identify where it cam from based on the value in `msg`
+      showToast("error", msg)
+    })
+    
+    
+    garde <- deliverGardeDisplayName(out$modified_by, out$partner, user_base)
+    author <- convertUsernameToDisplayname(archive_patient_data()$created_by, user_base)
+    timestamp <- displaySimpleDateTime(archive_patient_data()$created_at)
+    
+    x <- buildMetadataBanner(author,
+                             archive_patient_data()$hopital,
+                             timestamp,
+                             garde)
+    
+    HTML(x)
+    
+  })
+  
+  output$archive_status <-renderUI({
+    req(archive_patient_data())
+    
+    statusDisplayName <- archive_patient_data()$status %>%
+      displayStatusName()
+    
+    x <- paste0('<b><h4 style="color:#800000;text-align:right">Status : ', statusDisplayName,'</h4></b>')
+    
+    HTML(x)
   })
   
   output$archive_pathologies <-renderUI({
