@@ -1562,6 +1562,52 @@ function(input, output, session) {
     
   })
   
+  output$staff_metadata <-renderUI({
+    req(patient_data_staff())
+    
+    tryCatch({
+      out <- conn %>%
+        tbl('garde') %>%
+        collect() %>%
+        filter(garde_id == patient_data_staff()$garde_id[[patientIdx]])
+      
+    }, 
+    error = function(err) {
+      msg <- "Could not find the garde you are looking for!"
+      # print `msg` so that we can find it in the logs
+      print(msg)
+      # print the actual error to log it
+      print(error)
+      # show error `msg` to user.  User can then tell us about error and we can
+      # quickly identify where it cam from based on the value in `msg`
+      showToast("error", msg)
+    })
+    
+    
+    garde <- deliverGardeDisplayName(out$modified_by, out$partner, user_base)
+    author <- convertUsernameToDisplayname(patient_data_staff()$created_by[[patientIdx]], user_base)
+    timestamp <- displaySimpleDateTime(patient_data_staff()$created_at[[patientIdx]])
+    
+    x <- buildMetadataBanner(author,
+                             patient_data_staff()$hopital[[patientIdx]],
+                             timestamp,
+                             garde)
+    
+    HTML(x)
+    
+  })
+  
+  output$staff_status <-renderUI({
+    req(patient_data_staff())
+    
+    statusDisplayName <- patient_data_staff()$status[[patientIdx]] %>%
+      displayStatusName()
+    
+    x <- paste0('<b><h4 style="color:#800000;text-align:right">Status : ', statusDisplayName,'</h4></b>')
+    
+    HTML(x)
+  })
+  
   output$staff_pre_def_decisions <-renderUI({
     
     x <- buildDecisionBanner(patient_data_staff()$pre_decision[[patientIdx]], patient_data_staff()$def_decision[[patientIdx]])

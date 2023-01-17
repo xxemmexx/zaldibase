@@ -259,6 +259,8 @@ tagList(
                                                            h3(textOutput('staff_patient_display_name')),
                                                            h4(textOutput('staff_patient_age')),
                                                            uiOutput('staff_info_icons'),
+                                                           uiOutput('staff_metadata'),
+                                                           uiOutput('staff_status'),
                                                            uiOutput('staff_pre_def_decisions'),
                                                            tags$br(),
                                                            tags$br(),
