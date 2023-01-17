@@ -1452,7 +1452,7 @@ function(input, output, session) {
     patient_data_staff() %>%
       transmute(displayName = writePatientDisplayName(prenom, nom),
                 dec = decisionIsValid(checkVectorDecisions(), patient_data_staff_count()),
-                expl = explanationIsValid(checkVectorDecisions(), checkVectorExplanations()),
+                expl = explanationIsValid(checkVectorDecisions(), checkVectorExplanations(), patient_data_staff()$status),
                 valid = dossierIsReviewed(dec, expl),
                 tickedName = tickName(as.logical(valid), displayName))
     

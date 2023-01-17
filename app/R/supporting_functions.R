@@ -205,8 +205,8 @@ decisionIsValid <- function(aDecision, count) {
   )
 }
 
-explanationIsValid <- function(aDecision, anExplanation) {
-  if_else(aDecision == 'Clôturer dossier', 
+explanationIsValid <- function(aDecision, anExplanation, aStatus) {
+  if_else(aDecision == 'Clôturer dossier' & aStatus == 9, 
           1,
           case_when(
             str_trim(anExplanation) == "" ~ 0,
