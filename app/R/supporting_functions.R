@@ -398,6 +398,8 @@ deliverStandardOrCustom <- function(aStandard, anOtherValue, include) {
     
     if(aStandard == "Autre...") {
       return(prepareString(anOtherValue))
+    } else {
+      return(prepareString(aStandard))
     }
     
     #print(paste0('Exiting with ', aStandard))
