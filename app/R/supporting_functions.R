@@ -25,6 +25,18 @@ writePatientDisplayName <- function(aPrenom, aNom) {
   
 }
 
+isInvalidDate <- function(aDate) {
+  if(length(aDate) < 1) {
+    return(TRUE)
+  }
+  
+  if(ymd(aDate) < today()) {
+    return(TRUE)
+  }
+  
+  return(FALSE)
+}
+
 deliverGardeDisplayName <- function(aMedecin1, aMedecin2, aUserTibble) {
   name1 <- convertUsernameToDisplayname(aMedecin1, aUserTibble)
   name2 <- convertUsernameToDisplayname(aMedecin2, aUserTibble)
