@@ -57,7 +57,15 @@ tagList(
                                                   DTOutput('dossiers_table') %>% withSpinner())
                                   ), # Close fluid row
                                   tags$script(src = "dossiers_table_module.js"),
-                                  tags$script(paste0("dossiers_table_module_js('')"))),
+                                  tags$script(paste0("dossiers_table_module_js('')")),
+                                  tags$hr(),
+                                  tags$div(id = "notifications_container",
+                                           HTML('<h5 style="color:#FF6347"><b>Vous avez de nouveaux messages dans les dossiers des patients ci-dessous : </b></h5>'),
+                                           fluidRow(column(width = 3,
+                                                           DTOutput("notifications_table")),
+                                                    column(width = 10)
+                                           ))
+                                  ), # Close tab panel
                          tabPanel("Fiche patient", icon = icon("eye"), value = "fiche",
                                   tags$br(),
                                   tags$br(),

@@ -157,6 +157,67 @@ function(input, output, session) {
   })
   
   
+  # Read in Mes Dossiers table from the database
+  notifications <- reactive({
+    req(credentials()$user_auth)
+    
+    dbTimer()
+    
+    out <- NULL
+    tryCatch({
+      out <- conn %>%
+        tbl('pending') %>%
+        collect() %>%
+        distinct(uid, .keep_all = TRUE)
+      
+    }, 
+    error = function(err) {
+      msg <- "Could not find pending notifications!"
+      # print `msg` so that we can find it in the logs
+      print(msg)
+      # print the actual error to log it
+      print(error)
+      # show error `msg` to user.  User can then tell us about error and we can
+      # quickly identify where it cam from based on the value in `msg`
+      showToast("error", msg)
+    })
+    
+    out 
+    
+    #print(out)
+    
+  })
+  
+  observe({
+    if(nrow(notifications()) < 1) {
+      shinyjs::hide("notifications_container")
+    } else {
+      shinyjs::show("notifications_container")
+    }
+  })
+  
+  
+  output$notifications_table <- renderDT({
+    req(credentials()$user_auth)
+    
+    notifications() %>%
+      select(name) %>%
+      datatable(rownames = FALSE,
+                colnames = c(''),
+                selection = "none",
+                class = "compact row-border nowrap",
+                escape = -1,  # Escape the HTML in all except 1st column (which has the buttons)
+                options = list(scrollX = TRUE,
+                               dom = 't',
+                               columnDefs = list(list(targets = 0, orderable = FALSE),
+                                                 list(className = 'dt-center', targets = 0)),
+                               language = list(emptyTable = "Vous n'avez pas de notifications"),
+                               drawCallback = JS("function(settings) {
+                                              // removes any lingering tooltips
+                                              $('.tooltip').remove()}"))
+      ) 
+  })
+  
   # Fetch data based on row -------- ------------------------------------------
   
   observe({
@@ -2473,8 +2534,11 @@ function(input, output, session) {
       
       messages_db$messages <- fetchMessages(conn, patientUID())
       
-      # clear the message text
       shiny::updateTextInput(inputId = "chat_message", value = "")
+      
+      deleteNotificationsQuery <- writeDeleteNotificationsQuery(patientUID())
+      
+      dbExecute(conn, deleteNotificationsQuery)
     }
   })
   
@@ -2513,8 +2577,13 @@ function(input, output, session) {
       
       messages_db$messages <- fetchMessages(conn, extPatientUID())
       
-      # clear the message text
       shiny::updateTextInput(inputId = "chat_message_externes", value = "")
+      
+      notificationQuery <- writeNotificationQuery(extPatientUID(),
+                                                  writePatientDisplayName(externes_patient_data()$prenom,
+                                                                          externes_patient_data()$nom))
+
+      dbExecute(conn, notificationQuery)
     }
   })
   
@@ -2553,8 +2622,11 @@ function(input, output, session) {
       
       messages_db$messages <- fetchMessages(conn, archivePatientUID())
       
-      # clear the message text
       shiny::updateTextInput(inputId = "chat_message_archive", value = "")
+      
+      deleteNotificationsQuery <- writeDeleteNotificationsQuery(archivePatientUID())
+      
+      dbExecute(conn, deleteNotificationsQuery)
     }
   })
   
@@ -2576,45 +2648,6 @@ function(input, output, session) {
     }    
   })
   
-  observeEvent(input$chat_send_externes, {
-    
-    # only do anything if there's a message
-    if (!(input$chat_message_externes == "" | is.null(input$chat_message_externes))) {
-      
-      messageTimestamp <- Sys.time() %>%
-        as.character()
-      
-      chatQuery <- writeChatQuery(messageTimestamp,
-                                  extPatientUID(),
-                                  session$userData$username(),
-                                  prepareString(input$chat_message_externes))
-      
-      dbExecute(conn, chatQuery)
-      
-      messages_db$messages <- fetchMessages(conn, extPatientUID())
-      
-      # clear the message text
-      shiny::updateTextInput(inputId = "chat_message_externes", value = "")
-    }
-  })
-  
-  output$chat_body_externes <- renderUI({
-    req(extPatientUID())
-    
-    messages <- messages_db$messages %>%
-      filter(uid == extPatientUID(),
-             !(str_trim(message) == ""))
-    
-    renderChatMessages(messages, session$userData$username())
-  })
-  
-  observe({
-    if(identical(extPatientUID(), character(0))) {
-      shinyjs::hide("chat_area_externes")
-    } else {
-      shinyjs::show("chat_area_externes")
-    }    
-  })
   
   staff_chat_names <- reactive(paste0("chat_message_", seq_len(patient_data_staff_count())))
   
@@ -2650,8 +2683,11 @@ function(input, output, session) {
       
       messages_db$messages <- fetchMessages(conn, patient_data_staff()$uid[[patientIdx]])
       
-      # clear the message text
       shiny::updateTextInput(inputId = staff_chat_names()[[patientIdx]], value = "")
+      
+      deleteNotificationsQuery <- writeDeleteNotificationsQuery(patient_data_staff()$uid[[patientIdx]])
+      
+      dbExecute(conn, deleteNotificationsQuery)
     }
   })
   

@@ -842,6 +842,16 @@ writeChatQuery <- function(aTimestamp, aPatientUID, aUsername, aMessage) {
          aMessage, "');")
 }
 
+writeNotificationQuery <- function(aPatientUID, aName) {
+  
+  paste0("INSERT INTO pending (uid, name) VALUES 
+        ('", aPatientUID, "', '", aName, "');")
+}
+
+writeDeleteNotificationsQuery <- function(aPatientUID) {
+  paste0("DELETE FROM pending WHERE uid = '", aPatientUID, "';")
+}
+
 fetchMessages <- function(aConnection, aPatientUID = NULL){
   
   if(is.null(aPatientUID)) {
