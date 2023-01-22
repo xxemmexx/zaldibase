@@ -462,15 +462,21 @@ function(input, output, session) {
   
   output$patient_display_name <- renderText({
     
-    paste0(patient_data()$prenom, ' ', str_to_upper(patient_data()$nom, locale = 'fr'))
-    
+    if(patient_data()$prenom == '' | patient_data()$nom == '') {
+      return("Patient inconnu")
+    } else {
+      return(writePatientDisplayName(patient_data()$prenom, patient_data()$nom))
+    }
   })
   
   output$patient_age <-renderText({
     
-    paste0("âgé(e) de ", deliverAge(patient_data()$date_naissance,
-                                    patient_data()$created_at), " ans")
-    
+    if(patient_data()$date_naissance == '') {
+      return("Âge inconnu")
+    } else {
+      return(paste0("âgé(e) de ", deliverAge(patient_data()$date_naissance,
+                                      patient_data()$created_at), " ans"))
+    }
   })
   
   
@@ -493,11 +499,12 @@ function(input, output, session) {
                   
     } 
     
-    if(deliverAge(patient_data()$date_naissance, patient_data()$created_at) < 18) {
-      iconPediatrician <- '<img src="child_icon.jpeg" alt="child" height="30"/>'
-      textPediatrician <- "<h4><b>Pédiatrie</b></h4>"
-      
-    }
+    if(!(patient_data()$date_naissance == '')) {
+      if(deliverAge(patient_data()$date_naissance, patient_data()$created_at) < 18) {
+        iconPediatrician <- '<img src="child_icon.jpeg" alt="child" height="30"/>'
+        textPediatrician <- "<h4><b>Pédiatrie</b></h4>"
+      }
+    } 
     
     x <- paste0('<table style="width:100%">
       <tr>
@@ -574,7 +581,7 @@ function(input, output, session) {
   
   observeEvent(input$show_contact_details, {
     showModal(modalDialog(
-      title = paste0(patient_data()$prenom, ' ', str_to_upper(patient_data()$nom, locale = 'fr')),
+      title = writePatientDisplayName(patient_data()$prenom, patient_data()$nom),
       buildContactCard(patient_data()$phone_number_patient,
                        patient_data()$contact_person, 
                        patient_data()$contact_phone, 
@@ -840,7 +847,7 @@ function(input, output, session) {
   
   output$archive_patient_display_name <- renderText({
     
-    paste0(archive_patient_data()$prenom, ' ', str_to_upper(archive_patient_data()$nom, locale = 'fr'))
+    writePatientDisplayName(archive_patient_data()$prenom, archive_patient_data()$nom)
     
   })
   
@@ -853,7 +860,7 @@ function(input, output, session) {
   
   observeEvent(input$archive_show_contact_details, {
     showModal(modalDialog(
-      title = paste0(archive_patient_data()$prenom, ' ', str_to_upper(archive_patient_data()$nom, locale = 'fr')),
+      title = writePatientDisplayName(archive_patient_data()$prenom, archive_patient_data()$nom),
       buildContactCard(archive_patient_data()$phone_number_patient,
                        archive_patient_data()$contact_person, 
                        archive_patient_data()$contact_phone, 
@@ -965,10 +972,11 @@ function(input, output, session) {
       
     } 
     
-    if(deliverAge(archive_patient_data()$date_naissance, archive_patient_data()$created_at) < 18) {
-      iconPediatrician <- '<img src="child_icon.jpeg" alt="child" height="30"/>'
-      textPediatrician <- "<h4><b>Pédiatrie</b></h4>"
-      
+    if(!(archive_patient_data()$date_naissance == '')) {
+      if(deliverAge(archive_patient_data()$date_naissance, archive_patient_data()$created_at) < 18) {
+        iconPediatrician <- '<img src="child_icon.jpeg" alt="child" height="30"/>'
+        textPediatrician <- "<h4><b>Pédiatrie</b></h4>"
+      }
     }
     
     x <- paste0('<table style="width:100%">
@@ -1597,11 +1605,12 @@ function(input, output, session) {
       
     } 
     
-    if(deliverAge(patient_data_staff()$date_naissance[[patientIdx]], 
-                  patient_data_staff()$created_at[[patientIdx]]) < 18) {
-      iconPediatrician <- '<img src="child_icon.jpeg" alt="child" height="30"/>'
-      textPediatrician <- "<h4><b>Pédiatrie</b></h4>"
-      
+    if(!(patient_data_staff()$date_naissance[[patientIdx]] == '')) {
+      if(deliverAge(patient_data_staff()$date_naissance[[patientIdx]], 
+                    patient_data_staff()$created_at[[patientIdx]]) < 18) {
+        iconPediatrician <- '<img src="child_icon.jpeg" alt="child" height="30"/>'
+        textPediatrician <- "<h4><b>Pédiatrie</b></h4>"
+      }
     }
     
     x <- paste0('<table style="width:100%">
@@ -2268,7 +2277,7 @@ function(input, output, session) {
   
   output$patient_display_name_ext <- renderText({
     
-    paste0(externes_patient_data()$prenom, ' ', str_to_upper(externes_patient_data()$nom, locale = 'fr'))
+    writePatientDisplayName(externes_patient_data()$prenom, externes_patient_data()$nom)
     
   })
   

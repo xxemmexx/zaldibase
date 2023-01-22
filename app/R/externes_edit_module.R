@@ -73,8 +73,9 @@ externesEditModuleServer <- function(id,
                                                                 value = ifelse(is.null(hold), "", hold$prenom))
                                       ), #close column
                                       column(width = 6,
-                                             tags$br(),
-                                             tags$br(),
+                                             checkboxInput(ns('patient_inconnu'),
+                                                           HTML('<b>Patient inconnu</b>'),
+                                                           value = ifelse(is.null(hold), FALSE, hold$patient_inconnu)),
                                              tags$br(),
                                              dateInput(ns("date_naissance"),
                                                        'Date de naissance (AAAA-MM-JJ)',
@@ -274,49 +275,117 @@ externesEditModuleServer <- function(id,
                        }
                      })
                      
-                     observeEvent(input$nom, {
-                       if (input$nom == "") {
-                         shinyFeedback::showFeedbackDanger("nom",
-                                                           text = "Le nom du patient est obligatoire!")
-                         shinyjs::disable('submit')
-                       } else {
-                         shinyFeedback::hideFeedback("nom")
-                         formFields$nom = 1
+                     observeEvent(
+                       eventExpr = {
+                         input$nom
+                         input$patient_inconnu
+                       }, 
+                       handlerExpr = {
+                         if (input$nom == "" & !input$patient_inconnu) {
+                           shinyFeedback::showFeedbackDanger("nom",
+                                                             text = "Le nom du patient est obligatoire!")
+                           shinyjs::disable('submit')
+                         } else {
+                           shinyFeedback::hideFeedback("nom")
+                           formFields$nom = 1
+                         }
                        }
-                     })
+                     )
                      
-                     observeEvent(input$prenom, {
-                       if (input$prenom == "") {
-                         shinyFeedback::showFeedbackDanger("prenom",
-                                                           text = "Le prénom du patient est obligatoire!")
-                         shinyjs::disable('submit')
-                       } else {
-                         shinyFeedback::hideFeedback("prenom")
-                         formFields$prenom = 1
-                       }
-                     })
+                     # observeEvent(input$nom, {
+                     #   if (input$nom == "") {
+                     #     shinyFeedback::showFeedbackDanger("nom",
+                     #                                       text = "Le nom du patient est obligatoire!")
+                     #     shinyjs::disable('submit')
+                     #   } else {
+                     #     shinyFeedback::hideFeedback("nom")
+                     #     formFields$nom = 1
+                     #   }
+                     # })
                      
-                     observeEvent(input$date_naissance, {
-                       if (length(input$date_naissance) < 1) {
-                         shinyFeedback::showFeedbackDanger("date_naissance",
-                                                           text = "Le date de naissance du patient est obligatoire!")
-                         shinyjs::disable('submit')
-                       } else {
-                         shinyFeedback::hideFeedback("date_naissance")
-                         formFields$date_naissance = 1
+                     observeEvent(
+                       eventExpr = {
+                         input$prenom
+                         input$patient_inconnu
+                       }, 
+                       handlerExpr = {
+                         if (input$prenom == "" & !input$patient_inconnu) {
+                           shinyFeedback::showFeedbackDanger("prenom",
+                                                             text = "Le prénom du patient est obligatoire!")
+                           shinyjs::disable('submit')
+                         } else {
+                           shinyFeedback::hideFeedback("prenom")
+                           formFields$prenom = 1
+                         }
                        }
-                     })
+                     )
                      
-                     observeEvent(input$phone_number_patient, {
-                       if (str_trim(input$phone_number_patient) == "") {
-                         shinyFeedback::showFeedbackDanger("phone_number_patient",
-                                                           text = "Le numéro de téléphone est obligatoire!")
-                         shinyjs::disable('submit')
-                       } else {
-                         shinyFeedback::hideFeedback("phone_number_patient")
-                         formFields$phone_number_patient = 1
+                     # observeEvent(input$prenom, {
+                     #   if (input$prenom == "") {
+                     #     shinyFeedback::showFeedbackDanger("prenom",
+                     #                                       text = "Le prénom du patient est obligatoire!")
+                     #     shinyjs::disable('submit')
+                     #   } else {
+                     #     shinyFeedback::hideFeedback("prenom")
+                     #     formFields$prenom = 1
+                     #   }
+                     # })
+                     
+                     observeEvent(
+                       eventExpr = {
+                         input$date_naissance
+                         input$patient_inconnu
+                       }, 
+                       handlerExpr = {
+                         if (length(input$date_naissance) < 1 & !input$patient_inconnu) {
+                           shinyFeedback::showFeedbackDanger("date_naissance",
+                                                             text = "Le date de naissance du patient est obligatoire!")
+                           shinyjs::disable('submit')
+                         } else {
+                           shinyFeedback::hideFeedback("date_naissance")
+                           formFields$date_naissance = 1
+                         }
                        }
-                     })
+                     )
+                     
+                     # observeEvent(input$date_naissance, {
+                     #   if (length(input$date_naissance) < 1) {
+                     #     shinyFeedback::showFeedbackDanger("date_naissance",
+                     #                                       text = "Le date de naissance du patient est obligatoire!")
+                     #     shinyjs::disable('submit')
+                     #   } else {
+                     #     shinyFeedback::hideFeedback("date_naissance")
+                     #     formFields$date_naissance = 1
+                     #   }
+                     # })
+                     
+                     observeEvent(
+                       eventExpr = {
+                         input$phone_number_patient
+                         input$patient_inconnu
+                       }, 
+                       handlerExpr = {
+                         if (str_trim(input$phone_number_patient) == "" & !input$patient_inconnu) {
+                           shinyFeedback::showFeedbackDanger("phone_number_patient",
+                                                             text = "Le numéro de téléphone est obligatoire!")
+                           shinyjs::disable('submit')
+                         } else {
+                           shinyFeedback::hideFeedback("phone_number_patient")
+                           formFields$phone_number_patient = 1
+                         }
+                       }
+                     )
+                     
+                     # observeEvent(input$phone_number_patient, {
+                     #   if (str_trim(input$phone_number_patient) == "") {
+                     #     shinyFeedback::showFeedbackDanger("phone_number_patient",
+                     #                                       text = "Le numéro de téléphone est obligatoire!")
+                     #     shinyjs::disable('submit')
+                     #   } else {
+                     #     shinyFeedback::hideFeedback("phone_number_patient")
+                     #     formFields$phone_number_patient = 1
+                     #   }
+                     # })
                      
                      observeEvent(
                        eventExpr = {
@@ -470,7 +539,8 @@ externesEditModuleServer <- function(id,
                    time_now <- Sys.time() %>% ymd_hms()
                    
                    out <- list(uid = deliverUID(hold),
-                               data = list("nom" = prepareString(input$nom),
+                               data = list("patient_inconnu" = ifelse(input$patient_inconnu, 1, 0),
+                                           "nom" = prepareString(input$nom),
                                            "prenom" = prepareString(input$prenom),
                                            "sexe" = input$sex,
                                            "date_naissance" = writeISODate(input$date_naissance),
@@ -574,6 +644,7 @@ externesEditModuleServer <- function(id,
                      }
                      
                      query <- writeExterneQuery(uid, 
+                                                dat$data$patient_inconnu,
                                                 dat$data$nom, 
                                                 dat$data$prenom,
                                                 dat$data$sexe,
