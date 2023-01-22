@@ -37,10 +37,8 @@ externesEditModuleServer <- function(id,
                        modalDialog(
                          div(style = "padding: 30px;",
                              fluidRow(style = "background-color:#DBDFE3;",
-                                      
-                                      
                                       HTML("<h4 style=text-align:center;><b>Origine de l'appel</b></h4>"),
-                                      column(width = 6,
+                                      column(width = 6, align = "center",
                                              textInput(ns('contact_person'),
                                                        "Personne de contact",
                                                        value = ifelse(is.null(hold), "", hold$contact_person)),
@@ -49,7 +47,7 @@ externesEditModuleServer <- function(id,
                                                          choices = getAffiliation(session$userData$username(), user_base))
                                              
                                       ),
-                                      column(width = 6,
+                                      column(width = 6, align = "center",
                                              textInput(ns('contact_phone'),
                                                        "Numéro de téléphone du contact",
                                                        value = ifelse(is.null(hold), "", hold$contact_phone)),
@@ -352,18 +350,7 @@ externesEditModuleServer <- function(id,
                          }
                        }
                      )
-                     
-                     # observeEvent(input$date_naissance, {
-                     #   if (length(input$date_naissance) < 1) {
-                     #     shinyFeedback::showFeedbackDanger("date_naissance",
-                     #                                       text = "Le date de naissance du patient est obligatoire!")
-                     #     shinyjs::disable('submit')
-                     #   } else {
-                     #     shinyFeedback::hideFeedback("date_naissance")
-                     #     formFields$date_naissance = 1
-                     #   }
-                     # })
-                     
+                    
                      observeEvent(
                        eventExpr = {
                          input$phone_number_patient
@@ -381,17 +368,6 @@ externesEditModuleServer <- function(id,
                        }
                      )
                      
-                     # observeEvent(input$phone_number_patient, {
-                     #   if (str_trim(input$phone_number_patient) == "") {
-                     #     shinyFeedback::showFeedbackDanger("phone_number_patient",
-                     #                                       text = "Le numéro de téléphone est obligatoire!")
-                     #     shinyjs::disable('submit')
-                     #   } else {
-                     #     shinyFeedback::hideFeedback("phone_number_patient")
-                     #     formFields$phone_number_patient = 1
-                     #   }
-                     # })
-                     
                      observeEvent(
                        eventExpr = {
                          input$traitement_1
@@ -403,7 +379,6 @@ externesEditModuleServer <- function(id,
                                                              text = "Fournissez une date!")
                          } else {
                            shinyFeedback::hideFeedback("date_derniere_prise_1")
-                           
                          }
                        }
                      )
@@ -550,6 +525,7 @@ externesEditModuleServer <- function(id,
                                            "sexe" = input$sex,
                                            "date_naissance" = writeISODate(input$date_naissance),
                                            "phone_number_patient" = input$phone_number_patient,
+                                           "email_patient" = input$email_patient,
                                            "pathologie_1" = deliverStandardOrCustom(input$pathologie_1, input$description_pathologie_1, 1),
                                            "pathologie_2" = deliverStandardOrCustom(input$pathologie_2, input$description_pathologie_2, input$add_pathologie_2),
                                            "pathologie_3" = deliverStandardOrCustom(input$pathologie_3, input$description_pathologie_3, input$add_pathologie_3),
@@ -655,6 +631,7 @@ externesEditModuleServer <- function(id,
                                                 dat$data$sexe,
                                                 dat$data$date_naissance, 
                                                 dat$data$phone_number_patient,
+                                                dat$data$email_patient,
                                                 dat$data$pathologie_1,
                                                 dat$data$pathologie_2,
                                                 dat$data$pathologie_3,
