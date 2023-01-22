@@ -59,6 +59,11 @@ externesEditModuleServer <- function(id,
                              ), # Close fluidrow
                              tags$br(),
                              fluidRow(HTML("<h4 style=text-align:center;><b>Données du patient</b></h4>"),
+                                      tags$br(),
+                                      fluidRow(column = 12, align = "center",
+                                               checkboxInput(ns('patient_inconnu'),
+                                                             HTML('<b>Patient inconnu</b>'),
+                                                             value = ifelse(is.null(hold), FALSE, hold$patient_inconnu))),
                                       fluidRow(column(width = 6, align="center",
                                                       radioButtons(ns('sex'), 
                                                                    HTML('<b>Sexe</b>'), 
@@ -72,18 +77,18 @@ externesEditModuleServer <- function(id,
                                                                 'Prénom',
                                                                 value = ifelse(is.null(hold), "", hold$prenom))
                                       ), #close column
-                                      column(width = 6,
-                                             checkboxInput(ns('patient_inconnu'),
-                                                           HTML('<b>Patient inconnu</b>'),
-                                                           value = ifelse(is.null(hold), FALSE, hold$patient_inconnu)),
-                                             tags$br(),
+                                      column(width = 6, align="center",
                                              dateInput(ns("date_naissance"),
                                                        'Date de naissance (AAAA-MM-JJ)',
                                                        value = ifelse(is.null(hold), "", hold$date_naissance),
                                                        language = "fr"),
                                              textInput(ns("phone_number_patient"),
                                                        'Numéro de téléphone du patient',
-                                                       value = ifelse(is.null(hold), "", hold$phone_number_patient))
+                                                       value = ifelse(is.null(hold), "", hold$phone_number_patient)),
+                                             textInput(ns("email_patient"),
+                                                       'Email du patient',
+                                                       placeholder = "(facultatif)",
+                                                       value = ifelse(is.null(hold), "", hold$email_patient))
                                       ) # close column
                                       ) # Close fluidRow
                              ), # Close fluid row
@@ -150,7 +155,7 @@ externesEditModuleServer <- function(id,
                              HTML("<h5 style=text-align:left;font-family:Garamond><b>FLUIDIFIANTS</b></h5>"),
                              fluidRow(
                                column(width = 12, 
-                                      HTML('<b>Le patient, prend-il des fluidifiants adressant des troubles de coagulation?</b>'),
+                                      HTML('<b>Le patient, prend-il des fluidifiants ou a-t-il des troubles de coagulation?</b>'),
                                       radioButtons(ns('add_coagulation'), 
                                                    "", 
                                                    choices = c("Non" = 0, "Oui" = 1),
