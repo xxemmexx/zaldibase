@@ -119,18 +119,29 @@ buildMetadataBanner <- function(aCreator, anOrigin, aTimestamp, aGarde) {
   
 }
 
-buildContactCard <- function(aPatientPhone, aContactPerson, aContactPhone, 
-                             aContactEmail, aHospital) {
+buildContactCard <- function(aPatientPhone, aPatientEmail, aContactPerson, 
+                             aContactPhone, aContactEmail, aHospital) {
   
-  paste0('<div>
-         <h4><b>Données de la personne de contact</b></h4><br>
-         <b>Nom: </b> ', aContactPerson, '<br>
-         <b>Numéro de téléphone: </b> ', aContactPhone, '<br>
-         <b>Email: </b>', aContactEmail, '<br>
-         <b>Centre hospitalier d`origine: </b> ', aHospital, '<br><br>
-         <h4><b>Données du patient</b></h4><br>
-         <b>Numéro de téléphone: </b> ', aPatientPhone, '<br>
-         </div>')
+  openingDivTag <- '<div>'
+  closingDivTag <- '</div>'
+  patientEmail <- ''
+  
+  if(!(aPatientEmail == '')) {
+    patientEmail <- paste0('<b>Email: </b>', aPatientEmail, '<br>')
+  }
+  
+  cardBody <- paste0('<h4><b>Données de la personne de contact</b></h4><br>
+  <b>Nom: </b> ', aContactPerson, '<br>
+  <b>Numéro de téléphone: </b> ', aContactPhone, '<br>
+  <b>Email: </b>', aContactEmail, '<br>
+  <b>Centre hospitalier d`origine: </b> ', aHospital, '<br><br>
+  <h4><b>Données du patient</b></h4><br>
+  <b>Numéro de téléphone: </b> ', aPatientPhone, '<br>')
+  
+  return(paste0(openingDivTag,
+                cardBody,
+                patientEmail,
+                closingDivTag))
 }
 
 convertUsernameToDisplayname <- function(aUsername, aUserTibble) {

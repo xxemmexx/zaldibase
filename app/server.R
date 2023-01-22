@@ -583,6 +583,7 @@ function(input, output, session) {
     showModal(modalDialog(
       title = writePatientDisplayName(patient_data()$prenom, patient_data()$nom),
       buildContactCard(patient_data()$phone_number_patient,
+                       patient_data()$email_patient,
                        patient_data()$contact_person, 
                        patient_data()$contact_phone, 
                        patient_data()$contact_email,
@@ -862,13 +863,11 @@ function(input, output, session) {
     showModal(modalDialog(
       title = writePatientDisplayName(archive_patient_data()$prenom, archive_patient_data()$nom),
       buildContactCard(archive_patient_data()$phone_number_patient,
+                       archive_patient_data()$email_patient,
                        archive_patient_data()$contact_person, 
                        archive_patient_data()$contact_phone, 
                        archive_patient_data()$contact_email,
-                       archive_patient_data()$hopital, 
-                       archive_patient_data()$created_at, 
-                       archive_patient_data()$created_by, 
-                       user_base) %>% HTML(),
+                       archive_patient_data()$hopital) %>% HTML(),
       easyClose = TRUE,
       footer = modalButton("Fermer")
     ))
