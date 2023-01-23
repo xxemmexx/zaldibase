@@ -1965,13 +1965,16 @@ function(input, output, session) {
   })
   
   rendezvous_table_prep <- reactiveVal(NULL)
+  rendezvous_table_proxy <- DT::dataTableProxy('rendezvous_table')
+  rendezvous_ok_table_prep <- reactiveVal(NULL)
+  rendezvous_ok_table_proxy <- DT::dataTableProxy('rendezvous_ok_table')
   
   observeEvent(rendezvous(), {
     
-    out <- rendezvous() %>%
+    needsRendezVousTibb <- rendezvous() %>%
       filter(needs_rendezvous == 1)
     
-    ids <- out$uid
+    ids <- needsRendezVousTibb$uid
     
     actions <- purrr::map_chr(ids, function(id_) {
       paste0('<div class="btn-group" style="width: 75px;" role="group" aria-label="Basic example">
@@ -1979,25 +1982,44 @@ function(input, output, session) {
                             </div>')
     })
     
-    # Select relevant columns for the user
-    out <- out %>%
+    needsRendezVousTibb <- needsRendezVousTibb %>%
       transmute(nom, prenom, date_naissance, displayStatusName(status))
       
-    
-    # Set the Action Buttons row to the first column of the `dossiers` table
-    out <- cbind(tibble(" " = actions),
-                 out)
+    needsRendezVousTibb <- cbind(tibble(" " = actions), needsRendezVousTibb)
     
     if (is.null(rendezvous_table_prep())) {
-      # loading data into the table for the first time, so we render the entire table
-      # rather than using a DT proxy
-      rendezvous_table_prep(out)
+      
+      rendezvous_table_prep(needsRendezVousTibb)
+    } else {
+      replaceData(rendezvous_table_proxy,
+                  needsRendezVousTibb,
+                  resetPaging = FALSE,
+                  rownames = FALSE)
+    }
+    
+    okRendezVousTibb <- rendezvous() %>%
+      filter(has_rendezvous == 1)
+    
+    ids <- okRendezVousTibb$uid
+    
+    actions2 <- purrr::map_chr(ids, function(id_) {
+      paste0('<div class="btn-group" style="width: 75px;" role="group" aria-label="Basic example">
+                     <button class="btn btn-primary btn-sm edit_btn" data-toggle="tooltip" data-placement="top" title="Planifier" id = ', id_, ' style="margin: 0; background:teal"><i class="fa fa-calendar"></i></button>
+                            </div>')
+    })
+    
+    okRendezVousTibb <- okRendezVousTibb %>%
+      transmute(nom, prenom, date_naissance, displayStatusName(status))
+    
+    okRendezVousTibb <- cbind(tibble(" " = actions2), okRendezVousTibb)
+    
+    if (is.null(rendezvous_ok_table_prep())) {
+
+      rendezvous_ok_table_prep(okRendezVousTibb)
       
     } else {
-      # table has already rendered, so use DT proxy to update the data in the
-      # table without reendering the entire table
-      replaceData(rendezvous_table_proxy,
-                  out,
+      replaceData(rendezvous_ok_table_proxy,
+                  okRendezVousTibb,
                   resetPaging = FALSE,
                   rownames = FALSE)
     }
@@ -2029,46 +2051,6 @@ function(input, output, session) {
     
   })
   
-  rendezvous_table_proxy <- DT::dataTableProxy('rendezvous_table')
-  
-  rendezvous_ok_table_prep <- reactiveVal(NULL)
-  
-  observeEvent(rendezvous(), {
-    
-    out <- rendezvous() %>%
-      filter(has_rendezvous == 1)
-    
-    ids <- out$uid
-    
-    actions <- purrr::map_chr(ids, function(id_) {
-      paste0('<div class="btn-group" style="width: 75px;" role="group" aria-label="Basic example">
-                     <button class="btn btn-primary btn-sm edit_btn" data-toggle="tooltip" data-placement="top" title="Planifier" id = ', id_, ' style="margin: 0; background:teal"><i class="fa fa-calendar"></i></button>
-                            </div>')
-    })
-    
-    # Select relevant columns for the user
-    out <- out %>%
-      transmute(nom, prenom, date_naissance, displayStatusName(status))
-    
-    
-    # Set the Action Buttons row to the first column of the `dossiers` table
-    out <- cbind(tibble(" " = actions),
-                 out)
-    
-    if (is.null(rendezvous_ok_table_prep())) {
-      # loading data into the table for the first time, so we render the entire table
-      # rather than using a DT proxy
-      rendezvous_ok_table_prep(out)
-      
-    } else {
-      # table has already rendered, so use DT proxy to update the data in the
-      # table without reendering the entire table
-      replaceData(rendezvous_ok_table_proxy,
-                  out,
-                  resetPaging = FALSE,
-                  rownames = FALSE)
-    }
-  })
   
   output$rendezvous_ok_table <- renderDT({
     req(credentials()$user_auth, rendezvous_ok_table_prep())
@@ -2095,8 +2077,6 @@ function(input, output, session) {
       ) 
     
   })
-  
-  rendezvous_ok_table_proxy <- DT::dataTableProxy('rendezvous_ok_table')
   
   rendezvous_patient <- eventReactive(input$rendezvous_patient_id, {
     

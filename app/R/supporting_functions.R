@@ -1262,6 +1262,35 @@ L'équipe du Neurochirurgical")
   )
 }
 
+generateRendezvousEmailForPatient <- function(aRendezvousDate,
+                                              aRendezvousTime,
+                                              aRendezvousDoctor,
+                                              anExplanation) {
+  
+  img_string <- add_image(file = logoPath, width = 90, align = 'center')
+  
+  thisBody <- paste0(" {img_string} <br>
+  
+  Bonjour,
+
+Voici un rappel de votre rendez-vous chez le Centre Hospitalier de Grenoble.<br><br>
+
+<b>Rendez-vous </b><br>",
+"Le ", sd(ymd(aRendezvousDate)), " à ", aRendezvousTime, " hrs. chez ", aRendezvousDoctor, "<br><br>
+<b>Note supplémentaire</b><br>
+<em>", anExplanation,"</em><br><br><br>
+
+
+Cordialement, <br><br>
+L'équipe du Neurochirurgical")
+  
+  
+  compose_email(
+    body = md(glue::glue(thisBody)),
+    footer = md(glue::glue("Ceci est mon corps donné pour vous, faites ceci en souvenir de moi"))
+  )
+}
+
 # tib <- tribble(
 #   ~modified_at, ~modified_by, ~partner, ~status,
 #   "2022-10-21",   'zaldijn001', 'escudro001', 1,

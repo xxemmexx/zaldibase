@@ -148,6 +148,7 @@ rendezvousEditModuleServer <- function(id,
                                            "rendezvous_avec" = input$rendezvous_avec,
                                            "nom" = hold$nom,
                                            "prenom" = hold$prenom,
+                                           "email" = hold$email_patient,
                                            "date_naissance" = hold$date_naissance,
                                            "staff_decision" = hold$staff_decision,
                                            "explication" = hold$explication,
@@ -195,7 +196,7 @@ rendezvousEditModuleServer <- function(id,
                      
                      nomCompletPatient <- paste0(dat$data$prenom, " ", str_to_upper(dat$data$nom))
 
-                     print('Trying to send notification email...')
+                     print('Trying to send notification email to contact person...')
 
                      generateRendezvousEmail(nomCompletPatient,
                                              dat$data$date_naissance,
@@ -210,6 +211,22 @@ rendezvousEditModuleServer <- function(id,
                          subject = "Nouvelle notification CHU - équipue du neurochirurgical",
                          credentials = creds_file(credentialsPath)
                        )
+                     
+                     if(!(dat$data$email == '')) {
+                       print('Trying to send notification email to patient...')
+                       
+                       generateRendezvousEmailForPatient(dat$data$date_rendezvous,
+                                                         dat$data$time_rendezvous,
+                                                         dat$data$rendezvous_avec,
+                                                         dat$data$explication) %>%
+                         smtp_send(
+                           to = dat$data$email,
+                           from = zaldibase,
+                           subject = "Nouvelle notification CHU - équipue du neurochirurgical",
+                           credentials = creds_file(credentialsPath)
+                         )
+                     }
+                     
                      
                      session$userData$rendezvous_trigger(session$userData$rendezvous_trigger() + 1)
                      
