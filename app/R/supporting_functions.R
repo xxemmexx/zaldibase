@@ -152,6 +152,13 @@ convertUsernameToDisplayname <- function(aUsername, aUserTibble) {
   row$name
 }
 
+isChef <- function(aUser, aUserTibble) {
+  userInfo <- aUserTibble %>% 
+    filter(name == aUser)
+  
+  userInfo$permissions == 'chef'
+}
+
 getAffiliation <- function(aUsername, aUserTibble) {
   userInfo <- aUserTibble %>% 
     filter(user == aUsername)
@@ -1231,9 +1238,20 @@ generateRendezvousEmail <- function(aPatient,
                                 aRendezvousDate,
                                 aRendezvousTime,
                                 aRendezvousDoctor,
-                                anExplanation) {
+                                anExplanation,
+                                isChef) {
   
   img_string <- add_image(file = logoPath, width = 90, align = 'center')
+  
+  rendezVousDateAndTime <- paste0("Le ", sd(ymd(aRendezvousDate)), " à ", aRendezvousTime, " hrs. ")
+  
+  rendezVousTitre <- ifelse(isChef,
+                            "Rendez-vous",
+                            "Rendez-vous à la consultation des internes")
+  
+  rendezVousText <- ifelse(isChef, 
+                           paste0(rendezVousDateAndTime, "chez le ", aRendezvousDoctor, "."),
+                           rendezVousDateAndTime)
   
   thisBody <- paste0(" {img_string} <br>
   
@@ -1246,8 +1264,8 @@ pris une décision par rapport à un dossier que vous avez soumis.<br><br>
 aPatient, ", né(e) le ", translateDate(aDateDeNaissance), "<br><br>
 <b>Décision </b><br>",
 aStaffDecision, "<br><br>
-<b>Rendez-vous </b><br>",
-"Le ", sd(ymd(aRendezvousDate)), " à ", aRendezvousTime, " hrs. chez ", aRendezvousDoctor, "<br><br>
+<b>", rendezVousTitre, "</b><br>",
+rendezVousText, "<br><br>
 <b>Note supplémentaire</b><br>
 <em>", anExplanation,"</em><br><br><br>
 
@@ -1265,9 +1283,20 @@ L'équipe du Neurochirurgical")
 generateRendezvousEmailForPatient <- function(aRendezvousDate,
                                               aRendezvousTime,
                                               aRendezvousDoctor,
-                                              anExplanation) {
+                                              anExplanation,
+                                              isChef) {
   
   img_string <- add_image(file = logoPath, width = 90, align = 'center')
+  
+  rendezVousDateAndTime <- paste0("Le ", sd(ymd(aRendezvousDate)), " à ", aRendezvousTime, " hrs. ")
+  
+  rendezVousTitre <- ifelse(isChef,
+                            "Rendez-vous",
+                            "Rendez-vous à la consultation des internes")
+  
+  rendezVousText <- ifelse(isChef, 
+                           paste0(rendezVousDateAndTime, "chez le ", aRendezvousDoctor, "."),
+                           rendezVousDateAndTime)
   
   thisBody <- paste0(" {img_string} <br>
   
@@ -1275,8 +1304,8 @@ generateRendezvousEmailForPatient <- function(aRendezvousDate,
 
 Voici un rappel de votre rendez-vous chez le Centre Hospitalier de Grenoble.<br><br>
 
-<b>Rendez-vous </b><br>",
-"Le ", sd(ymd(aRendezvousDate)), " à ", aRendezvousTime, " hrs. chez ", aRendezvousDoctor, "<br><br>
+<b>", rendezVousTitre, "</b><br>",
+rendezVousText, "<br><br>
 <b>Note supplémentaire</b><br>
 <em>", anExplanation,"</em><br><br><br>
 

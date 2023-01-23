@@ -152,7 +152,8 @@ rendezvousEditModuleServer <- function(id,
                                            "date_naissance" = hold$date_naissance,
                                            "staff_decision" = hold$staff_decision,
                                            "explication" = hold$explication,
-                                           "contact_email" = hold$contact_email))
+                                           "contact_email" = hold$contact_email,
+                                           "is_chef" = isChef(input$rendezvous_avec, user_base)))
               
                    out
                    })
@@ -204,7 +205,8 @@ rendezvousEditModuleServer <- function(id,
                                              dat$data$date_rendezvous,
                                              dat$data$time_rendezvous,
                                              dat$data$rendezvous_avec,
-                                             dat$data$explication) %>%
+                                             dat$data$explication,
+                                             dat$data$is_chef) %>%
                        smtp_send(
                          to = dat$data$contact_email,
                          from = zaldibase,
@@ -218,7 +220,8 @@ rendezvousEditModuleServer <- function(id,
                        generateRendezvousEmailForPatient(dat$data$date_rendezvous,
                                                          dat$data$time_rendezvous,
                                                          dat$data$rendezvous_avec,
-                                                         dat$data$explication) %>%
+                                                         dat$data$explication,
+                                                         dat$data$is_chef) %>%
                          smtp_send(
                            to = dat$data$email,
                            from = zaldibase,
