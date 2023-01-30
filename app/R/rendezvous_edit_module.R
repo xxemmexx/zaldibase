@@ -230,7 +230,6 @@ rendezvousEditModuleServer <- function(id,
                          )
                      }
                      
-                     
                      session$userData$rendezvous_trigger(session$userData$rendezvous_trigger() + 1)
                      
                      removeModal()
@@ -249,9 +248,6 @@ rendezvousEditModuleServer <- function(id,
                        showToast("error", msg)
                      }
                    ) # Close try-catch
-                     
-                   
-                   
                    })
                  
                  ############# END TALK TO DB, SUBMIT ACTION ###################

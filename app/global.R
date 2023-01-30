@@ -21,6 +21,7 @@ require(purrr)
 require(purrrlyr)
 require(tidyr)
 require(dplyr)
+require(knitr)
 
 localDB = TRUE
 

@@ -1944,9 +1944,10 @@ function(input, output, session) {
         tbl('patients') %>%
         collect() %>%
         mutate(created_at = as.POSIXct(created_at, tz = "UTC"),
-               modified_at = as.POSIXct(modified_at, tz = "UTC")) %>%
+               modified_at = as.POSIXct(modified_at, tz = "UTC"),
+               date_rendezvous = as.Date(date_rendezvous)) %>%
         arrange(desc(modified_at)) %>%
-        filter(needs_rendezvous == 1 | has_rendezvous == 1)
+        filter(needs_rendezvous == 1 | (has_rendezvous == 1 & date_rendezvous >= today()))
       
     }, 
     error = function(err) {
@@ -2013,16 +2014,8 @@ function(input, output, session) {
     
     okRendezVousTibb <- cbind(tibble(" " = actions2), okRendezVousTibb)
     
-    if (is.null(rendezvous_ok_table_prep())) {
-
-      rendezvous_ok_table_prep(okRendezVousTibb)
-      
-    } else {
-      replaceData(rendezvous_ok_table_proxy,
-                  okRendezVousTibb,
-                  resetPaging = FALSE,
-                  rownames = FALSE)
-    }
+    rendezvous_ok_table_prep(okRendezVousTibb)
+    
   })
   
   output$rendezvous_table <- renderDT({
@@ -2048,9 +2041,7 @@ function(input, output, session) {
                                               // removes any lingering tooltips
                                               $('.tooltip').remove()}"))
       ) 
-    
   })
-  
   
   output$rendezvous_ok_table <- renderDT({
     req(credentials()$user_auth, rendezvous_ok_table_prep())
