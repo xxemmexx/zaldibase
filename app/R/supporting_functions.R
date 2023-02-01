@@ -65,7 +65,7 @@ displaySimpleDateTime <- function(aTimestamp) {
          " hrs.")
 } 
 
-buildDecisionBanner <- function(aPreDecision, aDefDecision) {
+buildDecisionBanner <- function(aPreDecision, aDefDecision, pullRight = TRUE) {
   
   if(is.na(aPreDecision) | aPreDecision == '') {
     preDecision = '-'
@@ -79,9 +79,18 @@ buildDecisionBanner <- function(aPreDecision, aDefDecision) {
     defDecision = aDefDecision
   }
   
-  paste0('<div class="pull-right"><h4 style="font-size:16px;margin: 0px 0;"><b>Décision définitive: ', defDecision, '</b></h4></div><br>',
-         '<div class="pull-right"><h4 style="font-size:16px;margin: 5px 0;"><b>Décision préliminaire: ', preDecision, '</b></h4></div>'
-  )
+  if(pullRight) {
+    openTag <- '<div class="pull-right">'
+  } else {
+    openTag <- '<div>'
+  }
+  
+  defTag <- paste0('<h4 style="font-size:16px;margin: 0px 0;"><b>Décision définitive: ', defDecision, '</b></h4>')
+  preTag <- paste0('<h4 style="font-size:16px;margin: 5px 0;"><b>Décision préliminaire: ', preDecision, '</b></h4>')
+  closeTag <- '</div>'
+  
+  paste0(openTag, defTag, closeTag, '<br>', openTag, preTag, closeTag)
+
 }
 
 buildTreatmentBanner <- function (aMedicine1, aDerniereDate1,
@@ -112,8 +121,8 @@ buildTreatmentBanner <- function (aMedicine1, aDerniereDate1,
 
 buildMetadataBanner <- function(aCreator, anOrigin, aTimestamp, aGarde) {
   
-  paste0('<div id="metadata-banner" class="metadata-banner"><h5 style="color:#777875;text-align:right;">Origine : ', anOrigin,'<br>
-         Enregistré par : ', aCreator,'<br>
+  paste0('<div ><h4 style="text-align:right;">Origine : ', anOrigin,'</h4>
+         <h5 style="color:#777875;text-align:right;">Enregistré par : ', aCreator,'<br>
          Enregistré le : ', aTimestamp,'<br>
          Garde : ', aGarde,'</h5></div><br>')
   

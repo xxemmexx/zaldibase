@@ -1692,7 +1692,9 @@ function(input, output, session) {
   
   output$staff_pre_def_decisions <-renderUI({
     
-    x <- buildDecisionBanner(patient_data_staff()$pre_decision[[patientIdx]], patient_data_staff()$def_decision[[patientIdx]])
+    x <- buildDecisionBanner(patient_data_staff()$pre_decision[[patientIdx]], 
+                             patient_data_staff()$def_decision[[patientIdx]],
+                             pullRight = FALSE)
     
     HTML(x)
     

@@ -269,7 +269,6 @@ tagList(
                                                            uiOutput('staff_info_icons'),
                                                            uiOutput('staff_metadata'),
                                                            uiOutput('staff_status'),
-                                                           uiOutput('staff_pre_def_decisions'),
                                                            tags$br(),
                                                            tags$br(),
                                                            tags$br(),
@@ -311,6 +310,7 @@ tagList(
                                                          fluidRow(
                                                            column(width = 3),
                                                            column(width = 6,
+                                                                  uiOutput('staff_pre_def_decisions'),
                                                                   tags$br(),
                                                                   uiOutput("staff_decisions")),
                                                            column(width = 3)
