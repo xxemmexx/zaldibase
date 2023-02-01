@@ -295,17 +295,6 @@ externesEditModuleServer <- function(id,
                        }
                      )
                      
-                     # observeEvent(input$nom, {
-                     #   if (input$nom == "") {
-                     #     shinyFeedback::showFeedbackDanger("nom",
-                     #                                       text = "Le nom du patient est obligatoire!")
-                     #     shinyjs::disable('submit')
-                     #   } else {
-                     #     shinyFeedback::hideFeedback("nom")
-                     #     formFields$nom = 1
-                     #   }
-                     # })
-                     
                      observeEvent(
                        eventExpr = {
                          input$prenom
@@ -322,18 +311,7 @@ externesEditModuleServer <- function(id,
                          }
                        }
                      )
-                     
-                     # observeEvent(input$prenom, {
-                     #   if (input$prenom == "") {
-                     #     shinyFeedback::showFeedbackDanger("prenom",
-                     #                                       text = "Le prénom du patient est obligatoire!")
-                     #     shinyjs::disable('submit')
-                     #   } else {
-                     #     shinyFeedback::hideFeedback("prenom")
-                     #     formFields$prenom = 1
-                     #   }
-                     # })
-                     
+                    
                      observeEvent(
                        eventExpr = {
                          input$date_naissance

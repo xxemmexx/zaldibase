@@ -159,6 +159,14 @@ isChef <- function(aUser, aUserTibble) {
   userInfo$permissions == 'chef'
 }
 
+isRelevantForRendezVous <- function(needsRendezVous, hasRendezVous, dateRendezVous) {
+  case_when(
+    needsRendezVous == 1 ~ TRUE,
+    hasRendezVous == 1 & dateRendezVous >= today() ~ TRUE,
+    TRUE ~ FALSE
+  )
+}
+
 getAffiliation <- function(aUsername, aUserTibble) {
   userInfo <- aUserTibble %>% 
     filter(user == aUsername)
@@ -661,7 +669,7 @@ writeQuery <- function(aUID,
                      treat_coagulant_1, date_derniere_prise_1, treat_coagulant_2, 
                      date_derniere_prise_2, treat_coagulant_3, date_derniere_prise_3,
                      created_at, created_by, modified_at, modified_by, garde_id, needs_rendezvous,
-                     has_rendezvous, is_closed, is_viewed, status) VALUES ('",
+                     has_rendezvous, date_rendezvous, is_closed, is_viewed, status) VALUES ('",
                      aUID, "', ", aPatientInconnu, ", '", aNom, "', '", aPrenom, "', ", aSexe, ", '", aDateNaissance, "', '",
                      aPhoneNumber, "', '", anEmail, "', '", aPathologie1, "', '", aPathologie2, "', '",
                      aPathologie3, "', '", aSyndrome, "', ", aComorbMetabolique, ", ", 
@@ -675,7 +683,7 @@ writeQuery <- function(aUID,
                      aDernierePrise2, "', '", aCoagulant3, "', '", aDernierePrise3, "', '",
                      aCreatedAt, "', '", aCreatedBy, "', '", 
                      aModifiedAt, "', '", aModifiedBy, "', ", aGardeId, ", ", needsRendezVous, ", ",
-                     hasRendezVous, ", ", isClosed, ", ", isViewed, ", 0);"),
+                     hasRendezVous, ", '1970-01-01', ", isClosed, ", ", isViewed, ", 0);"),
                      
                      "update" = paste0("UPDATE patients SET patient_inconnu= ", aPatientInconnu,
                                        ", nom='", aNom, 
@@ -763,7 +771,7 @@ writeExterneQuery <- function(aUID,
                      pathologie_2, pathologie_3, description_histoire, 
                      contact_person, contact_phone, contact_email, hopital, has_coagulation,
                      created_at, created_by, modified_at, modified_by, garde_id, needs_rendezvous,
-                     has_rendezvous, is_closed, is_viewed, status) VALUES ('",
+                     has_rendezvous, date_rendezvous, is_closed, is_viewed, status) VALUES ('",
                                        aUID, "', ", aPatientInconnu, ", '", aNom, "', '", aPrenom, "', ", 
                                        aSexe, ", '", aDateNaissance, "', '",
                                        aPhoneNumber, "', '", anEmail, "', '", aPathologie1, "', '", aPathologie2, "', '",
@@ -772,7 +780,7 @@ writeExterneQuery <- function(aUID,
                                        aHospital, "', ", hasCoagulation, ", '",
                                        aCreatedAt, "', '", aCreatedBy, "', '", 
                                        aModifiedAt, "', '", aModifiedBy, "', ", aGardeId, ", ", needsRendezVous, ", ",
-                                       hasRendezVous, ", ", isClosed, ", ", isViewed, ", 0);"),
+                                       hasRendezVous, ", '1970-01-01', ", isClosed, ", ", isViewed, ", 0);"),
                      
                      "update" = paste0("UPDATE patients SET patient_inconnu= ", aPatientInconnu, 
                                        ", nom='", aNom, 

@@ -121,11 +121,11 @@ tagList(
                                                     tags$span(
                                                       actionButton("refresh_images", 
                                                                    "",
-                                                                   icon("refresh"),
+                                                                   icon("refresh", verify_fa = FALSE),
                                                                    style="color: #FFF0F5; background-color: #3E3F3A;"),
                                                       actionButton("archive_refresh_images", 
                                                                    "",
-                                                                   icon("refresh"),
+                                                                   icon("refresh", verify_fa = FALSE),
                                                                    style="color: #FFF0F5; background-color: #3E3F3A;"),
                                                       style = "position:absolute;right:2em;"),
                                                     tags$div(id = "photo_container",

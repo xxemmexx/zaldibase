@@ -68,7 +68,7 @@ function(input, output, session) {
       
     }, 
     error = function(err) {
-      msg <- "Could not find what you are looking for!"
+      msg <- "Could not find the dossiers you are looking for!"
       # print `msg` so that we can find it in the logs
       print(msg)
       # print the actual error to log it
@@ -848,15 +848,22 @@ function(input, output, session) {
   
   output$archive_patient_display_name <- renderText({
     
-    writePatientDisplayName(archive_patient_data()$prenom, archive_patient_data()$nom)
+    if(archive_patient_data()$prenom == '' | archive_patient_data()$nom == '') {
+      return("Patient inconnu")
+    } else {
+      return(writePatientDisplayName(archive_patient_data()$prenom, archive_patient_data()$nom))
+    }
     
   })
   
   output$archive_patient_age <-renderText({
     
-    paste0("âgé(e) de ", deliverAge(archive_patient_data()$date_naissance,
-                                    archive_patient_data()$created_at), " ans")
-    
+    if(archive_patient_data()$date_naissance == '') {
+      return("Âge inconnu")
+    } else {
+      return(paste0("âgé(e) de ", deliverAge(archive_patient_data()$date_naissance,
+                                             archive_patient_data()$created_at), " ans"))
+    }
   })
   
   observeEvent(input$archive_show_contact_details, {
@@ -1518,7 +1525,7 @@ function(input, output, session) {
     req(checkVectorDecisions(), patient_data_staff())
     
     patient_data_staff() %>%
-      transmute(displayName = writePatientDisplayName(prenom, nom),
+      transmute(displayName = if_else(prenom == '' | nom == '', '(Inconnu)', writePatientDisplayName(prenom, nom)),
                 dec = decisionIsValid(checkVectorDecisions(), patient_data_staff_count()),
                 expl = explanationIsValid(checkVectorDecisions(), checkVectorExplanations(), patient_data_staff()$status),
                 valid = dossierIsReviewed(dec, expl),
@@ -1572,17 +1579,23 @@ function(input, output, session) {
   output$staff_patient_display_name <- renderText({
     req(patient_data_staff())
     
-    writePatientDisplayName(patient_data_staff()$prenom[[patientIdx]],
-                            patient_data_staff()$nom[[patientIdx]])
-    
+    if(patient_data_staff()$prenom[[patientIdx]] == '' | patient_data_staff()$nom[[patientIdx]] == '') {
+      return("Patient inconnu")
+    } else {
+      return(writePatientDisplayName(patient_data_staff()$prenom[[patientIdx]],
+                                     patient_data_staff()$nom[[patientIdx]]))
+    }
   })
   
   output$staff_patient_age <-renderText({
     req(patient_data_staff())
     
-    paste0("âgé(e) de ", deliverAge(patient_data_staff()$date_naissance[[patientIdx]],
-                                    patient_data_staff()$created_at[[patientIdx]]), " ans")
-    
+    if(patient_data_staff()$date_naissance[[patientIdx]] == '') {
+      return("Âge inconnu")
+    } else {
+      return(paste0("âgé(e) de ", deliverAge(patient_data_staff()$date_naissance[[patientIdx]],
+                                             patient_data_staff()$created_at[[patientIdx]]), " ans"))
+    }
   })
   
   output$staff_info_icons <- renderUI({
@@ -1947,11 +1960,11 @@ function(input, output, session) {
                modified_at = as.POSIXct(modified_at, tz = "UTC"),
                date_rendezvous = as.Date(date_rendezvous)) %>%
         arrange(desc(modified_at)) %>%
-        filter(needs_rendezvous == 1 | (has_rendezvous == 1 & date_rendezvous >= today()))
+        filter(isRelevantForRendezVous(needs_rendezvous, has_rendezvous, date_rendezvous))
       
     }, 
     error = function(err) {
-      msg <- "Could not find what you are looking for!"
+      msg <- "Could not find the rendez-vous you are looking for!"
       # print `msg` so that we can find it in the logs
       print(msg)
       # print the actual error to log it
@@ -2247,8 +2260,11 @@ function(input, output, session) {
   
   output$patient_display_name_ext <- renderText({
     
-    writePatientDisplayName(externes_patient_data()$prenom, externes_patient_data()$nom)
-    
+    if(externes_patient_data()$prenom == '' | externes_patient_data()$nom == '') {
+      return("Patient inconnu")
+    } else {
+      return(writePatientDisplayName(externes_patient_data()$prenom, externes_patient_data()$nom))
+    }
   })
   
   output$patient_age_ext <-renderText({
