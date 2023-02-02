@@ -80,7 +80,10 @@ decisions <- c(" ", "A hospitaliser / A rappatrier",
                "Prise en charge externe ou non-chirurgicale",
                "Complément d`examen à faire")
 
-decisions_dev <- c(" ", "Rendez-vous / Suivi", "Clôturer dossier")
+decisions_dev <- c(" ", 
+                   "A hospitaliser / A rappatrier",
+                   "Rendez-vous / Suivi", 
+                   "Clôturer dossier")
 
 pathologies <- c(" ", "Trauma crânien",
                  "Trauma rachidien",

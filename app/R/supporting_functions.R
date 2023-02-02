@@ -837,6 +837,7 @@ writeRendezVousQuery <- function(aPatientUid, aMode) {
 
 writeStatusUpdate <- function(aDecision) {
   case_when(
+    aDecision == "A hospitaliser / A rappatrier" ~ ", is_viewed = 1, needs_room = 1, status = 6",
     aDecision == "Rendez-vous / Suivi" ~ ", is_viewed = 1, needs_rendezvous = 1, status = 4",
     aDecision == "Clôturer dossier" ~  ", is_closed = 1, is_viewed = 1, status = -1"
   )
@@ -865,6 +866,24 @@ writeRendezVousDetailsQuery <- function(aDate, aTime, aDoctor, aPatientUid) {
                          aDoctor, "'")
   
   updateStatus <- ", is_closed = 1, needs_rendezvous = 0, has_rendezvous = 1, status = 5"
+  
+  whereClause <- paste0(" WHERE uid = '", aPatientUid, "';")
+  
+  query <- paste0(detailsQuery, updateStatus, whereClause)
+  
+  query
+  
+}
+
+writeHospitalisationDetailsQuery <- function(aDate, aTime, aRoom, aPatientUid) {
+  
+  detailsQuery <- paste0("UPDATE patients
+                         SET date_rapatriement = '", 
+                         aDate, "', time_rapatriement = '", 
+                         aTime, "', room_id = '", 
+                         aRoom, "'")
+  
+  updateStatus <- ", is_closed = 1, needs_room = 0, has_room = 1, status = 7"
   
   whereClause <- paste0(" WHERE uid = '", aPatientUid, "';")
   
@@ -936,6 +955,8 @@ displayStatusName <- function(aStatus) {
     aStatus == 3 ~  "En attente d'examen/infos supplémentaires",
     aStatus == 4 ~ "Attend sécretariat pour un rendez-vous",
     aStatus == 5 ~ "Rendez-vous accordé",
+    aStatus == 6 ~ "Attend cadres de services pour hospitalisation",
+    aStatus == 7 ~ "Chambre assignée",
     aStatus == 8 ~  "Opéré(e)",
     aStatus == 9 ~  "À opérer"
   )
@@ -945,11 +966,13 @@ displayStatusCode <- function(aStatus) {
   case_when(
     aStatus == "Dossier fermé" ~ -1,
     aStatus == "En cours..." ~ 0,
-    aStatus == "À opérer" ~ 8,
-    aStatus == "Opéré(e)" ~ 9,
     aStatus == "En attente d'examen/infos supplémentaires" ~ 3,
     aStatus == "Attend sécretariat pour un rendez-vous" ~ 4,
-    aStatus == "Rendez-vous accordé" ~ 5
+    aStatus == "Rendez-vous accordé" ~ 5,
+    aStatus == "Attend cadres de services pour hospitalisation" ~ 6,
+    aStatus == "Chambre assignée" ~ 7,
+    aStatus == "À opérer" ~ 8,
+    aStatus == "Opéré(e)" ~ 9
   )
 }
 
