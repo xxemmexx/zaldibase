@@ -75,8 +75,8 @@ rapatriementEditModuleServer <- function(id,
                              fluidRow(column(width = 2),
                                       column(width = 8,
                                              textInput(ns("room_id"),
-                                                         "Chambre",
-                                                         placeholder = "Chambre 2.17")),
+                                                         "Unité",
+                                                         placeholder = "8 M")),
                                       column(width = 2)
                                       ) # Close fluidrow
                              ), # Close div
@@ -184,10 +184,10 @@ rapatriementEditModuleServer <- function(id,
                      
                      showModal(patientezDialog)
                      
-                     query <- writeRapatriementDetailsQuery(dat$data$date_rapatriement,
-                                                          dat$data$time_rapatriement,
-                                                          dat$data$room_id,
-                                                          dat$uid)
+                     query <- writeHospitalisationDetailsQuery(dat$data$date_rapatriement,
+                                                               dat$data$time_rapatriement,
+                                                               dat$data$room_id,
+                                                               dat$uid)
                      
                      print('Trying to execute query...')
                      
@@ -207,24 +207,10 @@ rapatriementEditModuleServer <- function(id,
                        smtp_send(
                          to = dat$data$contact_email,
                          from = zaldibase,
-                         subject = "Nouvelle notification CHU - équipue du neurochirurgical",
+                         subject = printStandardEmailTitle,
                          credentials = creds_file(credentialsPath)
                        )
                      
-                     if(!(dat$data$email == '')) {
-                       print('Trying to send notification email to patient...')
-                       
-                       generateRapatriementEmailForPatient(dat$data$date_rapatriement,
-                                                         dat$data$time_rapatriement,
-                                                         dat$data$room_id,
-                                                         dat$data$explication) %>%
-                         smtp_send(
-                           to = dat$data$email,
-                           from = zaldibase,
-                           subject = "Nouvelle notification CHU - équipue du neurochirurgical",
-                           credentials = creds_file(credentialsPath)
-                         )
-                     }
                      
                      session$userData$rapatriement_trigger(session$userData$rapatriement_trigger() + 1)
                      

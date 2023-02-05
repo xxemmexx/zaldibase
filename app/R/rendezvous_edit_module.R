@@ -210,7 +210,7 @@ rendezvousEditModuleServer <- function(id,
                        smtp_send(
                          to = dat$data$contact_email,
                          from = zaldibase,
-                         subject = "Nouvelle notification CHU - équipue du neurochirurgical",
+                         subject = printStandardEmailTitle,
                          credentials = creds_file(credentialsPath)
                        )
                      

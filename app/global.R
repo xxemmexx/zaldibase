@@ -75,13 +75,13 @@ if(localDB) {
                          password = dbInfo[[1]][[5]])
 }
 
-decisions <- c(" ", "A hospitaliser / A rappatrier",
+decisions <- c(" ", "A hospitaliser / A rapatrier",
                "Rendez-vous / Suivi",
                "Prise en charge externe ou non-chirurgicale",
                "Complément d`examen à faire")
 
 decisions_dev <- c(" ", 
-                   "A hospitaliser / A rappatrier",
+                   "A hospitaliser / A rapatrier",
                    "Rendez-vous / Suivi", 
                    "Clôturer dossier")
 
@@ -139,6 +139,8 @@ options(scipen = 999)
 options(spinner.type = 1)
 
 # HTML
+
+printStandardEmailTitle <- "Nouvelle notification CHUGA - équipue du neurochirurgical"
 
 printAbout <- '<p><h5><b>Exploitation</b><br><br>
 Ce formulaire a été créé dans le but d’améliorer la traçabilité des avis de Neurochirurgie de l’Hôpital de Grenoble ainsi que pour optimiser la communication de ces avis aux hôpitaux et cliniques partenaires.

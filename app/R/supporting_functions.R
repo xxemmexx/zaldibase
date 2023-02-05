@@ -837,7 +837,7 @@ writeRendezVousQuery <- function(aPatientUid, aMode) {
 
 writeStatusUpdate <- function(aDecision) {
   case_when(
-    aDecision == "A hospitaliser / A rappatrier" ~ ", is_viewed = 1, needs_room = 1, status = 6",
+    aDecision == "A hospitaliser / A rapatrier" ~ ", is_viewed = 1, needs_room = 1, status = 6",
     aDecision == "Rendez-vous / Suivi" ~ ", is_viewed = 1, needs_rendezvous = 1, status = 4",
     aDecision == "Clôturer dossier" ~  ", is_closed = 1, is_viewed = 1, status = -1"
   )
@@ -956,7 +956,7 @@ displayStatusName <- function(aStatus) {
     aStatus == 4 ~ "Attend sécretariat pour un rendez-vous",
     aStatus == 5 ~ "Rendez-vous accordé",
     aStatus == 6 ~ "Attend cadres de services pour hospitalisation",
-    aStatus == 7 ~ "Chambre assignée",
+    aStatus == 7 ~ "Unité assignée",
     aStatus == 8 ~  "Opéré(e)",
     aStatus == 9 ~  "À opérer"
   )
@@ -1357,6 +1357,46 @@ L'équipe du Neurochirurgical")
   compose_email(
     body = md(glue::glue(thisBody)),
     footer = md(glue::glue("Ceci est mon corps donné pour vous, faites ceci en souvenir de moi"))
+  )
+}
+
+generateRapatriementEmail <- function(aPatient,
+                                    aDateDeNaissance, 
+                                    aStaffDecision,
+                                    aDate,
+                                    aTime,
+                                    aUnite,
+                                    anExplanation
+                                    ) {
+  
+  img_string <- add_image(file = logoPath, width = 90, align = 'center')
+  
+  rapatriementDateTimeUnity <- paste0("Le ", sd(ymd(aDate)), " à ", aTime, " hrs. à l'unité ", aUnite)
+  
+  thisBody <- paste0(" {img_string} <br>
+  
+  Bonjour,
+
+Vous recevez cette notification automatique parce que l'équipe du Neurochirurgical du Centre Hospitalier de Grenoble a récemment
+pris la décision de rapatrier un de vos patients pour traitement.<br><br>
+
+<b>Patient </b><br>", 
+                     aPatient, ", né(e) le ", translateDate(aDateDeNaissance), "<br><br>
+<b>Décision </b><br>",
+                     aStaffDecision, "<br><br>
+<b> Le patient est attendu</b><br>",
+                     rapatriementDateTimeUnity, "<br><br>
+<b>Note supplémentaire</b><br>
+<em>", anExplanation,"</em><br><br><br>
+
+
+Cordialement, <br><br>
+L'équipe du Neurochirurgical")
+  
+  
+  compose_email(
+    body = md(glue::glue(thisBody)),
+    footer = md(glue::glue('<a href="emme.shinyapps.io/zaldibase">Cliquez ici</a> pour accéder à votre compte Zaldibase'))
   )
 }
 
