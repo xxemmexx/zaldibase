@@ -1962,7 +1962,7 @@ function(input, output, session) {
                modified_at = as.POSIXct(modified_at, tz = "UTC"),
                date_rendezvous = as.Date(date_rendezvous)) %>%
         arrange(desc(modified_at)) %>%
-        filter(isRelevantForRendezVous(needs_rendezvous, has_rendezvous, date_rendezvous))
+        filter(isRelevantForSchedule(needs_rendezvous, has_rendezvous, date_rendezvous))
       
     }, 
     error = function(err) {
@@ -2096,6 +2096,160 @@ function(input, output, session) {
                            rendezvous_patient = rendezvous_patient,
                            modal_trigger = reactive({input$rendezvous_patient_id}))
   
+  # Rapatriement table ------------------------------------------------------------
+  
+  # trigger to reload data from the "rendez-vous" table
+  session$userData$rapatriement_trigger <- reactiveVal(0)
+  
+  
+  # Read in Rendez-vous table from the database
+  rapatriement <- reactive({
+    req(credentials()$user_auth)
+    
+    session$userData$rapatriement_trigger()
+    
+    out <- NULL
+    tryCatch({
+      out <- conn %>%
+        tbl('patients') %>%
+        collect() %>%
+        mutate(created_at = as.POSIXct(created_at, tz = "UTC"),
+               modified_at = as.POSIXct(modified_at, tz = "UTC"),
+               date_rapatriement = as.Date(date_rapatriement)) %>%
+        arrange(desc(modified_at)) %>%
+        filter(isRelevantForSchedule(needs_room, has_room, date_rapatriement))
+      
+    }, 
+    error = function(err) {
+      msg <- "Could not find the rapatriement you are looking for!"
+      # print `msg` so that we can find it in the logs
+      print(msg)
+      # print the actual error to log it
+      print(error)
+      # show error `msg` to user.  User can then tell us about error and we can
+      # quickly identify where it cam from based on the value in `msg`
+      showToast("error", msg)
+    })
+    
+    out 
+    
+  })
+  
+  rapatriement_table_prep <- reactiveVal(NULL)
+  rapatriement_table_proxy <- DT::dataTableProxy('rapatriement_table')
+  rapatriement_ok_table_prep <- reactiveVal(NULL)
+  rapatriement_ok_table_proxy <- DT::dataTableProxy('rapatriement_ok_table')
+  
+  observeEvent(rapatriement(), {
+    
+    needsRapatriementTibb <- rapatriement() %>%
+      filter(needs_room == 1)
+    
+    ids <- needsRapatriementTibb$uid
+    
+    actions <- purrr::map_chr(ids, function(id_) {
+      paste0('<div class="btn-group" style="width: 75px;" role="group" aria-label="Basic example">
+                     <button class="btn btn-primary btn-sm edit_btn" data-toggle="tooltip" data-placement="top" title="Planifier" id = ', id_, ' style="margin: 0; background:teal"><i class="fa fa-hospital"></i></button>
+                            </div>')
+    })
+    
+    needsRapatriementTibb <- needsRapatriementTibb %>%
+      transmute(nom, prenom, date_naissance, displayStatusName(status))
+    
+    needsRapatriementTibb <- cbind(tibble(" " = actions), needsRapatriementTibb)
+    
+    if (is.null(rapatriement_table_prep())) {
+      
+      rapatriement_table_prep(needsRapatriementTibb)
+    } else {
+      replaceData(rapatriement_table_proxy,
+                  needsRapatriementTibb,
+                  resetPaging = FALSE,
+                  rownames = FALSE)
+    }
+    
+    okRapatriementTibb <- rapatriement() %>%
+      filter(has_room == 1)
+    
+    ids <- okRapatriementTibb$uid
+    
+    actions2 <- purrr::map_chr(ids, function(id_) {
+      paste0('<div class="btn-group" style="width: 75px;" role="group" aria-label="Basic example">
+                     <button class="btn btn-primary btn-sm edit_btn" data-toggle="tooltip" data-placement="top" title="Planifier" id = ', id_, ' style="margin: 0; background:teal"><i class="fa fa-hospital"></i></button>
+                            </div>')
+    })
+    
+    okRapatriementTibb <- okRapatriementTibb %>%
+      transmute(nom, prenom, date_naissance, displayStatusName(status))
+    
+    okRapatriementTibb <- cbind(tibble(" " = actions2), okRapatriementTibb)
+    
+    rapatriement_ok_table_prep(okRapatriementTibb)
+    
+  })
+  
+  output$rapatriement_table <- renderDT({
+    req(credentials()$user_auth, rapatriement_table_prep())
+    
+    out <- rapatriement_table_prep() 
+    
+    out %>%
+      datatable(rownames = FALSE,
+                colnames = c('Nom', 'Prénom', 'Date de naissance', 
+                             'Status'),
+                selection = "single",
+                class = "compact stripe row-border nowrap",
+                escape = -1,  # Escape the HTML in all except 1st column (which has the buttons)
+                options = list(scrollX = TRUE,
+                               dom = 'tp',
+                               columnDefs = list(list(targets = 0, orderable = FALSE)),
+                               pageLength = 10,
+                               language = list(emptyTable = "Pas de patients à hospiatliser",
+                                               paginate = list(`next` = 'Suivant',
+                                                               previous = 'Précédant')),
+                               drawCallback = JS("function(settings) {
+                                              // removes any lingering tooltips
+                                              $('.tooltip').remove()}"))
+      ) 
+  })
+  
+  output$rapatriement_ok_table <- renderDT({
+    req(credentials()$user_auth, rapatriement_ok_table_prep())
+    
+    out <- rapatriement_ok_table_prep() 
+    
+    out %>%
+      datatable(rownames = FALSE,
+                colnames = c('Nom', 'Prénom', 'Date de naissance', 
+                             'Status'),
+                selection = "single",
+                class = "compact stripe row-border nowrap",
+                escape = -1,  # Escape the HTML in all except 1st column (which has the buttons)
+                options = list(scrollX = TRUE,
+                               dom = 'tp',
+                               columnDefs = list(list(targets = 0, orderable = FALSE)),
+                               pageLength = 10,
+                               language = list(emptyTable = "Pas d'hospitalisations prévues",
+                                               paginate = list(`next` = 'Suivant',
+                                                               previous = 'Précédant')),
+                               drawCallback = JS("function(settings) {
+                                              // removes any lingering tooltips
+                                              $('.tooltip').remove()}"))
+      ) 
+    
+  })
+  
+  rapatriement_patient <- eventReactive(input$rapatriement_patient_id, {
+    
+    rapatriement() %>%
+      filter(uid == input$rapatriement_patient_id)
+    
+  })
+  
+  rapatriementEditModuleServer("add_rapatriement",
+                             modal_title = "Planification des hospitalisations",
+                             rapatriement_patient = rapatriement_patient,
+                             modal_trigger = reactive({input$rapatriement_patient_id}))
   
   # Externes table ------------------------------------------------------------
   

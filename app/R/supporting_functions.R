@@ -168,10 +168,10 @@ isChef <- function(aUser, aUserTibble) {
   userInfo$permissions == 'chef'
 }
 
-isRelevantForRendezVous <- function(needsRendezVous, hasRendezVous, dateRendezVous) {
+isRelevantForSchedule <- function(needsBeScheduled, isScheduled, aDate) {
   case_when(
-    needsRendezVous == 1 ~ TRUE,
-    hasRendezVous == 1 & dateRendezVous >= today() ~ TRUE,
+    needsBeScheduled == 1 ~ TRUE,
+    isScheduled == 1 & aDate >= today() ~ TRUE,
     TRUE ~ FALSE
   )
 }

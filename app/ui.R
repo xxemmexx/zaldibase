@@ -385,6 +385,28 @@ tagList(
                    tags$script(paste0("rendezvous_table_module_js('')")))
         ) # Close tabset panel
       ), # Close conditional panel secretariat
+      conditionalPanel(condition = "output.role == 'cadre'",
+                       tabsetPanel(
+                         tabPanel("Patients à rapatrier",
+                                  tags$br(),
+                                  tags$br(),
+                                  fluidRow(column(width = 12,
+                                                  title = "Rapatriement",
+                                                  DTOutput('rapatriement_table') %>% withSpinner())
+                                  ), # Close fluid row
+                                  tags$script(src = "rapatriement_table_module.js"),
+                                  tags$script(paste0("rapatriement_table_module_js('')"))),
+                         tabPanel("Hospitalisations",
+                                  tags$br(),
+                                  tags$br(),
+                                  fluidRow(column(width = 12,
+                                                  title = "Agenda",
+                                                  DTOutput('rapatriement_ok_table') %>% withSpinner())
+                                  ), # Close fluid row
+                                  tags$script(src = "rapatriement_table_module.js"),
+                                  tags$script(paste0("rapatriement_table_module_js('')")))
+                       ) # Close tabset panel
+      ), # Close conditional panel cadres de services
       conditionalPanel(condition = "output.role == 'externe'",
                        tabsetPanel(
                          tabPanel("Mes dossiers",
