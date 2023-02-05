@@ -2149,7 +2149,7 @@ function(input, output, session) {
     
     actions <- purrr::map_chr(ids, function(id_) {
       paste0('<div class="btn-group" style="width: 75px;" role="group" aria-label="Basic example">
-                     <button class="btn btn-primary btn-sm edit_btn" data-toggle="tooltip" data-placement="top" title="Planifier" id = ', id_, ' style="margin: 0; background:teal"><i class="fa fa-hospital"></i></button>
+                     <button class="btn btn-primary btn-sm edit_btn" data-toggle="tooltip" data-placement="top" title="Planifier" id = ', id_, ' style="margin: 0; background:#8B008B"><i class="fa fa-hospital"></i></button>
                             </div>')
     })
     
@@ -2175,7 +2175,7 @@ function(input, output, session) {
     
     actions2 <- purrr::map_chr(ids, function(id_) {
       paste0('<div class="btn-group" style="width: 75px;" role="group" aria-label="Basic example">
-                     <button class="btn btn-primary btn-sm edit_btn" data-toggle="tooltip" data-placement="top" title="Planifier" id = ', id_, ' style="margin: 0; background:teal"><i class="fa fa-hospital"></i></button>
+                     <button class="btn btn-primary btn-sm edit_btn" data-toggle="tooltip" data-placement="top" title="Planifier" id = ', id_, ' style="margin: 0; background:#8B008B"><i class="fa fa-hospital"></i></button>
                             </div>')
     })
     
