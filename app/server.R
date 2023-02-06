@@ -2898,11 +2898,11 @@ function(input, output, session) {
       mutate(hopital = reorder(hopital, n)) %>%
       ggplot(aes(x = hopital, y = n)) +
       geom_bar(stat = "identity", fill="steelblue") +
-      ggtitle(paste0("Numéro de patients reportés par hôpitaux régionaux \n entre le ",
+      ggtitle(paste0("Numéro de patients rapportés par hôpitaux régionaux \n entre le ",
                      sd(ymd(input$interval_of_interest[1])),
                      " et le ",
                      sd(ymd(input$interval_of_interest[2])))) +
-      xlab("") + ylab("# cas reportés au CHUGA") +
+      xlab("") + ylab("# cas rapportés au CHUGA") +
       theme(plot.title = element_text(size=18, face="bold", hjust = 0.5)) +
       theme(axis.title.x = element_text(size=16, face="bold")) +
       theme(axis.title.y = element_text(size=16, face="bold")) +
