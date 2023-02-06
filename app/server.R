@@ -2851,6 +2851,67 @@ function(input, output, session) {
     
     renderChatMessages(messages, session$userData$username())
   })
+  
+  # Analyse ---------------------------------------------------------------------
+  # Read in Mes Dossiers table from the database
+  
+  closedDossiers <- reactive({
+    req(credentials()$user_auth)
+    
+    session$userData$dossiers_trigger()
+    session$userData$staff_trigger()
+    
+    out <- NULL
+    tryCatch({
+      out <- conn %>%
+        tbl('patients') %>%
+        collect() %>%
+        filter(is_closed == 1)
+      
+    }, 
+    error = function(err) {
+      msg <- "Could not find the closed dossiers you are looking for!"
+      # print `msg` so that we can find it in the logs
+      print(msg)
+      # print the actual error to log it
+      print(error)
+      # show error `msg` to user.  User can then tell us about error and we can
+      # quickly identify where it cam from based on the value in `msg`
+      showToast("error", msg)
+    })
+    
+    print(str(out))
+    print("Print hospital...")
+    print(out$hopital[[1]])
+    out 
+    
+  })
+  
+  output$chart_cases_per_origin <- renderPlot({
+    
+    closedDossiers() %>%
+      filter(between(as.Date(ymd_hms(created_at)), 
+                     ymd(input$interval_of_interest[1]), 
+                     ymd(input$interval_of_interest[2]))) %>%
+      mutate(hopital = factor(hopital, levels = hopitaux)) %>%
+      count(hopital) %>%
+      mutate(hopital = reorder(hopital, n)) %>%
+      ggplot(aes(x = hopital, y = n)) +
+      geom_bar(stat = "identity", fill="steelblue") +
+      ggtitle(paste0("Numéro de patients reportés par hôpitaux régionaux \n entre le ",
+                     sd(ymd(input$interval_of_interest[1])),
+                     " et le ",
+                     sd(ymd(input$interval_of_interest[2])))) +
+      xlab("") + ylab("# cas reportés au CHUGA") +
+      theme(plot.title = element_text(size=18, face="bold", hjust = 0.5)) +
+      theme(axis.title.x = element_text(size=16, face="bold")) +
+      theme(axis.title.y = element_text(size=16, face="bold")) +
+      theme(axis.text.x= element_text(face="bold", size=12)) +
+      theme(axis.text.y= element_text(face="bold", size=12, angle=30)) +
+      coord_flip()
+    
+    
+  })
  
   # set suspendWhenHidden to FALSE so it renders even without output
   outputOptions(output, 'role', suspendWhenHidden = FALSE) 

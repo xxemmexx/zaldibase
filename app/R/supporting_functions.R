@@ -81,15 +81,17 @@ buildDecisionBanner <- function(aPreDecision, aDefDecision, pullRight = TRUE) {
   
   if(pullRight) {
     openTag <- '<div class="pull-right">'
+    fontSize <- 'font-size:16px;'
   } else {
     openTag <- '<div>'
+    fontSize <- 'font-size:14px;'
   }
   
-  defTag <- paste0('<h4 style="font-size:16px;margin: 0px 0;"><b>Décision définitive: ', defDecision, '</b></h4>')
-  preTag <- paste0('<h4 style="font-size:16px;margin: 5px 0;"><b>Décision préliminaire: ', preDecision, '</b></h4>')
+  defTag <- paste0('<h4 style="', fontSize, 'margin: 5px 0;"><b>Décision définitive: ', defDecision, '</b></h4>')
+  preTag <- paste0('<h4 style="', fontSize, 'margin: 5px 0;"><b>Décision préliminaire: ', preDecision, '</b></h4>')
   closeTag <- '</div>'
   
-  paste0(openTag, defTag, closeTag, '<br>', openTag, preTag, closeTag)
+  paste0(openTag, preTag, closeTag, '<br>', openTag, defTag, closeTag)
 
 }
 

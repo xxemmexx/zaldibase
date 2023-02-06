@@ -360,7 +360,16 @@ tagList(
                                                    ) # Close fluid row
                                           ) # Close column
                                  )
-                                 ) # Close tabpanel Garde
+                                 ), # Close tabpanel Garde
+                         tabPanel("Analyse", icon = icon("chart-bar"), value = "analyse",
+                                  sidebarLayout(sidebarPanel(dateRangeInput("interval_of_interest",
+                                                                            label = "Intervalle",
+                                                                            start = "2023-01-01",
+                                                                            end = today(),
+                                                                            separator = "jusqu'au",
+                                                                            language = "fr")),
+                                                mainPanel(plotOutput("chart_cases_per_origin")))
+                         ) # Close tabpanel Analyse
                          ) # Close tabset panel
       ), # Close conditional panel admin
       conditionalPanel(condition = "output.role == 'secretariat'",
