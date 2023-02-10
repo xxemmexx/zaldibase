@@ -25,6 +25,19 @@ writePatientDisplayName <- function(aPrenom, aNom) {
   
 }
 
+writeSyndromeInflammatoire <- function(aSyndrome) {
+  
+  if(str_trim(aSyndrome) == "") {
+    syndromeNote <- "Aucun"
+  } else {
+    syndromeNote <- aSyndrome
+  }
+  
+  
+  return(HTML(paste0("<em>", syndromeNote, "</em>")))
+}
+
+
 isInvalidDate <- function(aDate) {
   if(length(aDate) < 1) {
     return(TRUE)
@@ -841,6 +854,7 @@ writeStatusUpdate <- function(aDecision) {
   case_when(
     aDecision == "A hospitaliser / A rapatrier" ~ ", is_viewed = 1, needs_room = 1, status = 6",
     aDecision == "Rendez-vous / Suivi" ~ ", is_viewed = 1, needs_rendezvous = 1, status = 4",
+    aDecision == "Complément d`examen à faire" ~ ", is_viewed = 1, status = 3",
     aDecision == "Clôturer dossier" ~  ", is_closed = 1, is_viewed = 1, status = -1"
   )
 }
@@ -867,7 +881,7 @@ writeRendezVousDetailsQuery <- function(aDate, aTime, aDoctor, aPatientUid) {
                          aTime, "', rendezvous_avec = '", 
                          aDoctor, "'")
   
-  updateStatus <- ", is_closed = 1, needs_rendezvous = 0, has_rendezvous = 1, status = 5"
+  updateStatus <- ", is_closed = 1, needs_rendezvous = 0, has_rendezvous = 1, status = 40"
   
   whereClause <- paste0(" WHERE uid = '", aPatientUid, "';")
   
@@ -885,7 +899,7 @@ writeHospitalisationDetailsQuery <- function(aDate, aTime, aRoom, aPatientUid) {
                          aTime, "', room_id = '", 
                          aRoom, "'")
   
-  updateStatus <- ", is_closed = 1, needs_room = 0, has_room = 1, status = 7"
+  updateStatus <- ", is_closed = 1, needs_room = 0, has_room = 1, status = 60"
   
   whereClause <- paste0(" WHERE uid = '", aPatientUid, "';")
   
@@ -912,6 +926,34 @@ writeNotificationQuery <- function(aPatientUID, aName) {
 
 writeDeleteNotificationsQuery <- function(aPatientUID) {
   paste0("DELETE FROM pending WHERE uid = '", aPatientUID, "';")
+}
+
+displayStatusName <- function(aStatus) {
+  case_when(
+    aStatus == -1 ~ "Dossier fermé",
+    aStatus == 0 ~ "En cours...",
+    aStatus == 3 ~  "En attente d'examen/infos supplémentaires",
+    aStatus == 4 ~ "Attend sécretariat pour un rendez-vous",
+    aStatus == 6 ~ "Attend cadres de services pour hospitalisation",
+    aStatus == 8 ~  "Opéré(e)",
+    aStatus == 9 ~  "À opérer",
+    aStatus == 40 ~ "Rendez-vous accordé",
+    aStatus == 60 ~ "En cours de rapatriement"
+  )
+}
+
+displayStatusCode <- function(aStatus) {
+  case_when(
+    aStatus == "Dossier fermé" ~ -1,
+    aStatus == "En cours..." ~ 0,
+    aStatus == "En attente d'examen/infos supplémentaires" ~ 3,
+    aStatus == "Attend sécretariat pour un rendez-vous" ~ 4,
+    aStatus == "Rendez-vous accordé" ~ 40,
+    aStatus == "Attend cadres de services pour hospitalisation" ~ 6,
+    aStatus == "En cours de rapatriement" ~ 60,
+    aStatus == "À opérer" ~ 8,
+    aStatus == "Opéré(e)" ~ 9
+  )
 }
 
 fetchMessages <- function(aConnection, aPatientUID = NULL){
@@ -947,34 +989,6 @@ renderChatMessages <- function(aListOfMessages, aUsername) {
                                div(class = "message", .$message),
                                div(class = "datetime", displaySimpleDateTime(.$timestamp)))) %>% 
         {.$.out}
-  )
-}
-
-displayStatusName <- function(aStatus) {
-  case_when(
-    aStatus == -1 ~ "Dossier fermé",
-    aStatus == 0 ~ "En cours...",
-    aStatus == 3 ~  "En attente d'examen/infos supplémentaires",
-    aStatus == 4 ~ "Attend sécretariat pour un rendez-vous",
-    aStatus == 5 ~ "Rendez-vous accordé",
-    aStatus == 6 ~ "Attend cadres de services pour hospitalisation",
-    aStatus == 7 ~ "Unité assignée",
-    aStatus == 8 ~  "Opéré(e)",
-    aStatus == 9 ~  "À opérer"
-  )
-}
-
-displayStatusCode <- function(aStatus) {
-  case_when(
-    aStatus == "Dossier fermé" ~ -1,
-    aStatus == "En cours..." ~ 0,
-    aStatus == "En attente d'examen/infos supplémentaires" ~ 3,
-    aStatus == "Attend sécretariat pour un rendez-vous" ~ 4,
-    aStatus == "Rendez-vous accordé" ~ 5,
-    aStatus == "Attend cadres de services pour hospitalisation" ~ 6,
-    aStatus == "Chambre assignée" ~ 7,
-    aStatus == "À opérer" ~ 8,
-    aStatus == "Opéré(e)" ~ 9
   )
 }
 

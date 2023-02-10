@@ -398,11 +398,13 @@ dossiersEditModuleServer <- function(id,
                                                   date_naissance = 0,
                                                   phone_number_patient = 0,
                                                   pathologie_1 = 0,
+                                                  syndrome = 0,
                                                   description_histoire = 0)
                      
                      
                      observeEvent(input$contact_person, {
                        if (input$contact_person == "") {
+                         formFields$contact_person = 0
                          shinyFeedback::showFeedbackDanger("contact_person",
                                                            text = "La personne de contact est obligatoire!")
                          shinyjs::disable('submit')
@@ -414,6 +416,7 @@ dossiersEditModuleServer <- function(id,
                      
                      observeEvent(input$hopital, {
                        if (input$hopital == " ") {
+                         formFields$hopital = 0
                          shinyFeedback::showFeedbackDanger("hopital",
                                                            text = "L'hôpital d'origine est obligatoire!")
                          shinyjs::disable('submit')
@@ -442,6 +445,7 @@ dossiersEditModuleServer <- function(id,
                      
                      observeEvent(input$contact_phone, {
                        if (input$contact_phone == "") {
+                         formFields$contact_phone = 0
                          shinyFeedback::showFeedbackDanger("contact_phone",
                                                            text = "Le numéro de téléphone du contact est obligatoire!")
                          shinyjs::disable('submit')
@@ -453,6 +457,7 @@ dossiersEditModuleServer <- function(id,
                      
                      observeEvent(input$contact_email, {
                        if (str_trim(input$contact_email == "")) {
+                         formFields$contact_email = 0
                          shinyFeedback::showFeedbackDanger("contact_email",
                                                            text = "L'email de la personne de contact est obligatoire!")
                          shinyjs::disable('submit')
@@ -469,6 +474,7 @@ dossiersEditModuleServer <- function(id,
                        }, 
                        handlerExpr = {
                          if (input$nom == "" & !input$patient_inconnu) {
+                           formFields$nom = 0
                            shinyFeedback::showFeedbackDanger("nom",
                                                              text = "Le nom du patient est obligatoire!")
                            shinyjs::disable('submit')
@@ -486,6 +492,7 @@ dossiersEditModuleServer <- function(id,
                        }, 
                        handlerExpr = {
                          if (input$prenom == "" & !input$patient_inconnu) {
+                           formFields$prenom = 0
                            shinyFeedback::showFeedbackDanger("prenom",
                                                              text = "Le prénom du patient est obligatoire!")
                            shinyjs::disable('submit')
@@ -503,6 +510,7 @@ dossiersEditModuleServer <- function(id,
                        }, 
                        handlerExpr = {
                          if (length(input$date_naissance) < 1 & !input$patient_inconnu) {
+                           formFields$date_naissance = 0
                            shinyFeedback::showFeedbackDanger("date_naissance",
                                                              text = "Le date de naissance du patient est obligatoire!")
                            shinyjs::disable('submit')
@@ -520,6 +528,7 @@ dossiersEditModuleServer <- function(id,
                        }, 
                        handlerExpr = {
                          if (str_trim(input$phone_number_patient) == "" & !input$patient_inconnu) {
+                           formFields$phone_number_patient = 0
                            shinyFeedback::showFeedbackDanger("phone_number_patient",
                                                              text = "Le numéro de téléphone est obligatoire!")
                            shinyjs::disable('submit')
@@ -580,6 +589,7 @@ dossiersEditModuleServer <- function(id,
                      
                      observeEvent(input$pathologie_1, {
                        if (str_trim(input$pathologie_1) == "") {
+                         formFields$pathologie_1 = 0
                          shinyFeedback::showFeedbackDanger("pathologie_1",
                                                            text = "Indiquez une pathologie")
                          shinyjs::disable('submit')
@@ -645,17 +655,20 @@ dossiersEditModuleServer <- function(id,
                        }, 
                        handlerExpr = {
                          if (str_trim(input$syndrome) == "" & input$add_syndrome == 1) {
+                           formFields$syndrome = 0
                            shinyFeedback::showFeedbackDanger("syndrome",
                                                              text = "Indiquez le syndrome")
+                           shinyjs::disable('submit')
                          } else {
+                           formFields$syndrome = 1
                            shinyFeedback::hideFeedback("syndrome")
-                           
                          }
                        }
                      )
                      
                      observeEvent(input$description_histoire, {
                        if (str_trim(input$description_histoire) == "") {
+                         formFields$description_histoire = 0
                          shinyFeedback::showFeedbackDanger("description_histoire",
                                                            text = "L'histoire de la maladie est obligatoire!")
                          shinyjs::disable('submit')
@@ -677,11 +690,11 @@ dossiersEditModuleServer <- function(id,
                           formFields$date_naissance == 1 &
                           formFields$phone_number_patient == 1 &
                           formFields$pathologie_1 == 1 & 
+                          formFields$syndrome == 1 &
                           formFields$description_histoire == 1) {
-                         shinyjs::enable('submit')
+                         shinyjs::enable(id ='submit')
                        }
                      })
-                     
                      
                      #------------END FIELD VALIDATION - FEEDBACK---------------
                      
