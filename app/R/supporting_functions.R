@@ -136,7 +136,7 @@ buildTreatmentBanner <- function (aMedicine1, aDerniereDate1,
 
 buildMetadataBanner <- function(aCreator, anOrigin, aTimestamp, aGarde) {
   
-  paste0('<div ><h4 style="text-align:right;">Origine : ', anOrigin,'</h4>
+  paste0('<div ><h5 style="text-align:right;font-size:8px;">Origine : ', anOrigin,'</h5>
          <h5 style="color:#777875;text-align:right;">Enregistré par : ', aCreator,'<br>
          Enregistré le : ', aTimestamp,'<br>
          Garde : ', aGarde,'</h5></div><br>')
