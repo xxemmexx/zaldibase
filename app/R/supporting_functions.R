@@ -852,8 +852,8 @@ writeRendezVousQuery <- function(aPatientUid, aMode) {
 
 writeStatusUpdate <- function(aDecision) {
   case_when(
-    aDecision == "A hospitaliser / A rapatrier" ~ ", is_viewed = 1, needs_room = 1, status = 6",
-    aDecision == "Rendez-vous / Suivi" ~ ", is_viewed = 1, needs_rendezvous = 1, status = 4",
+    aDecision == "A hospitaliser / A rapatrier" ~ ", is_viewed = 1, needs_room = 1, status = 69",
+    aDecision == "Rendez-vous / Suivi" ~ ", is_viewed = 1, needs_rendezvous = 1, status = 49",
     aDecision == "Complément d`examen à faire" ~ ", is_viewed = 1, status = 3",
     aDecision == "Clôturer dossier" ~  ", is_closed = 1, is_viewed = 1, status = -1"
   )
@@ -933,12 +933,12 @@ displayStatusName <- function(aStatus) {
     aStatus == -1 ~ "Dossier fermé",
     aStatus == 0 ~ "En cours...",
     aStatus == 3 ~  "En attente d'examen/infos supplémentaires",
-    aStatus == 4 ~ "Attend sécretariat pour un rendez-vous",
-    aStatus == 6 ~ "Attend cadres de services pour hospitalisation",
     aStatus == 8 ~  "Opéré(e)",
     aStatus == 9 ~  "À opérer",
     aStatus == 40 ~ "Rendez-vous accordé",
-    aStatus == 60 ~ "En cours de rapatriement"
+    aStatus == 49 ~ "Attend sécretariat pour un rendez-vous",
+    aStatus == 60 ~ "En cours de rapatriement",
+    aStatus == 69 ~ "Attend cadres de services pour hospitalisation",
   )
 }
 
@@ -947,9 +947,9 @@ displayStatusCode <- function(aStatus) {
     aStatus == "Dossier fermé" ~ -1,
     aStatus == "En cours..." ~ 0,
     aStatus == "En attente d'examen/infos supplémentaires" ~ 3,
-    aStatus == "Attend sécretariat pour un rendez-vous" ~ 4,
+    aStatus == "Attend sécretariat pour un rendez-vous" ~ 49,
     aStatus == "Rendez-vous accordé" ~ 40,
-    aStatus == "Attend cadres de services pour hospitalisation" ~ 6,
+    aStatus == "Attend cadres de services pour hospitalisation" ~ 69,
     aStatus == "En cours de rapatriement" ~ 60,
     aStatus == "À opérer" ~ 8,
     aStatus == "Opéré(e)" ~ 9

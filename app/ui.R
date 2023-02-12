@@ -121,11 +121,11 @@ tagList(
                                                     tags$span(
                                                       actionButton("refresh_images", 
                                                                    "",
-                                                                   icon("refresh", verify_fa = FALSE),
+                                                                   icon("refresh"),
                                                                    style="color: #FFF0F5; background-color: #3E3F3A;"),
                                                       actionButton("archive_refresh_images", 
                                                                    "",
-                                                                   icon("refresh", verify_fa = FALSE),
+                                                                   icon("refresh"),
                                                                    style="color: #FFF0F5; background-color: #3E3F3A;"),
                                                       style = "position:absolute;right:2em;"),
                                                     tags$div(id = "photo_container",
@@ -213,17 +213,23 @@ tagList(
                                                   DTOutput('archive_table') %>% withSpinner()))
                                            ),
                          tabPanel("Staff", icon = icon("user-nurse"), value = "staff",
-                                 fluidRow(column(width = 1),
-                                          column(width = 8,
-                                                 tags$br(),
-                                                 tags$br(),
-                                                 tags$span(actionButton("staff_meeting", 
-                                                                        "Lancer le staff meeting",
-                                                                        icon("users"), 
-                                                                        style="color: #FFF0F5; background-color: #325d88"),
-                                                           style = "position:absolute;left:2em;")),
-                                          column(width = 3)
-                                          ), # Close Fluid row
+                                  tags$br(),
+                                  tags$br(),
+                                  fluidRow(column(width = 12,
+                                                 tags$div(style="text-align:left;",
+                                                          actionButton("staff_meeting", 
+                                                                       "Lancer le staff meeting",
+                                                                       icon("users"), 
+                                                                       style="color: #FFF0F5; background-color: #325d88"),
+                                                          actionButton("annuler_staff_meeting", 
+                                                                       "Annuler", 
+                                                                       style="color: #FFF0F5; background-color: #3e3f3a") %>% shinyjs::hidden(),
+                                                          actionButton("cloturer_staff_meeting", 
+                                                                       "Clôturer le staff meeting",
+                                                                       icon("users"),
+                                                                       style="color: #FFF0F5;background-color:#d9534f") %>% shinyjs::hidden())
+                                                 ) # Close column
+                                 ), # Close Fluid row
                                  tags$br(),
                                  tags$br(),
                                  tags$br(),
@@ -237,11 +243,7 @@ tagList(
                                               actionButton("increase_patient_index", 
                                                            "",
                                                            icon("arrow-right"),
-                                                           style="color: #DAA520; background-color:#3E3F3A"),
-                                              actionButton("cloturer_staff_meeting", 
-                                                           "Clôturer le staff meeting",
-                                                           icon("users"),
-                                                           style="color: #FFF0F5;background-color:#d9534f;position:absolute;right:2em;") %>% shinyjs::hidden()
+                                                           style="color: #DAA520; background-color:#3E3F3A")
                                               ) %>% shinyjs::hidden()
                                    
                                  ),

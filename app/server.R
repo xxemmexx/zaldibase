@@ -420,11 +420,16 @@ function(input, output, session) {
        #height <- session$clientData$output_tiffImage_height
       
       # Generate the PNG
-      #png(outfile, width = 400, height = 300)
-      patientPhotos()[imgIdx] %>%
+      if(dossiers_patient_filenames_count() == 0) {
+        index <- 1
+      } else {
+        index <- imgIdx
+      }
+      
+      patientPhotos()[index] %>%
         image_scale(geometry = "x380") %>%
         image_write(path = outfile, format = "png")
-      #dev.off()
+      
       
       # Return a list containing the filename
       list(src = outfile,
@@ -450,7 +455,7 @@ function(input, output, session) {
     showModal(
       modalDialog(
         HTML(paste0('<img src="tmpimg', timeSuffix, '">')),
-        size = "xl",
+        size = "l",
         easyClose = TRUE,
         footer = NULL
       )
@@ -1137,8 +1142,13 @@ function(input, output, session) {
       outfile <- tempfile(fileext = '.png')
       
       # Generate the PNG
-      #png(outfile, width = 400, height = 300)
-      archivePatientPhotos()[archiveImgIdx] %>%
+      if(archive_patient_filenames_count() == 0) {
+        index <- 1
+      } else {
+        index <- archiveImgIdx
+      }
+      
+      archivePatientPhotos()[index] %>%
         image_scale(geometry = "x380") %>%
         image_write(path = outfile, format = "png")
       #dev.off()
@@ -1167,7 +1177,7 @@ function(input, output, session) {
     showModal(
       modalDialog(
         HTML(paste0('<img src="tmpimg', timeSuffix, '">')),
-        size = "xl",
+        size = "l",
         easyClose = TRUE,
         footer = NULL
       )
@@ -1376,7 +1386,29 @@ function(input, output, session) {
       
       session$userData$garde_trigger(session$userData$garde_trigger() + 1)
       
-      showToast("success", message = "Vous avez bien pris la garde")}, 
+      showToast("success", message = "Vous avez bien pris la garde")
+      
+      
+      # output$report <- downloadHandler(
+      #   
+      #   filename = "report.pdf",
+      #   content = function(file) {
+      #     
+      #     tempReport <- file.path(tmpDir)
+      #     file.copy(list.files(getwd()), tempReport, overwrite = TRUE, recursive = TRUE)
+      #     
+      #     params <- list(species = input$garde_avec,
+      #                    island = input$garde_avec,
+      #                    sex = input$garde_avec
+      #     )
+      #     quarto::quarto_render("data/Report.qmd",
+      #                           output_file = file,
+      #                           execute_params = params
+      #     )
+      #   }
+      # )
+      
+      }, 
       
       error = function(error) {
         
@@ -1410,7 +1442,8 @@ function(input, output, session) {
         mutate(created_at = as.POSIXct(created_at, tz = "UTC"),
                modified_at = as.POSIXct(modified_at, tz = "UTC")) %>%
         arrange(desc(modified_at)) %>%
-        filter(is_closed == 0 | is_viewed == 0)
+        filter(is_closed == 0 | is_viewed == 0) %>%
+        filter(status < 10)
 
     },
     error = function(err) {
@@ -1533,20 +1566,6 @@ function(input, output, session) {
     
   })
   
-  staffMeetingReady <- reactive({
-    
-    summary <- overviewTable() %>%
-      summarise(readiness = sum(valid))
-    
-    summary$readiness == patient_data_staff_count()
-    
-  })
-  
-  observe({
-    if(staffMeetingReady()) {
-      shinyjs::toggle("cloturer_staff_meeting")
-    }
-  })
 
   output$patient_overview <- renderDT({
     req(overviewTable())
@@ -1732,7 +1751,6 @@ function(input, output, session) {
     
   })
   
-  
   output$staff_description_histoire <-renderUI({
     req(patient_data_staff()$description_histoire)
     
@@ -1806,6 +1824,13 @@ function(input, output, session) {
     
   })
   
+  observeEvent(staff_patient_filenames_count(), {
+    if(staff_patient_filenames_count() < 1){
+      shinyjs::hide("staff_arrows_container")
+    } else {
+      shinyjs::show("staff_arrows_container")
+    }
+  })
   
   imgIdxStaff <- 1
   makeReactiveBinding('imgIdxStaff')
@@ -1847,13 +1872,16 @@ function(input, output, session) {
       # A temp file to save the output.
       # This file will be removed later by renderImage
       outfile <- tempfile(fileext = '.png')
-      
-      #width  <- session$clientData$output_tiffImage_width
-      #height <- session$clientData$output_tiffImage_height
+
       
       # Generate the PNG
-      #png(outfile, width = 400, height = 300)
-      staffPatientPhotos()[imgIdxStaff] %>%
+      if(staff_patient_filenames_count() == 0) {
+        index <- 1
+      } else {
+        index <- imgIdxStaff
+      }
+      
+      staffPatientPhotos()[index] %>%
         image_scale(geometry = "x380") %>%
         image_write(path = outfile, format = "png")
       #dev.off()
@@ -1882,7 +1910,7 @@ function(input, output, session) {
     showModal(
       modalDialog(
         HTML(paste0('<img src="tmpimg', timeSuffix, '">')),
-        size = "xl",
+        size = "l",
         easyClose = TRUE,
         footer = NULL
       )
@@ -1892,53 +1920,86 @@ function(input, output, session) {
   session$userData$staff_meting_overview <- reactiveVal(0)
   
   observeEvent(input$staff_meeting, {
-    shinyjs::toggle("staff_ui_controllers")
-    shinyjs::toggle("staff_patient_overview")
-    shinyjs::toggle("staff_ui")
-    shinyjs::toggle("staff_ui_controllers_2")
-    shinyjs::toggle("staff_ui_chat")
+    shinyjs::show("staff_ui_controllers")
+    shinyjs::show("staff_patient_overview")
+    shinyjs::show("staff_ui")
+    shinyjs::show("staff_ui_controllers_2")
+    shinyjs::show("staff_ui_chat")
+    shinyjs::show("annuler_staff_meeting")
+    shinyjs::show("cloturer_staff_meeting")
+    shinyjs::disable("staff_meeting")
   })
   
+  observeEvent(input$annuler_staff_meeting, {
+    shinyjs::hide("staff_ui_controllers")
+    shinyjs::hide("staff_patient_overview")
+    shinyjs::hide("staff_ui")
+    shinyjs::hide("staff_ui_controllers_2")
+    shinyjs::hide("staff_ui_chat")
+    shinyjs::hide("annuler_staff_meeting")
+    shinyjs::hide("cloturer_staff_meeting")
+    shinyjs::enable("staff_meeting")
+  })
+  
+  
   observeEvent(input$cloturer_staff_meeting, {
+    
+    summary <- overviewTable() %>%
+      summarise(readiness = sum(valid))
 
-    tryCatch({
+    if (summary$readiness == patient_data_staff_count()) {
       
-      uids <- patient_data_staff()$uid
-      
-      for(i in 1:patient_data_staff_count()) {
+      tryCatch({
         
-        thisQuery <- writeStaffDecisionQuery(input[[staff_decision_names()[[i]]]], 
-                                             prepareString(input[[staff_explanation_names()[[i]]]]),
-                                             uids[[i]])
+        uids <- patient_data_staff()$uid
         
-        dbExecute(conn, thisQuery)
-      }
-      
-      session$userData$staff_trigger(session$userData$staff_trigger() + 1)
-      session$userData$dossiers_trigger(session$userData$dossiers_trigger() + 1)
-      
-      shinyjs::toggle("staff_ui")
-      shinyjs::toggle("staff_ui_controllers")
-      shinyjs::toggle("staff_ui_controllers_2")
-      shinyjs::toggle("staff_patient_overview")
-      shinyjs::toggle("staff_ui_chat")
-      shinyjs::hide("staff_meeting")
-      
-      showToast("success", message = "Staff meeting terminée correctement")}, 
-      
-      error = function(error) {
+        for(i in 1:patient_data_staff_count()) {
+          
+          thisQuery <- writeStaffDecisionQuery(input[[staff_decision_names()[[i]]]], 
+                                               prepareString(input[[staff_explanation_names()[[i]]]]),
+                                               uids[[i]])
+          
+          dbExecute(conn, thisQuery)
+        }
         
-        msg <- paste0("Erreur - contactez votre admin")
-        # print `msg` so that we can find it in the logs
-        print(msg)
-        # print the actual error to log it
-        print(error)
-        # show error `msg` to user.  User can then tell us about error and we can
-        # quickly identify where it cam from based on the value in `msg`
-        showToast("error", msg)
-      }
-    ) # Close try-catch
-
+        session$userData$staff_trigger(session$userData$staff_trigger() + 1)
+        session$userData$dossiers_trigger(session$userData$dossiers_trigger() + 1)
+        
+        shinyjs::hide("staff_ui")
+        shinyjs::hide("staff_ui_controllers")
+        shinyjs::hide("staff_ui_controllers_2")
+        shinyjs::hide("staff_patient_overview")
+        shinyjs::hide("staff_ui_chat")
+        shinyjs::hide("annuler_staff_meeting")
+        shinyjs::hide("cloturer_staff_meeting")
+        shinyjs::enable("staff_meeting")
+        
+        patientIdx <<- 1
+        
+        showToast("success", message = "Staff meeting terminée correctement")}, 
+        
+        error = function(error) {
+          
+          msg <- paste0("Erreur - contactez votre admin")
+          # print `msg` so that we can find it in the logs
+          print(msg)
+          # print the actual error to log it
+          print(error)
+          # show error `msg` to user.  User can then tell us about error and we can
+          # quickly identify where it cam from based on the value in `msg`
+          showToast("error", msg)
+        }
+      ) # Close try-catch
+    } else {
+      
+      showModal(
+        modalDialog(
+        div(style = "padding: 30px;", class = "text-center",
+            HTML(printWarningIncompleteStaffMeeting)),
+        easyClose = TRUE,
+        footer = modalButton("Fermer"))
+      )
+    }
   })
   
   # Rendez-vous table ------------------------------------------------------------
