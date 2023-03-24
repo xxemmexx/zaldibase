@@ -2958,19 +2958,121 @@ function(input, output, session) {
       count(hopital) %>%
       mutate(hopital = reorder(hopital, n)) %>%
       ggplot(aes(x = hopital, y = n)) +
-      geom_bar(stat = "identity", fill="steelblue") +
-      ggtitle(paste0("Numéro de patients rapportés par hôpitaux régionaux \n entre le ",
+      geom_bar(stat = "identity", fill = "steelblue") +
+      ggtitle(paste0("Nombre de patients rapportés par hôpitaux régionaux \n entre le ",
                      sd(ymd(input$interval_of_interest[1])),
                      " et le ",
                      sd(ymd(input$interval_of_interest[2])))) +
       xlab("") + ylab("# cas rapportés au CHUGA") +
-      theme(plot.title = element_text(size=18, face="bold", hjust = 0.5)) +
-      theme(axis.title.x = element_text(size=16, face="bold")) +
-      theme(axis.title.y = element_text(size=16, face="bold")) +
-      theme(axis.text.x= element_text(face="bold", size=12)) +
-      theme(axis.text.y= element_text(face="bold", size=12, angle=30)) +
+      theme(plot.title = element_text(size = 18, face = "bold", hjust = 0.5)) +
+      theme(axis.title.x = element_text(size = 16, face = "bold")) +
+      theme(axis.title.y = element_text(size = 16, face = "bold")) +
+      theme(axis.text.x= element_text(face = "bold", size = 12)) +
+      theme(axis.text.y= element_text(face = "bold", size = 12, angle = 30)) +
       coord_flip()
     
+    
+  })
+  
+  summaryPathologies <- reactive({
+    
+    summary <- closedDossiers() %>%
+      filter(between(as.Date(ymd_hms(created_at)), 
+                     ymd(input$interval_of_interest[1]), 
+                     ymd(input$interval_of_interest[2]))) %>%
+      filter(hopital == input$centre_hopitalier) %>%
+      select(pathologie_1, pathologie_2, pathologie_3) %>%
+      pivot_longer(cols = starts_with('pathologie_'), names_to = 'label') %>%
+      filter(!value == "") %>%
+      mutate(pathologie = as.factor(value)) %>%
+      group_by(pathologie) %>%
+      summarise(cas = n()) %>%
+      ungroup()
+    
+    if(nrow(summary) == 0) {
+      return(NULL)
+    } else {
+      return(summary)
+    }
+  })
+  
+  output$pie_pathologies <- renderPlot({
+    req(summaryPathologies())
+    
+    totalCases <- sum(summaryPathologies()$cas)
+    
+    summaryPathologies() %>%
+      mutate(perc = cas/totalCases) %>%
+      ggplot(aes(x = "", y = perc, fill = pathologie)) +
+      geom_bar(stat = "identity", width = 1) +
+      coord_polar("y", start = 0) +
+      theme_void() +
+      labs(fill = "legend",
+           x = NULL,
+           y = NULL,
+           title = paste0("Disque par pathologies entre le ", 
+                          sd(ymd(input$interval_of_interest[1])),
+                          " et le ",
+                          sd(ymd(input$interval_of_interest[2]))),
+           caption = paste0("Centre hôpitalier : ", input$centre_hopitalier)) +
+      theme(plot.title = element_text(size = 18, face = "bold", hjust = 0.5),
+            plot.caption = element_text(size = 12, hjust = 0, color = "#696969"),
+            panel.background = element_blank(),
+            legend.title = element_blank(),
+            legend.text = element_text(size = 14)) + 
+      scale_fill_brewer(palette = "Set1")
+    
+  })
+  
+  summaryAges <- reactive({
+    
+    summary <- closedDossiers() %>%
+      filter(between(as.Date(ymd_hms(created_at)), 
+                     ymd(input$interval_of_interest[1]), 
+                     ymd(input$interval_of_interest[2]))) %>%
+      filter(hopital == input$centre_hopitalier) %>%
+      select(date_naissance, created_at) %>%
+      mutate(age = deliverAge(date_naissance, created_at),
+             classAge = classifyAge(age)) %>%
+      pivot_longer(cols = starts_with('class'), names_to = 'label') %>%
+      filter(!value == "") %>%
+      mutate(class = as.factor(value)) %>%
+      group_by(class) %>%
+      summarise(cas = n()) %>%
+      ungroup()
+    
+    if(nrow(summary) == 0) {
+      return(NULL)
+    } else {
+      return(summary)
+    }
+  })
+  
+  output$pie_ages <- renderPlot({
+    req(summaryAges())
+    
+    totalCases <- sum(summaryAges()$cas)
+    
+    summaryAges() %>%
+      mutate(perc = cas/totalCases) %>%
+      ggplot(aes(x = "", y = perc, fill = class)) +
+      geom_bar(stat = "identity", width = 1) +
+      coord_polar("y", start = 0) +
+      theme_void() +
+      labs(fill = "legend",
+           x = NULL,
+           y = NULL,
+           title = paste0("Disque par âges entre le ",
+                          sd(ymd(input$interval_of_interest[1])),
+                          " et le ",
+                          sd(ymd(input$interval_of_interest[2]))),
+           caption = paste0("Centre hôpitalier : ", input$centre_hopitalier)) +
+      theme(plot.title = element_text(size = 18, face = "bold", hjust = 0.5),
+            plot.caption = element_text(size = 12, hjust = 0, color = "#696969"),
+            panel.background = element_blank(),
+            legend.title = element_blank(),
+            legend.text = element_text(size = 14)) +
+      scale_fill_brewer(palette = "Set1")
     
   })
  

@@ -87,6 +87,10 @@ decisions_dev <- c(" ",
                    "Complément d`examen à faire",
                    "Clôturer dossier")
 
+graphiques <- c("Nombre de cas par origine",
+                "Disque par pathologie",
+                "Disque par âge")
+
 pathologies <- c(" ", "Trauma crânien",
                  "Trauma rachidien",
                  "Pathologie vasculaire (Intracranienne et rachidienne)",

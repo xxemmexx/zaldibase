@@ -68,6 +68,14 @@ deliverAge <- function(aDateNaissance, aCreatedAtDate) {
   interval(ymd(aDateNaissance), sdISO(ymd_hms(aCreatedAtDate))) %/% years(1)
 }
 
+classifyAge <- function(anAge) {
+  case_when(
+    anAge < 16 ~ "Pédiatrie",
+    anAge >= 16 && anAge < 31 ~ "Jeunes adultes",
+    anAge >= 31 ~ "Adultes",
+  )
+}
+
 displaySimpleDateTime <- function(aTimestamp) {
   timestampList <- aTimestamp %>% 
     str_split(" ")

@@ -364,13 +364,40 @@ tagList(
                                  )
                                  ), # Close tabpanel Garde
                          tabPanel("Analyse", icon = icon("chart-bar"), value = "analyse",
-                                  sidebarLayout(sidebarPanel(dateRangeInput("interval_of_interest",
-                                                                            label = "Intervalle",
-                                                                            start = "2023-01-01",
-                                                                            end = today(),
-                                                                            separator = "jusqu'au",
-                                                                            language = "fr")),
-                                                mainPanel(plotOutput("chart_cases_per_origin")))
+                                  sidebarLayout(
+                                    sidebarPanel(
+                                      tags$br(),
+                                      selectInput("type_of_graph",
+                                                  "Graphique",
+                                                  choices = graphiques,
+                                                  selected = "Nombre de cas par origine"),
+                                      tags$br(),
+                                      tags$br(),
+                                      tags$br(),
+                                      tags$br(),
+                                      dateRangeInput("interval_of_interest",
+                                                     label = "Intervalle",
+                                                     start = "2023-01-01",
+                                                     end = today(),
+                                                     separator = "jusqu'au",
+                                                     language = "fr"),
+                                      conditionalPanel(condition = "input.type_of_graph == 'Disque par pathologie' | input.type_of_graph == 'Disque par âge'",
+                                                       selectInput("centre_hopitalier",
+                                                                   "Centre hôpitalier",
+                                                                   choices = hopitaux,
+                                                                   selected = "Albertville - Moûtiers"))
+                                                                            
+                                      ), # Close sidebar panel
+                                    mainPanel(
+                                      conditionalPanel(condition = "input.type_of_graph == 'Nombre de cas par origine'",
+                                                               tags$br(),
+                                                               plotOutput("chart_cases_per_origin")),
+                                      conditionalPanel(condition = "input.type_of_graph == 'Disque par pathologie'",
+                                                       plotOutput("pie_pathologies")),
+                                      conditionalPanel(condition = "input.type_of_graph == 'Disque par âge'",
+                                                       plotOutput("pie_ages"))
+                                      ) # Close main panel
+                                    ) # Close sidebar layout
                          ) # Close tabpanel Analyse
                          ) # Close tabset panel
       ), # Close conditional panel admin
