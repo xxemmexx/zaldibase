@@ -492,6 +492,8 @@ function(input, output, session) {
     textCoagulation <- ''
     iconPediatrician <- ''
     textPediatrician <- ''
+    iconSyndrome <- ''
+    textSyndrome <- ''
     
     if(patient_data()$has_coagulation) {
       iconCoagulation <- '<img src="blood.jpeg" alt="drop" width="27" height="31.5"/>'
@@ -511,6 +513,11 @@ function(input, output, session) {
       }
     } 
     
+    if(!(patient_data()$syndrome == '')) {
+      iconSyndrome <- '<img src="bugs_icon.png" alt="infection" height="30"/>'
+      textSyndrome <- "<h4><b>Infection/Syndrome inflammatoire</b></h4>"
+    } 
+    
     x <- paste0('<table style="width:100%">
       <tr>
       <th></th>
@@ -523,6 +530,9 @@ function(input, output, session) {
       <tr>
       <td style="text-align:center;">', iconPediatrician, '</td>
       <td style="text-align:left;">', textPediatrician, '</td>
+      </tr>
+      <td style="text-align:center;">', iconSyndrome, '</td>
+      <td style="text-align:left;">', textSyndrome, '</td>
       </tr>
       </table> ')
     
@@ -971,6 +981,8 @@ function(input, output, session) {
     textCoagulation <- ''
     iconPediatrician <- ''
     textPediatrician <- ''
+    iconSyndrome <- ''
+    textSyndrome <- ''
     
     if(archive_patient_data()$has_coagulation) {
       iconCoagulation <- '<img src="blood.jpeg" alt="drop" width="27" height="31.5"/>'
@@ -988,7 +1000,12 @@ function(input, output, session) {
         iconPediatrician <- '<img src="child_icon.jpeg" alt="child" height="30"/>'
         textPediatrician <- "<h4><b>Pédiatrie</b></h4>"
       }
-    }
+    } 
+    
+    if(!(archive_patient_data()$syndrome == '')) {
+      iconSyndrome <- '<img src="bugs_icon.png" alt="infection" height="30"/>'
+      textSyndrome <- "<h4><b>Infection/Syndrome inflammatoire</b></h4>"
+    } 
     
     x <- paste0('<table style="width:100%">
       <tr>
@@ -1002,6 +1019,9 @@ function(input, output, session) {
       <tr>
       <td style="text-align:center;">', iconPediatrician, '</td>
       <td style="text-align:left;">', textPediatrician, '</td>
+      </tr>
+      <td style="text-align:center;">', iconSyndrome, '</td>
+      <td style="text-align:left;">', textSyndrome, '</td>
       </tr>
       </table> ')
     
@@ -1624,6 +1644,8 @@ function(input, output, session) {
     textCoagulation <- ''
     iconPediatrician <- ''
     textPediatrician <- ''
+    iconSyndrome <- ''
+    textSyndrome <- ''
     
     if(patient_data_staff()$has_coagulation[[patientIdx]]) {
       iconCoagulation <- '<img src="blood.jpeg" alt="drop" width="27" height="31.5"/>'
@@ -1644,6 +1666,11 @@ function(input, output, session) {
       }
     }
     
+    if(!(patient_data_staff()$syndrome[[patientIdx]] == '')) {
+      iconSyndrome <- '<img src="bugs_icon.png" alt="infection" height="30"/>'
+      textSyndrome <- "<h4><b>Infection/Syndrome inflammatoire</b></h4>"
+    } 
+    
     x <- paste0('<table style="width:100%">
       <tr>
       <th></th>
@@ -1656,6 +1683,9 @@ function(input, output, session) {
       <tr>
       <td style="text-align:center;">', iconPediatrician, '</td>
       <td style="text-align:left;">', textPediatrician, '</td>
+      </tr>
+      <td style="text-align:center;">', iconSyndrome, '</td>
+      <td style="text-align:left;">', textSyndrome, '</td>
       </tr>
       </table> ')
     
