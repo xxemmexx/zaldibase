@@ -395,7 +395,9 @@ tagList(
                                       conditionalPanel(condition = "input.type_of_graph == 'Disque par pathologie'",
                                                        plotOutput("pie_pathologies")),
                                       conditionalPanel(condition = "input.type_of_graph == 'Disque par âge'",
-                                                       plotOutput("pie_ages"))
+                                                       plotOutput("pie_ages")),
+                                      conditionalPanel(condition = "input.type_of_graph == 'Histogramme Infections/Complications'",
+                                                       plotOutput("chart_infect"))
                                       ) # Close main panel
                                     ) # Close sidebar layout
                          ) # Close tabpanel Analyse

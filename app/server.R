@@ -1660,7 +1660,7 @@ function(input, output, session) {
     
     if(!(patient_data_staff()$date_naissance[[patientIdx]] == '')) {
       if(deliverAge(patient_data_staff()$date_naissance[[patientIdx]], 
-                    patient_data_staff()$created_at[[patientIdx]]) < 18) {
+                    patient_data_staff()$created_at[[patientIdx]]) < 16) {
         iconPediatrician <- '<img src="child_icon.jpeg" alt="child" height="30"/>'
         textPediatrician <- "<h4><b>Pédiatrie</b></h4>"
       }
@@ -3102,8 +3102,98 @@ function(input, output, session) {
             panel.background = element_blank(),
             legend.title = element_blank(),
             legend.text = element_text(size = 14)) +
-      scale_fill_brewer(palette = "Set1")
+      scale_fill_brewer(palette = "Set2")
     
+  })
+  
+  # output$table_ages <- renderTable({
+  #   req(summaryAges())
+  #   
+  #   summaryAges()
+  # })
+  
+  # sequencedTibb <- seq(ymd('2012-04-07'), ymd('2013-03-22'), by = 'months') %>%
+  #   as_tibble() %>%
+  #   mutate(creationMonth = month(value),
+  #          month = deliverMonthName(as.integer(creationMonth)),
+  #          year = year(value),
+  #          monthLabel = as.factor(paste0(month, " ", year)),
+  #          counter = 0) %>%
+  #   select(value, monthLabel, counter)
+  # 
+  # testTibb <- tribble(~monthLabel, ~counter,
+  #                     'Avril 2012', 4,
+  #                     'Janvier 2013', 7) %>%
+  #   mutate(monthLabel = as.factor(monthLabel))
+  # 
+  # 
+  # 
+  # right_join(testTibb, sequencedTibb, c('monthLabel')) %>%
+  #   arrange(value) %>%
+  #   mutate(cas = if_else(is.na(counter.x), counter.y, counter.x))
+    
+    
+  summaryInfections <- reactive({
+    
+    compactSummary <- closedDossiers() %>%
+      filter(between(as.Date(ymd_hms(created_at)), 
+                     ymd(input$interval_of_interest[1]), 
+                     ymd(input$interval_of_interest[2]))) %>%
+      filter(pathologie_1 == 'Complications / Infections post-op' | pathologie_2 == 'Complications / Infections post-op' | pathologie_3 == 'Complications / Infections post-op') %>%
+      select(created_at) %>%
+      mutate(creationDate = ymd_hms(created_at),
+             creationMonth = month(creationDate),
+             month = deliverShortMonthName(as.integer(creationMonth)),
+             year = year(creationDate),
+             monthLabel = paste0(month, " ", year)) %>%
+      select(creationDate, monthLabel) %>%
+      mutate(monthLabel = as.factor(monthLabel)) %>%
+      group_by(monthLabel) %>%
+      summarise(cas = n()) %>%
+      ungroup()
+    
+    sequencedTibb <- seq(ymd(input$interval_of_interest[1]),ymd(input$interval_of_interest[2]), by = 'months') %>%
+      as_tibble() %>%
+      mutate(creationMonth = month(value),
+             month = deliverShortMonthName(as.integer(creationMonth)),
+             year = year(value),
+             monthLabel = as.factor(paste0(month, " ", year)),
+             cas = 0) %>%
+      select(value, monthLabel, cas)
+    
+    summary <- right_join(compactSummary, sequencedTibb, c('monthLabel')) %>%
+      arrange(value) %>%
+      mutate(cas_1 = as.numeric(cas.x),
+             cas_2 = as.numeric(cas.y),
+             casTotaux = if_else(is.na(cas_1), cas_2, cas_1))
+    
+    summary$monthLabel <- factor(summary$monthLabel, levels = summary$monthLabel)
+    
+    if(nrow(summary) == 0) {
+      return(NULL)
+    } else {
+      return(summary)
+    }
+  })
+  
+  #as.numeric(NA)
+  
+  output$chart_infect <- renderPlot({
+    req(summaryInfections())
+
+    summaryInfections() %>%
+      ggplot(aes(x = monthLabel, y = casTotaux)) +
+      geom_bar(stat = "identity", fill = "steelblue") +
+      ggtitle(paste0("Nombre de cas de complications ou infections entre le ",
+                     sd(ymd(input$interval_of_interest[1])),
+                     " et le ",
+                     sd(ymd(input$interval_of_interest[2])))) +
+      xlab("") + ylab("Nombre de cas") +
+      theme(plot.title = element_text(size = 18, face = "bold", hjust = 0.5)) +
+      theme(axis.title.x = element_text(size = 16, face = "bold")) +
+      theme(axis.title.y = element_text(size = 16, face = "bold")) +
+      theme(axis.text.x= element_text(face = "bold", size = 12)) +
+      theme(axis.text.y= element_text(face = "bold", size = 12)) 
   })
  
   # set suspendWhenHidden to FALSE so it renders even without output

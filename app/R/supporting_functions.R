@@ -71,7 +71,7 @@ deliverAge <- function(aDateNaissance, aCreatedAtDate) {
 classifyAge <- function(anAge) {
   case_when(
     anAge < 16 ~ "Pédiatrie",
-    anAge >= 16 && anAge < 31 ~ "Jeunes adultes",
+    anAge >= 16 & anAge < 31 ~ "Jeunes adultes",
     anAge >= 31 ~ "Adultes",
   )
 }
@@ -521,20 +521,36 @@ translateDate <- function(aDateString) {
 
 deliverMonthName <- function(anInteger) {
   
-  switch(anInteger,
-         'Janvier',
-         'Février',
-         'Mars',
-         'Avril',
-         'Mai',
-         'Juin',
-         'Juillet',
-         'Août',
-         'Septembre',
-         'Octobre',
-         'Novembre',
-         'Décembre')
+  case_when(anInteger == 1 ~ 'Janvier',
+            anInteger == 2 ~ 'Février',
+            anInteger == 3 ~ 'Mars',
+            anInteger == 4 ~ 'Avril',
+            anInteger == 5 ~ 'Mai',
+            anInteger == 6 ~ 'Juin',
+            anInteger == 7 ~ 'Juillet',
+            anInteger == 8 ~ 'Août',
+            anInteger == 9 ~ 'Septembre',
+            anInteger == 10 ~ 'Octobre',
+            anInteger == 11 ~ 'Novembre',
+            anInteger == 12 ~ 'Décembre',
+            )
+}
+
+deliverShortMonthName <- function(anInteger) {
   
+  case_when(anInteger == 1 ~ 'Jan.',
+            anInteger == 2 ~ 'Fév.',
+            anInteger == 3 ~ 'Mars',
+            anInteger == 4 ~ 'Avril',
+            anInteger == 5 ~ 'Mai',
+            anInteger == 6 ~ 'Juin',
+            anInteger == 7 ~ 'Juillet',
+            anInteger == 8 ~ 'Août',
+            anInteger == 9 ~ 'Sep.',
+            anInteger == 10 ~ 'Oct.',
+            anInteger == 11 ~ 'Nov.',
+            anInteger == 12 ~ 'Déc.',
+  )
 }
 
 computeDateGarde <- function(aTimestamp) {

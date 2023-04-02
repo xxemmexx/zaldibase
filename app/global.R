@@ -90,7 +90,8 @@ decisions_dev <- c(" ",
 
 graphiques <- c("Nombre de cas par origine",
                 "Disque par pathologie",
-                "Disque par âge")
+                "Disque par âge",
+                "Histogramme Infections/Complications")
 
 pathologies <- c(" ", "Trauma crânien",
                  "Trauma rachidien",
