@@ -895,6 +895,44 @@ function(input, output, session) {
     ))
   })
   
+  observe({
+    if(identical(patientUID(), character(0))) {
+      shinyjs::hide("mark_as_opere")
+    } else {
+      if(patient_data()$status == 9) {
+        shinyjs::show("mark_as_opere")
+      } else {
+        shinyjs::hide("mark_as_opere")
+      }
+    }    
+  })
+  
+  observeEvent(input$mark_as_opere, {
+    
+    tryCatch({
+      
+      opereQuery <- writeOperationFinieQuery(patient_data()$uid)
+      
+      dbExecute(conn, opereQuery)
+      
+      session$userData$dossiers_trigger(session$userData$dossiers_trigger() + 1)
+      
+      showToast("success", message = "Patient a été opéré. Vous pouvez quitter la fiche...")}, 
+      
+      error = function(error) {
+        
+        msg <- paste0("Erreur pendant le changement - contactez votre admin")
+        # print `msg` so that we can find it in the logs
+        print(msg)
+        # print the actual error to log it
+        print(error)
+        # show error `msg` to user.  User can then tell us about error and we can
+        # quickly identify where it cam from based on the value in `msg`
+        showToast("error", msg)
+      }
+    )
+  })
+  
   output$archive_metadata <-renderUI({
     req(archive_patient_data())
     
@@ -1213,7 +1251,6 @@ function(input, output, session) {
       } else {
         shinyjs::hide("reopen_from_archive")
       }
-      
     }    
   })
   

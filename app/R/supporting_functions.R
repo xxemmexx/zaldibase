@@ -874,12 +874,21 @@ writeRendezVousQuery <- function(aPatientUid, aMode) {
   
 }
 
+writeOperationFinieQuery <- function(aPatientUid) {
+    
+  paste0("UPDATE patients SET 
+                    status = 8
+                    WHERE uid = '", aPatientUid, "';")
+  
+}
+
 writeStatusUpdate <- function(aDecision) {
   case_when(
     aDecision == "A hospitaliser / A rapatrier" ~ ", is_viewed = 1, needs_room = 1, status = 69",
     aDecision == "Rendez-vous / Suivi" ~ ", is_viewed = 1, needs_rendezvous = 1, status = 49",
     aDecision == "Complément d`examen à faire" ~ ", is_viewed = 1, status = 3",
-    aDecision == "Clôturer dossier" ~  ", is_closed = 1, is_viewed = 1, status = -1"
+    aDecision == "Clôturer dossier" ~  ", is_closed = 1, is_viewed = 1, status = -1",
+    aDecision == "A opérer" ~  ", is_viewed = 1, status = 9"
   )
 }
 

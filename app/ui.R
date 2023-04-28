@@ -72,7 +72,10 @@ tagList(
                                   fluidRow(column(width = 1),
                                            column(width = 10,
                                                   wellPanel(
-                                                    tags$span(actionButton("show_contact_details", 
+                                                    tags$span(actionButton("mark_as_opere", 
+                                                                           "Opération finie",
+                                                                           style="color: #FFF0F5; background-color: #008080"),
+                                                              actionButton("show_contact_details", 
                                                                            "Contact",
                                                                            style="color: #FFF0F5; background-color: #3E3F3A"),
                                                               style = "position:absolute;right:2em;"),

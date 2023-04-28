@@ -84,6 +84,7 @@ decisions <- c(" ", "A hospitaliser / A rapatrier",
 
 decisions_dev <- c(" ", 
                    "A hospitaliser / A rapatrier",
+                   "A opérer",
                    "Rendez-vous / Suivi", 
                    "Complément d`examen à faire",
                    "Clôturer dossier")
