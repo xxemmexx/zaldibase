@@ -37,6 +37,18 @@ writeSyndromeInflammatoire <- function(aSyndrome) {
   return(HTML(paste0("<em>", syndromeNote, "</em>")))
 }
 
+writeExplanation <- function(anExplanation) {
+  
+  if(str_trim(anExplanation) == "") {
+    explanationNote <- "Aucune observation trouvée"
+  } else {
+    explanationNote <- anExplanation
+  }
+  
+  
+  return(HTML(paste0("<em>", explanationNote, "</em>")))
+}
+
 
 isInvalidDate <- function(aDate) {
   if(length(aDate) < 1) {
