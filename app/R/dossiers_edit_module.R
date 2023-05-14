@@ -169,7 +169,7 @@ dossiersEditModuleServer <- function(id,
                                                HTML("<h5 style=text-align:left;font-family:Garamond><b>FLUIDIFIANTS</b></h5>"),
                                                fluidRow(
                                                  column(width = 12, 
-                                                        HTML('<b>Le patient, prend-il des fluidifiants ou a-t-il des troubles de coagulation?</b>'),
+                                                        HTML('<b>Le patient prend-il des fluidifiants, ou a-t-il des troubles de coagulation?</b>'),
                                                         radioButtons(ns('add_coagulation'), 
                                                                      "", 
                                                                      choices = c("Non" = 0, "Oui" = 1),
@@ -215,7 +215,7 @@ dossiersEditModuleServer <- function(id,
                                                tags$br(),
                                                HTML("<h5 style=text-align:left;font-family:Garamond><b>SYNDROMES</b></h5>"),
                                       fluidRow(column(width = 12, 
-                                                      HTML("<b>Le patient, présent-il un syndrome inflammatoire ou infectieux actif, ou est-il en isolement?</b>"),
+                                                      HTML("<b>Le patient présente-t-il un syndrome inflammatoire ou infectieux actif, ou est-il en isolement?</b>"),
                                                       radioButtons(ns('add_syndrome'), 
                                                                    "", 
                                                                    choices = c("Non" = 0, "Oui" = 1),
@@ -233,107 +233,107 @@ dossiersEditModuleServer <- function(id,
                                                        ns = ns), # Close conditional panel
                                       
                                       tags$br(),
-                                      HTML("<h5 style=text-align:left;font-family:Garamond><b>COMORBIDITÉS</b></h5>"),
-                                      tags$br(),
-                                      fluidRow(
-                                        column(width = 4, align = 'right',
-                                               HTML('<br><b>Metabolique</b>')),
-                                        column(width = 8, align = 'left',
-                                                               radioButtons(ns('comorb_metabolique'),
-                                                                            "",
-                                                                            choices = c("Non" = 0, "Modérée" = 1, "Importante" = 2, "Très importante" = 3),
-                                                                            inline = TRUE,
-                                                                            selected = ifelse(is.null(hold), 0, hold$comorb_metabolique))
-                                               )
-                                      ),
-                                      fluidRow(style = "background-color:#F1F1F4;",
-                                        column(width = 4, align = 'right',
-                                               HTML('<br><b>Cardiovasculaire</b>')),
-                                        column(width = 8, align = 'left',
-                                               radioButtons(ns('comorb_cardiovasculaire'),
-                                                            "",
-                                                            choices = c("Non" = 0, "Modérée" = 1, "Importante" = 2, "Très importante" = 3),
-                                                            inline = TRUE,
-                                                            selected = ifelse(is.null(hold), 0, hold$comorb_cardiovasculaire))
-                                        )
-                                      ),
-                                      fluidRow(
-                                        column(width = 4, align = 'right',
-                                               HTML('<br><b>Renale</b>')),
-                                        column(width = 8, align = 'left',
-                                               radioButtons(ns('comorb_renale'),
-                                                            "",
-                                                            choices = c("Non" = 0, "Modérée" = 1, "Importante" = 2, "Très importante" = 3),
-                                                            inline = TRUE,
-                                                            selected = ifelse(is.null(hold), 0, hold$comorb_renale))
-                                        )
-                                      ),
-                                      fluidRow(style = "background-color:#F1F1F4;",
-                                        column(width = 4, align = 'right',
-                                               HTML('<br><b>Hepatique</b>')),
-                                        column(width = 8, align = 'left',
-                                               radioButtons(ns('comorb_hepatique'),
-                                                            "",
-                                                            choices = c("Non" = 0, "Modérée" = 1, "Importante" = 2, "Très importante" = 3),
-                                                            inline = TRUE,
-                                                            selected = ifelse(is.null(hold), 0, hold$comorb_hepatique))
-                                        )
-                                      ),
-                                      fluidRow(
-                                        column(width = 4, align = 'right',
-                                               HTML('<br><b>Oncologique/Hematologique</b>')),
-                                        column(width = 8, align = 'left',
-                                               radioButtons(ns('comorb_oncologique'),
-                                                            "",
-                                                            choices = c("Non" = 0, "Modérée" = 1, "Importante" = 2, "Très importante" = 3),
-                                                            inline = TRUE,
-                                                            selected = ifelse(is.null(hold), 0, hold$comorb_oncologique))
-                                        )
-                                      ),
-                                      fluidRow(style = "background-color:#F1F1F4;",
-                                        column(width = 4, align = 'right',
-                                               HTML('<br><b>Neurologique</b>')),
-                                        column(width = 8, align = 'left',
-                                               radioButtons(ns('comorb_neurologique'),
-                                                            "",
-                                                            choices = c("Non" = 0, "Modérée" = 1, "Importante" = 2, "Très importante" = 3),
-                                                            inline = TRUE,
-                                                            selected = ifelse(is.null(hold), 0, hold$comorb_neurologique))
-                                        )
-                                      ),
-                                      fluidRow(
-                                        column(width = 4, align = 'right',
-                                               textInput(ns('comorbidite_1'),
-                                                         "",
-                                                         value = ifelse(is.null(hold) || str_trim(hold$comorbidite_1) == "", "", hold$comorbidite_1),
-                                                         placeholder = 'Autre...',
-                                                         width = '80%')
-                                               ),
-                                        column(width = 8, align = 'left',
-                                               radioButtons(ns('comorb_1'),
-                                                            "",
-                                                            choices = c("Non" = 0, "Modérée" = 1, "Importante" = 2, "Très importante" = 3),
-                                                            inline = TRUE,
-                                                            selected = ifelse(is.null(hold), 0, hold$comorb_1))
-                                        )
-                                      ),
-                                      fluidRow(style = "background-color:#F1F1F4;",
-                                               column(width = 4, align = 'right',
-                                                      textInput(ns('comorbidite_2'),
-                                                                "",
-                                                                value = ifelse(is.null(hold) || str_trim(hold$comorbidite_2) == "", "", hold$comorbidite_2),
-                                                                placeholder = 'Autre...',
-                                                                width = '80%')
-                                               ),
-                                               column(width = 8, align = 'left',
-                                                      radioButtons(ns('comorb_2'),
-                                                                   "",
-                                                                   choices = c("Non" = 0, "Modérée" = 1, "Importante" = 2, "Très importante" = 3),
-                                                                   inline = TRUE,
-                                                                   selected = ifelse(is.null(hold), 0, hold$comorb_2))
-                                               )
-                                      ),
-                                      tags$br(),
+                                      # HTML("<h5 style=text-align:left;font-family:Garamond><b>COMORBIDITÉS</b></h5>"),
+                                      # tags$br(),
+                                      # fluidRow(
+                                      #   column(width = 4, align = 'right',
+                                      #          HTML('<br><b>Metabolique</b>')),
+                                      #   column(width = 8, align = 'left',
+                                      #                          radioButtons(ns('comorb_metabolique'),
+                                      #                                       "",
+                                      #                                       choices = c("Non" = 0, "Modérée" = 1, "Importante" = 2, "Très importante" = 3),
+                                      #                                       inline = TRUE,
+                                      #                                       selected = ifelse(is.null(hold), 0, hold$comorb_metabolique))
+                                      #          )
+                                      # ),
+                                      # fluidRow(style = "background-color:#F1F1F4;",
+                                      #   column(width = 4, align = 'right',
+                                      #          HTML('<br><b>Cardiovasculaire</b>')),
+                                      #   column(width = 8, align = 'left',
+                                      #          radioButtons(ns('comorb_cardiovasculaire'),
+                                      #                       "",
+                                      #                       choices = c("Non" = 0, "Modérée" = 1, "Importante" = 2, "Très importante" = 3),
+                                      #                       inline = TRUE,
+                                      #                       selected = ifelse(is.null(hold), 0, hold$comorb_cardiovasculaire))
+                                      #   )
+                                      # ),
+                                      # fluidRow(
+                                      #   column(width = 4, align = 'right',
+                                      #          HTML('<br><b>Renale</b>')),
+                                      #   column(width = 8, align = 'left',
+                                      #          radioButtons(ns('comorb_renale'),
+                                      #                       "",
+                                      #                       choices = c("Non" = 0, "Modérée" = 1, "Importante" = 2, "Très importante" = 3),
+                                      #                       inline = TRUE,
+                                      #                       selected = ifelse(is.null(hold), 0, hold$comorb_renale))
+                                      #   )
+                                      # ),
+                                      # fluidRow(style = "background-color:#F1F1F4;",
+                                      #   column(width = 4, align = 'right',
+                                      #          HTML('<br><b>Hepatique</b>')),
+                                      #   column(width = 8, align = 'left',
+                                      #          radioButtons(ns('comorb_hepatique'),
+                                      #                       "",
+                                      #                       choices = c("Non" = 0, "Modérée" = 1, "Importante" = 2, "Très importante" = 3),
+                                      #                       inline = TRUE,
+                                      #                       selected = ifelse(is.null(hold), 0, hold$comorb_hepatique))
+                                      #   )
+                                      # ),
+                                      # fluidRow(
+                                      #   column(width = 4, align = 'right',
+                                      #          HTML('<br><b>Oncologique/Hematologique</b>')),
+                                      #   column(width = 8, align = 'left',
+                                      #          radioButtons(ns('comorb_oncologique'),
+                                      #                       "",
+                                      #                       choices = c("Non" = 0, "Modérée" = 1, "Importante" = 2, "Très importante" = 3),
+                                      #                       inline = TRUE,
+                                      #                       selected = ifelse(is.null(hold), 0, hold$comorb_oncologique))
+                                      #   )
+                                      # ),
+                                      # fluidRow(style = "background-color:#F1F1F4;",
+                                      #   column(width = 4, align = 'right',
+                                      #          HTML('<br><b>Neurologique</b>')),
+                                      #   column(width = 8, align = 'left',
+                                      #          radioButtons(ns('comorb_neurologique'),
+                                      #                       "",
+                                      #                       choices = c("Non" = 0, "Modérée" = 1, "Importante" = 2, "Très importante" = 3),
+                                      #                       inline = TRUE,
+                                      #                       selected = ifelse(is.null(hold), 0, hold$comorb_neurologique))
+                                      #   )
+                                      # ),
+                                      # fluidRow(
+                                      #   column(width = 4, align = 'right',
+                                      #          textInput(ns('comorbidite_1'),
+                                      #                    "",
+                                      #                    value = ifelse(is.null(hold) || str_trim(hold$comorbidite_1) == "", "", hold$comorbidite_1),
+                                      #                    placeholder = 'Autre...',
+                                      #                    width = '80%')
+                                      #          ),
+                                      #   column(width = 8, align = 'left',
+                                      #          radioButtons(ns('comorb_1'),
+                                      #                       "",
+                                      #                       choices = c("Non" = 0, "Modérée" = 1, "Importante" = 2, "Très importante" = 3),
+                                      #                       inline = TRUE,
+                                      #                       selected = ifelse(is.null(hold), 0, hold$comorb_1))
+                                      #   )
+                                      # ),
+                                      # fluidRow(style = "background-color:#F1F1F4;",
+                                      #          column(width = 4, align = 'right',
+                                      #                 textInput(ns('comorbidite_2'),
+                                      #                           "",
+                                      #                           value = ifelse(is.null(hold) || str_trim(hold$comorbidite_2) == "", "", hold$comorbidite_2),
+                                      #                           placeholder = 'Autre...',
+                                      #                           width = '80%')
+                                      #          ),
+                                      #          column(width = 8, align = 'left',
+                                      #                 radioButtons(ns('comorb_2'),
+                                      #                              "",
+                                      #                              choices = c("Non" = 0, "Modérée" = 1, "Importante" = 2, "Très importante" = 3),
+                                      #                              inline = TRUE,
+                                      #                              selected = ifelse(is.null(hold), 0, hold$comorb_2))
+                                      #          )
+                                      # ),
+                                      # tags$br(),
                                       HTML("<h5 style=text-align:left;font-family:Garamond><b>HISTOIRE DE LA MALADIE</b></h5>"),
                                       fluidRow(column(width = 12, align="center",
                                                       textAreaInput(ns('description_histoire'),

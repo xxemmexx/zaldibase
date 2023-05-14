@@ -108,9 +108,9 @@ tagList(
                                                     uiOutput('syndrome'),
                                                     uiOutput('archive_syndrome'),
                                                     tags$br(),
-                                                    uiOutput('comorbidites'),
-                                                    uiOutput('archive_comorbidites'),
-                                                    tags$br(),
+                                                    # uiOutput('comorbidites'),
+                                                    # uiOutput('archive_comorbidites'),
+                                                    # tags$br(),
                                                     uiOutput('description_histoire'),
                                                     uiOutput('archive_description_histoire')
                                                     
@@ -281,8 +281,8 @@ tagList(
                                                            tags$br(),
                                                            uiOutput('staff_syndrome'),
                                                            tags$br(),
-                                                           uiOutput('staff_comorbidites'),
-                                                           tags$br(),
+                                                           # uiOutput('staff_comorbidites'),
+                                                           # tags$br(),
                                                            uiOutput('staff_description_histoire')
                                                          ) # Close fluid row
                                                        ), # Close well panel
@@ -486,8 +486,8 @@ tagList(
                                                     tags$br(),
                                                     uiOutput('syndrome_ext'),
                                                     tags$br(),
-                                                    uiOutput('comorbidites_ext'),
-                                                    tags$br(),
+                                                    # uiOutput('comorbidites_ext'),
+                                                    # tags$br(),
                                                     uiOutput('description_histoire_ext')
                                                   ),
                                                   wellPanel(
