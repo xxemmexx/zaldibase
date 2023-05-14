@@ -862,17 +862,17 @@ writeExterneQuery <- function(aUID,
   
 }
 
-writeRendezVousQuery <- function(aPatientUid, aMode) {
-  if(aMode == 'needsRendezvous') {
-    query <- paste0("UPDATE patients SET 
-                    needs_rendezvous = 1, 
-                    status = 3
-                    WHERE uid = '", aPatientUid, "';")
-  }
-  
-  query
-  
-}
+# writeRendezVousQuery <- function(aPatientUid, aMode) {
+#   if(aMode == 'needsRendezvous') {
+#     query <- paste0("UPDATE patients SET 
+#                     needs_rendezvous = 1, 
+#                     status = 3
+#                     WHERE uid = '", aPatientUid, "';")
+#   }
+#   
+#   query
+#   
+# }
 
 writeOperationFinieQuery <- function(aPatientUid) {
     
@@ -884,7 +884,7 @@ writeOperationFinieQuery <- function(aPatientUid) {
 
 writeStatusUpdate <- function(aDecision) {
   case_when(
-    aDecision == "A hospitaliser / A rapatrier" ~ ", is_viewed = 1, needs_room = 1, status = 69",
+    aDecision == "A hospitaliser / A rapatrier" ~ ", is_viewed = 1, needs_room = 1, status = 29",
     aDecision == "Rendez-vous / Suivi" ~ ", is_viewed = 1, needs_rendezvous = 1, status = 49",
     aDecision == "Complément d`examen à faire" ~ ", is_viewed = 1, status = 3",
     aDecision == "Clôturer dossier" ~  ", is_closed = 1, is_viewed = 1, status = -1",
@@ -932,7 +932,7 @@ writeHospitalisationDetailsQuery <- function(aDate, aTime, aRoom, aPatientUid) {
                          aTime, "', room_id = '", 
                          aRoom, "'")
   
-  updateStatus <- ", is_closed = 1, needs_room = 0, has_room = 1, status = 60"
+  updateStatus <- ", is_closed = 1, needs_room = 0, has_room = 1, status = 20"
   
   whereClause <- paste0(" WHERE uid = '", aPatientUid, "';")
   
@@ -970,24 +970,24 @@ displayStatusName <- function(aStatus) {
     aStatus == 9 ~  "À opérer",
     aStatus == 40 ~ "Rendez-vous accordé",
     aStatus == 49 ~ "Attend sécretariat pour un rendez-vous",
-    aStatus == 60 ~ "En cours de rapatriement",
-    aStatus == 69 ~ "Attend cadres de services pour hospitalisation",
+    aStatus == 20 ~ "En cours de rapatriement",
+    aStatus == 29 ~ "Attend cadres de services pour hospitalisation",
   )
 }
 
-displayStatusCode <- function(aStatus) {
-  case_when(
-    aStatus == "Dossier fermé" ~ -1,
-    aStatus == "En cours..." ~ 0,
-    aStatus == "En attente d'examen/infos supplémentaires" ~ 3,
-    aStatus == "Attend sécretariat pour un rendez-vous" ~ 49,
-    aStatus == "Rendez-vous accordé" ~ 40,
-    aStatus == "Attend cadres de services pour hospitalisation" ~ 69,
-    aStatus == "En cours de rapatriement" ~ 60,
-    aStatus == "À opérer" ~ 8,
-    aStatus == "Opéré(e)" ~ 9
-  )
-}
+# displayStatusCode <- function(aStatus) {
+#   case_when(
+#     aStatus == "Dossier fermé" ~ -1,
+#     aStatus == "En cours..." ~ 0,
+#     aStatus == "En attente d'examen/infos supplémentaires" ~ 3,
+#     aStatus == "Attend sécretariat pour un rendez-vous" ~ 49,
+#     aStatus == "Rendez-vous accordé" ~ 40,
+#     aStatus == "Attend cadres de services pour hospitalisation" ~ 69,
+#     aStatus == "En cours de rapatriement" ~ 60,
+#     aStatus == "À opérer" ~ 8,
+#     aStatus == "Opéré(e)" ~ 9
+#   )
+# }
 
 fetchMessages <- function(aConnection, aPatientUID = NULL){
   

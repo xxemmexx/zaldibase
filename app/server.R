@@ -64,7 +64,7 @@ function(input, output, session) {
         mutate(created_at = as.POSIXct(created_at, tz = "UTC"),
                modified_at = as.POSIXct(modified_at, tz = "UTC")) %>%
         arrange(desc(modified_at)) %>%
-        filter(is_closed == 0)
+        filter(is_closed == 0, status < 30)
       
     }, 
     error = function(err) {
@@ -1500,7 +1500,7 @@ function(input, output, session) {
                modified_at = as.POSIXct(modified_at, tz = "UTC")) %>%
         arrange(desc(modified_at)) %>%
         filter(is_closed == 0 | is_viewed == 0) %>%
-        filter(status < 10)
+        filter(status < 30)
 
     },
     error = function(err) {
@@ -1581,7 +1581,9 @@ function(input, output, session) {
     
     decision_input_controllers <- map(staff_decision_names(), ~ selectInput(.x, 
                                               "Décision du staff",
-                                              selected = isolate(input[[.x]]),
+                                              selected = isolate(ifelse(is.null(input[[.x]]), 
+                                                                        patient_data_staff()$staff_decision[[patientIdx]], 
+                                                                        input[[.x]])),
                                               choices = decisions_dev))
       decision_input_controllers[[patientIdx]]
   })
@@ -1593,7 +1595,9 @@ function(input, output, session) {
     
     explanation_input_controllers <- map(staff_explanation_names(), ~ textAreaInput(.x, 
                                                                                     "Explication",
-                                                                                    value = isolate(input[[.x]]),
+                                                                                    value = isolate(ifelse(is.null(input[[.x]]), 
+                                                                                                           patient_data_staff()$explication[[patientIdx]], 
+                                                                                                           input[[.x]])),
                                                                                     width = '100%',
                                                                                     height = '140px'))
     explanation_input_controllers[[patientIdx]]
