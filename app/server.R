@@ -2022,15 +2022,36 @@ function(input, output, session) {
       
       tryCatch({
         
+        showModal(patientezDialog)
+        
         uids <- patient_data_staff()$uid
         
         for(i in 1:patient_data_staff_count()) {
           
-          thisQuery <- writeStaffDecisionQuery(input[[staff_decision_names()[[i]]]], 
-                                               prepareString(input[[staff_explanation_names()[[i]]]]),
+          staffDecision <- input[[staff_decision_names()[[i]]]]
+          staffExplanation <- input[[staff_explanation_names()[[i]]]]
+          
+          thisQuery <- writeStaffDecisionQuery(staffDecision, 
+                                               prepareString(staffExplanation),
                                                uids[[i]])
           
           dbExecute(conn, thisQuery)
+          
+          if(staffDecision == 'Complément d`examen à faire') {
+            
+            nomCompletPatient <- writePatientDisplayName(patient_data_staff()$prenom[[i]], patient_data_staff()$nom[[i]])
+            
+            generateInfoSupplementaireEmail(nomCompletPatient,
+                                            patient_data_staff()$date_naissance[[i]],
+                                            staffDecision,
+                                            staffExplanation) %>%
+              smtp_send(
+                to = patient_data_staff()$contact_email[[i]],
+                from = zaldibase,
+                subject = printStandardEmailTitle,
+                credentials = creds_file(credentialsPath)
+              )
+          }
         }
         
         session$userData$staff_trigger(session$userData$staff_trigger() + 1)
@@ -2046,6 +2067,8 @@ function(input, output, session) {
         shinyjs::enable("staff_meeting")
         
         patientIdx <<- 1
+        
+        removeModal()
         
         showToast("success", message = "Staff meeting terminée correctement")}, 
         

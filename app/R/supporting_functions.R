@@ -1334,13 +1334,13 @@ deliverTimeString <- function(anHour, aMinute) {
 }
 
 generateRendezvousEmail <- function(aPatient,
-                                aDateDeNaissance, 
-                                aStaffDecision,
-                                aRendezvousDate,
-                                aRendezvousTime,
-                                aRendezvousDoctor,
-                                anExplanation,
-                                isChef) {
+                                    aDateDeNaissance, 
+                                    aStaffDecision,
+                                    aRendezvousDate,
+                                    aRendezvousTime,
+                                    aRendezvousDoctor,
+                                    anExplanation,
+                                    isChef) {
   
   img_string <- add_image(file = logoPath, width = 90, align = 'center')
   
@@ -1408,6 +1408,40 @@ Voici un rappel de votre rendez-vous chez le Centre Hospitalier de Grenoble.<br>
 <b>", rendezVousTitre, "</b><br>",
 rendezVousText, "<br><br>
 <b>Note supplémentaire</b><br>
+<em>", anExplanation,"</em><br><br><br>
+
+
+Cordialement, <br><br>
+L'équipe du Neurochirurgical")
+  
+  
+  compose_email(
+    body = md(glue::glue(thisBody)),
+    footer = md(glue::glue("Ceci est mon corps donné pour vous, faites ceci en souvenir de moi"))
+  )
+}
+
+generateInfoSupplementaireEmail <- function(aPatient,
+                                            aDateDeNaissance, 
+                                            aStaffDecision,
+                                            anExplanation
+                                            ) {
+  
+  img_string <- add_image(file = logoPath, width = 90, align = 'center')
+  
+  thisBody <- paste0(" {img_string} <br>
+  
+  Bonjour,
+
+Vous recevez cette notification automatique parce que l'équipe du Neurochirurgical 
+du Centre Hospitalier de Grenoble a récemment évalué un dossier que vous avez soumis. Or, il 
+vous faudra fournir des informations supplémentaires pour que l'équipe puisse arriver à une conclusion définitive.<br><br>
+
+<b>Patient </b><br>", 
+aPatient, ", né(e) le ", translateDate(aDateDeNaissance), "<br><br>
+<b>Décision </b><br>",
+aStaffDecision, "<br><br>
+<b>Infos/examens supplémentaires</b><br>
 <em>", anExplanation,"</em><br><br><br>
 
 
