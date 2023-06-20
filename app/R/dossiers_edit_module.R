@@ -895,18 +895,6 @@ dossiersEditModuleServer <- function(id,
                      
                      dbExecute(conn, thisQuery)
                      
-                     # Use this block for staff meeting
-                     if(input$def_decision == "Rendez-vous / Suivi" ||
-                        input$def_decision == "Rendez-vous / Suivi") {
-                       
-                       print('Trying to update status...')
-                       
-                       rendezVousUpdateQuery <- writeRendezVousQuery(uid, 'needsRendezvous')
-                       
-                       dbExecute(conn, rendezVousUpdateQuery)
-                       
-                     }
-                     
                      session$userData$dossiers_trigger(session$userData$dossiers_trigger() + 1)
                      
                      session$userData$archive_trigger(session$userData$archive_trigger() + 1)
