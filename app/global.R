@@ -77,16 +77,13 @@ if(localDB) {
                          password = dbInfo[[1]][[5]])
 }
 
-decisions <- c(" ", "A hospitaliser / A rapatrier",
-               "Rendez-vous / Suivi",
-               "Prise en charge externe ou non-chirurgicale",
+decisions <- c(" ", 
+               "A hospitaliser / A rapatrier",
+               "A opérer",
+               "Rendez-vous / Suivi", 
                "Complément d`examen à faire")
 
-decisions_dev <- c(" ", 
-                   "A hospitaliser / A rapatrier",
-                   "A opérer",
-                   "Rendez-vous / Suivi", 
-                   "Complément d`examen à faire",
+decisions_staff <- c(decisions,
                    "Clôturer dossier")
 
 graphiques <- c("Nombre de cas par origine",

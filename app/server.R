@@ -1584,7 +1584,7 @@ function(input, output, session) {
                                               selected = isolate(ifelse(is.null(input[[.x]]), 
                                                                         patient_data_staff()$staff_decision[[patientIdx]], 
                                                                         input[[.x]])),
-                                              choices = decisions_dev))
+                                              choices = decisions_staff))
       decision_input_controllers[[patientIdx]]
   })
   
