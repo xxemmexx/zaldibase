@@ -240,12 +240,10 @@ tagList(
                                  fluidRow(div(id = "staff_ui_controllers",
                                               style = "padding:10px 5px 10px 800px;background-color:#3E3F3A;",
                                               actionButton("decrease_patient_index", 
-                                                           "",
-                                                           icon("arrow-left"),
+                                                           "< Précédant",
                                                            style="color: #DAA520; background-color:#3E3F3A"),
                                               actionButton("increase_patient_index", 
-                                                           "",
-                                                           icon("arrow-right"),
+                                                           "Suivant >",
                                                            style="color: #DAA520; background-color:#3E3F3A")
                                               ) %>% shinyjs::hidden()
                                    
@@ -334,12 +332,10 @@ tagList(
                                  fluidRow(div(id = "staff_ui_controllers_2",
                                               style = "padding:10px 5px 10px 800px;background-color:#3E3F3A;",
                                               actionButton("decrease_patient_index_2", 
-                                                           "",
-                                                           icon("arrow-left"),
+                                                           "< Précédant",
                                                            style="color: #DAA520; background-color:#3E3F3A"),
                                               actionButton("increase_patient_index_2", 
-                                                           "",
-                                                           icon("arrow-right"),
+                                                           "Suivant >",
                                                            style="color: #DAA520; background-color:#3E3F3A")
                                  ) %>% shinyjs::hidden() # Close div 
                                  ), # Close fluid row
