@@ -22,6 +22,7 @@ require(purrrlyr)
 require(tidyr)
 require(dplyr)
 require(ggplot2)
+require(plotly)
 require(knitr)
 
 localDB = TRUE

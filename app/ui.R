@@ -390,13 +390,13 @@ tagList(
                                     mainPanel(
                                       conditionalPanel(condition = "input.type_of_graph == 'Nombre de cas par origine'",
                                                                tags$br(),
-                                                               plotOutput("chart_cases_per_origin")),
+                                                               plotlyOutput("chart_cases_per_origin")),
                                       conditionalPanel(condition = "input.type_of_graph == 'Disque par pathologie'",
                                                        plotOutput("pie_pathologies")),
                                       conditionalPanel(condition = "input.type_of_graph == 'Disque par âge'",
                                                        plotOutput("pie_ages")),
                                       conditionalPanel(condition = "input.type_of_graph == 'Histogramme Infections/Complications'",
-                                                       plotOutput("chart_infect"))
+                                                       plotlyOutput("chart_infect"))
                                       ) # Close main panel
                                     ) # Close sidebar layout
                          ) # Close tabpanel Analyse

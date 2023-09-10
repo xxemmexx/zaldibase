@@ -3042,9 +3042,9 @@ function(input, output, session) {
     
   })
   
-  output$chart_cases_per_origin <- renderPlot({
+  output$chart_cases_per_origin <- renderPlotly({
     
-    closedDossiers() %>%
+    histPlot <- closedDossiers() %>%
       filter(between(as.Date(ymd_hms(created_at)), 
                      ymd(input$interval_of_interest[1]), 
                      ymd(input$interval_of_interest[2]))) %>%
@@ -3053,19 +3053,20 @@ function(input, output, session) {
       mutate(hopital = reorder(hopital, n)) %>%
       ggplot(aes(x = hopital, y = n)) +
       geom_bar(stat = "identity", fill = "steelblue") +
-      ggtitle(paste0("Nombre de patients rapportés par hôpitaux régionaux \n entre le ",
+      ggtitle(paste0("Patients rapportés entre le ",
                      sd(ymd(input$interval_of_interest[1])),
                      " et le ",
                      sd(ymd(input$interval_of_interest[2])))) +
-      xlab("") + ylab("# cas rapportés au CHUGA") +
-      theme(plot.title = element_text(size = 18, face = "bold", hjust = 0.5)) +
-      theme(axis.title.x = element_text(size = 16, face = "bold")) +
-      theme(axis.title.y = element_text(size = 16, face = "bold")) +
+      xlab("") + ylab("Nombre de cas rapportés au CHUGA") +
+      theme(plot.title = element_text(size = 16, face = "bold", hjust = 0.5)) +
+      theme(axis.title.x = element_text(size = 14, face = "bold")) +
+      theme(axis.title.y = element_text(size = 14, face = "bold")) +
       theme(axis.text.x= element_text(face = "bold", size = 12)) +
       theme(axis.text.y= element_text(face = "bold", size = 12, angle = 30)) +
       coord_flip()
     
-    
+    ggplotly(histPlot) %>%
+      config(locale = "fr")
   })
   
   summaryPathologies <- reactive({
@@ -3242,10 +3243,10 @@ function(input, output, session) {
   
   #as.numeric(NA)
   
-  output$chart_infect <- renderPlot({
+  output$chart_infect <- renderPlotly({
     req(summaryInfections())
 
-    summaryInfections() %>%
+    histPlot <- summaryInfections() %>%
       ggplot(aes(x = monthLabel, y = casTotaux)) +
       geom_bar(stat = "identity", fill = "steelblue") +
       ggtitle(paste0("Nombre de cas de complications ou infections entre le ",
@@ -3258,6 +3259,9 @@ function(input, output, session) {
       theme(axis.title.y = element_text(size = 16, face = "bold")) +
       theme(axis.text.x= element_text(face = "bold", size = 12)) +
       theme(axis.text.y= element_text(face = "bold", size = 12)) 
+    
+    ggplotly(histPlot) %>%
+      config(locale = "fr")
   })
  
   # set suspendWhenHidden to FALSE so it renders even without output
