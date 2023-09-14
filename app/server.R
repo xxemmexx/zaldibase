@@ -3052,7 +3052,7 @@ function(input, output, session) {
       count(hopital) %>%
       mutate(hopital = reorder(hopital, n)) %>%
       ggplot(aes(x = hopital, y = n)) +
-      geom_bar(stat = "identity", fill = "steelblue") +
+      geom_bar(stat = "identity", fill = "#596e79") +
       ggtitle(paste0("Patients rapportés entre le ",
                      sd(ymd(input$interval_of_interest[1])),
                      " et le ",
@@ -3167,7 +3167,7 @@ function(input, output, session) {
             panel.background = element_blank(),
             legend.title = element_blank(),
             legend.text = element_text(size = 14)) +
-      scale_fill_brewer(palette = "Set2")
+      scale_fill_brewer(palette = "Dark2")
     
   })
   
@@ -3248,7 +3248,7 @@ function(input, output, session) {
 
     histPlot <- summaryInfections() %>%
       ggplot(aes(x = monthLabel, y = casTotaux)) +
-      geom_bar(stat = "identity", fill = "steelblue") +
+      geom_bar(stat = "identity", fill = "#596e79") +
       ggtitle(paste0("Nombre de cas de complications ou infections entre le ",
                      sd(ymd(input$interval_of_interest[1])),
                      " et le ",
