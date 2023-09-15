@@ -2015,85 +2015,97 @@ function(input, output, session) {
   
   observeEvent(input$cloturer_staff_meeting, {
     
-    summary <- overviewTable() %>%
-      summarise(readiness = sum(valid))
-
-    if (summary$readiness == patient_data_staff_count()) {
+    if (!(session$userData$permissions() == 'demo')) {
+      summary <- overviewTable() %>%
+        summarise(readiness = sum(valid))
       
-      tryCatch({
+      if (summary$readiness == patient_data_staff_count()) {
         
-        showModal(patientezDialog)
-        
-        uids <- patient_data_staff()$uid
-        
-        for(i in 1:patient_data_staff_count()) {
+        tryCatch({
           
-          staffDecision <- input[[staff_decision_names()[[i]]]]
-          staffExplanation <- input[[staff_explanation_names()[[i]]]]
+          showModal(patientezDialog)
           
-          thisQuery <- writeStaffDecisionQuery(staffDecision, 
-                                               prepareString(staffExplanation),
-                                               uids[[i]])
+          uids <- patient_data_staff()$uid
           
-          dbExecute(conn, thisQuery)
-          
-          if(staffDecision == 'Complément d`examen à faire') {
+          for(i in 1:patient_data_staff_count()) {
             
-            nomCompletPatient <- writePatientDisplayName(patient_data_staff()$prenom[[i]], patient_data_staff()$nom[[i]])
+            staffDecision <- input[[staff_decision_names()[[i]]]]
+            staffExplanation <- input[[staff_explanation_names()[[i]]]]
             
-            generateInfoSupplementaireEmail(nomCompletPatient,
-                                            patient_data_staff()$date_naissance[[i]],
-                                            staffDecision,
-                                            staffExplanation) %>%
-              smtp_send(
-                to = patient_data_staff()$contact_email[[i]],
-                from = zaldibase,
-                subject = printStandardEmailTitle,
-                credentials = creds_file(credentialsPath)
-              )
+            thisQuery <- writeStaffDecisionQuery(staffDecision, 
+                                                 prepareString(staffExplanation),
+                                                 uids[[i]])
+            
+            dbExecute(conn, thisQuery)
+            
+            if(staffDecision == 'Complément d`examen à faire') {
+              
+              nomCompletPatient <- writePatientDisplayName(patient_data_staff()$prenom[[i]], patient_data_staff()$nom[[i]])
+              
+              generateInfoSupplementaireEmail(nomCompletPatient,
+                                              patient_data_staff()$date_naissance[[i]],
+                                              staffDecision,
+                                              staffExplanation) %>%
+                smtp_send(
+                  to = patient_data_staff()$contact_email[[i]],
+                  from = zaldibase,
+                  subject = printStandardEmailTitle,
+                  credentials = creds_file(credentialsPath)
+                )
+            }
           }
-        }
-        
-        session$userData$staff_trigger(session$userData$staff_trigger() + 1)
-        session$userData$dossiers_trigger(session$userData$dossiers_trigger() + 1)
-        
-        shinyjs::hide("staff_ui")
-        shinyjs::hide("staff_ui_controllers")
-        shinyjs::hide("staff_ui_controllers_2")
-        shinyjs::hide("staff_patient_overview")
-        shinyjs::hide("staff_ui_chat")
-        shinyjs::hide("annuler_staff_meeting")
-        shinyjs::hide("cloturer_staff_meeting")
-        shinyjs::enable("staff_meeting")
-        
-        patientIdx <<- 1
-        
-        removeModal()
-        
-        showToast("success", message = "Staff meeting terminée correctement")}, 
-        
-        error = function(error) {
           
-          msg <- paste0("Erreur - contactez votre admin")
-          # print `msg` so that we can find it in the logs
-          print(msg)
-          # print the actual error to log it
-          print(error)
-          # show error `msg` to user.  User can then tell us about error and we can
-          # quickly identify where it cam from based on the value in `msg`
-          showToast("error", msg)
-        }
-      ) # Close try-catch
+          session$userData$staff_trigger(session$userData$staff_trigger() + 1)
+          session$userData$dossiers_trigger(session$userData$dossiers_trigger() + 1)
+          
+          shinyjs::hide("staff_ui")
+          shinyjs::hide("staff_ui_controllers")
+          shinyjs::hide("staff_ui_controllers_2")
+          shinyjs::hide("staff_patient_overview")
+          shinyjs::hide("staff_ui_chat")
+          shinyjs::hide("annuler_staff_meeting")
+          shinyjs::hide("cloturer_staff_meeting")
+          shinyjs::enable("staff_meeting")
+          
+          patientIdx <<- 1
+          
+          removeModal()
+          
+          showToast("success", message = "Staff meeting terminée correctement")}, 
+          
+          error = function(error) {
+            
+            msg <- paste0("Erreur - contactez votre admin")
+            # print `msg` so that we can find it in the logs
+            print(msg)
+            # print the actual error to log it
+            print(error)
+            # show error `msg` to user.  User can then tell us about error and we can
+            # quickly identify where it cam from based on the value in `msg`
+            showToast("error", msg)
+          }
+        ) # Close try-catch
+      } else {
+        
+        showModal(
+          modalDialog(
+            div(style = "padding: 30px;", class = "text-center",
+                HTML(printWarningIncompleteStaffMeeting)),
+            easyClose = TRUE,
+            footer = modalButton("Fermer"))
+        )
+      }
     } else {
       
       showModal(
         modalDialog(
-        div(style = "padding: 30px;", class = "text-center",
-            HTML(printWarningIncompleteStaffMeeting)),
-        easyClose = TRUE,
-        footer = modalButton("Fermer"))
+          div(style = "padding: 30px;", class = "text-center",
+              HTML(printWarningDemoPrivileges)),
+          easyClose = TRUE,
+          footer = modalButton("Fermer"))
       )
     }
+    
   })
   
   # Rendez-vous table ------------------------------------------------------------

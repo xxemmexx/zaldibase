@@ -176,6 +176,8 @@ printWarningIncompleteStaffMeeting <- '<p style="color:#FF4500;font-size:60px">&
 
 printWarningHighPrivileges <- '<p style="color:#FF4500;font-size:60px">&#9888;</p> <br> <h4 style = "line-height: 1.75;">Vous ne pouvez prendre la garde que si vous <br> avez des privilèges de <em>resident</em> ou de <em>chef de garde</em></h4>'
 
+printWarningDemoPrivileges <- '<p style="color:#FF4500;font-size:60px">&#9888;</p> <br> <h4 style = "line-height: 1.75;">Vous ne pouvez clôturer le staff meeting <br> en tant que utilisateur demo</h4>'
+
 printPatientez <- '<p style="color:#3E3F3A;font-size:60px;">&#9993;</p> <br> <h3 style = "line-height: 1.75;">Patientez...</h3>'
 
 printReopenDossierExplanation <- '<p style="color:#3E3F3A;font-size:60px;">&#9997;</p> <br> <h3 style = "line-height: 1.75;">En réouvrant ce dossier, vous allez créer un nouveau <br> dossier qui reprendra les données de ce patient. <br> Êtes-vous sûr de vouloir réouvrir le dossier?</h3>'
