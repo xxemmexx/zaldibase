@@ -98,7 +98,7 @@ displaySimpleDateTime <- function(aTimestamp) {
          " hrs.")
 } 
 
-buildDecisionBanner <- function(aPreDecision, aDefDecision, pullRight = TRUE) {
+buildDecisionBanner <- function(aPreDecision, aDefDecision, fontSize = '16px') {
   
   if(is.na(aPreDecision) | aPreDecision == '') {
     preDecision = '-'
@@ -112,19 +112,12 @@ buildDecisionBanner <- function(aPreDecision, aDefDecision, pullRight = TRUE) {
     defDecision = aDefDecision
   }
   
-  if(pullRight) {
-    openTag <- '<div class="pull-right">'
-    fontSize <- 'font-size:16px;'
-  } else {
-    openTag <- '<div>'
-    fontSize <- 'font-size:14px;'
-  }
+  size <- paste0('font-size:', fontSize, ';')
   
-  defTag <- paste0('<h4 style="', fontSize, 'margin: 5px 0;"><b>Décision définitive: ', defDecision, '</b></h4>')
-  preTag <- paste0('<h4 style="', fontSize, 'margin: 5px 0;"><b>Décision préliminaire: ', preDecision, '</b></h4>')
-  closeTag <- '</div>'
+  defTag <- paste0('<h4 style="', size, 'margin: 5px 0;"><b>Décision définitive: ', defDecision, '</b></h4>')
+  preTag <- paste0('<h4 style="', size, 'margin: 5px 0;"><b>Décision préliminaire: ', preDecision, '</b></h4>')
   
-  paste0(openTag, preTag, closeTag, '<br>', openTag, defTag, closeTag)
+  paste0('<div>', preTag, '</div>', '<br>', '<div>', defTag, '</div>')
 
 }
 

@@ -1784,7 +1784,7 @@ function(input, output, session) {
     
     x <- buildDecisionBanner(patient_data_staff()$pre_decision[[patientIdx]], 
                              patient_data_staff()$def_decision[[patientIdx]],
-                             pullRight = FALSE)
+                             fontSize = '14px')
     
     HTML(x)
     
