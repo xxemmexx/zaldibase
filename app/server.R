@@ -3063,7 +3063,9 @@ function(input, output, session) {
       mutate(hopital = factor(hopital, levels = hopitaux)) %>%
       count(hopital) %>%
       mutate(hopital = reorder(hopital, n)) %>%
-      ggplot(aes(x = hopital, y = n)) +
+      mutate(`Hôpital` = hopital,
+             `No. de cas` = n) %>%
+      ggplot(aes(x = `Hôpital`, y = `No. de cas`)) +
       geom_bar(stat = "identity", fill = "#596e79") +
       ggtitle(paste0("Patients rapportés entre le ",
                      sd(ymd(input$interval_of_interest[1])),
@@ -3103,14 +3105,16 @@ function(input, output, session) {
     }
   })
   
+  
   output$pie_pathologies <- renderPlot({
     req(summaryPathologies())
     
     totalCases <- sum(summaryPathologies()$cas)
     
     summaryPathologies() %>%
-      mutate(perc = cas/totalCases) %>%
-      ggplot(aes(x = "", y = perc, fill = pathologie)) +
+      mutate(perc = cas/totalCases,
+             legendLabel = paste0(pathologie, " (", round(perc*100, digits = 1), " %)")) %>%
+      ggplot(aes(x = "", y = perc, fill = legendLabel)) +
       geom_bar(stat = "identity", width = 1) +
       coord_polar("y", start = 0) +
       theme_void() +
@@ -3161,8 +3165,9 @@ function(input, output, session) {
     totalCases <- sum(summaryAges()$cas)
     
     summaryAges() %>%
-      mutate(perc = cas/totalCases) %>%
-      ggplot(aes(x = "", y = perc, fill = class)) +
+      mutate(perc = cas/totalCases,
+             legendLabel = paste0(class, " (", round(perc*100, digits = 1), " %)")) %>%
+      ggplot(aes(x = "", y = perc, fill = legendLabel)) +
       geom_bar(stat = "identity", width = 1) +
       coord_polar("y", start = 0) +
       theme_void() +
@@ -3259,7 +3264,8 @@ function(input, output, session) {
     req(summaryInfections())
 
     histPlot <- summaryInfections() %>%
-      ggplot(aes(x = monthLabel, y = casTotaux)) +
+      mutate(`Date` = monthLabel, `No. de cas` = casTotaux) %>%
+      ggplot(aes(x = `Date`, y = `No. de cas`)) +
       geom_bar(stat = "identity", fill = "#596e79") +
       ggtitle(paste0("Nombre de cas de complications ou infections entre le ",
                      sd(ymd(input$interval_of_interest[1])),
