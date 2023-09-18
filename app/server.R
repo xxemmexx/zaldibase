@@ -3054,6 +3054,17 @@ function(input, output, session) {
     
   })
   
+  filteredDossiers <- reactive({
+    req(input$centre_hopitalier)
+    
+    if(input$centre_hopitalier == 'Tous') {
+      closedDossiers() 
+    } else {
+      closedDossiers() %>%
+        filter(hopital == input$centre_hopitalier)
+    }
+  })
+  
   output$chart_cases_per_origin <- renderPlotly({
     
     histPlot <- closedDossiers() %>%
@@ -3085,11 +3096,10 @@ function(input, output, session) {
   
   summaryPathologies <- reactive({
     
-    summary <- closedDossiers() %>%
+    summary <- filteredDossiers() %>%
       filter(between(as.Date(ymd_hms(created_at)), 
                      ymd(input$interval_of_interest[1]), 
                      ymd(input$interval_of_interest[2]))) %>%
-      filter(hopital == input$centre_hopitalier) %>%
       select(pathologie_1, pathologie_2, pathologie_3) %>%
       pivot_longer(cols = starts_with('pathologie_'), names_to = 'label') %>%
       filter(!value == "") %>%
@@ -3113,7 +3123,8 @@ function(input, output, session) {
     
     summaryPathologies() %>%
       mutate(perc = cas/totalCases,
-             legendLabel = paste0(pathologie, " (", round(perc*100, digits = 1), " %)")) %>%
+             asPercentage = writeAsPercentage(perc, locale ='fr'),
+             legendLabel = paste0(pathologie, " (", asPercentage, ")")) %>%
       ggplot(aes(x = "", y = perc, fill = legendLabel)) +
       geom_bar(stat = "identity", width = 1) +
       coord_polar("y", start = 0) +
@@ -3137,11 +3148,10 @@ function(input, output, session) {
   
   summaryAges <- reactive({
     
-    summary <- closedDossiers() %>%
+    summary <- filteredDossiers() %>%
       filter(between(as.Date(ymd_hms(created_at)), 
                      ymd(input$interval_of_interest[1]), 
                      ymd(input$interval_of_interest[2]))) %>%
-      filter(hopital == input$centre_hopitalier) %>%
       select(date_naissance, created_at) %>%
       mutate(age = deliverAge(date_naissance, created_at),
              classAge = classifyAge(age)) %>%
@@ -3166,7 +3176,8 @@ function(input, output, session) {
     
     summaryAges() %>%
       mutate(perc = cas/totalCases,
-             legendLabel = paste0(class, " (", round(perc*100, digits = 1), " %)")) %>%
+             asPercentage = writeAsPercentage(perc, locale ='fr'),
+             legendLabel = paste0(class, " (", asPercentage, ")")) %>%
       ggplot(aes(x = "", y = perc, fill = legendLabel)) +
       geom_bar(stat = "identity", width = 1) +
       coord_polar("y", start = 0) +

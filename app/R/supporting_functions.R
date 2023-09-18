@@ -1490,6 +1490,21 @@ L'équipe du Neurochirurgical")
   )
 }
 
+writeAsPercentage <- function(aFraction, locale = 'en') {
+  
+  percentage <- round(aFraction*100, digits = 1) %>%
+    as.character()
+  
+  label <- paste0(percentage, "%")
+  
+  if(locale == 'fr') {
+    label <- str_replace_all(label, "[.]", ",")
+  }
+  
+  label
+}
+
+
 # tib <- tribble(
 #   ~modified_at, ~modified_by, ~partner, ~status,
 #   "2022-10-21",   'zaldijn001', 'escudro001', 1,

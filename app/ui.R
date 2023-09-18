@@ -383,7 +383,7 @@ tagList(
                                       conditionalPanel(condition = "input.type_of_graph == 'Disque par pathologie' | input.type_of_graph == 'Disque par âge'",
                                                        selectInput("centre_hopitalier",
                                                                    "Centre hôpitalier",
-                                                                   choices = hopitaux,
+                                                                   choices = c('Tous', hopitaux),
                                                                    selected = "Albertville - Moûtiers"))
                                                                             
                                       ), # Close sidebar panel
