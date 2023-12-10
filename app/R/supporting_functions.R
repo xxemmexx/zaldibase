@@ -315,8 +315,6 @@ buildUnorderedList <- function(aList, aTitle) {
     
   } else {
     
-    #print(aList)
-    
     n <- length(cleanList)
     
     items <- paste0('<li>', cleanList[[1]], '</li>')
