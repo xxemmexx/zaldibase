@@ -20,7 +20,7 @@ tagList(
       # add login panel UI function
       shinyauthr::loginUI(
         id = "login",
-        title = "Bienvenue!",
+        title = "Bienvenue",
         user_title = "Identifiant",
         pass_title = "Mot de passe",
         login_title = "Se connecter",
